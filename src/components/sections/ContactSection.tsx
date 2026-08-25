@@ -3,10 +3,16 @@ import { motion } from 'framer-motion';
 import { Send, CheckCircle2, Sparkles, Mail, MessageSquare, User, ArrowUpRight, Phone, MessageCircle } from 'lucide-react';
 import { FINAL_CTA_DATA, CONTACT_DATA } from '../../data/portfolioData';
 import { FadeIn } from '../common/FadeIn';
-import { CONTACT_CONFIG, createWhatsAppLeadUrl, createQuickWhatsAppUrl, submitLeadByEmail } from '../../utils/contactUtils';
+import {
+  CONTACT_CONFIG,
+  createWhatsAppLeadUrl,
+  submitLeadByEmail,
+  openWhatsApp,
+  getWhatsAppUrl,
+} from '../../utils/contactUtils';
 
 interface ContactSectionProps {
-  onDirectContactClick: () => void;
+  onDirectContactClick?: () => void;
 }
 
 const PROJECT_TYPES = [
@@ -26,23 +32,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const [contactInfo, setContactInfo] = useState('');
   const [interest, setInterest] = useState('Sites Profissionais');
   const [message, setMessage] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [submissionType, setSubmissionType] = useState<'whatsapp' | 'email'>('whatsapp');
 
   const handleSendWhatsApp = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name || !contactInfo) {
+      alert('Por favor, preencha seu nome e contato (e-mail ou telefone/whatsapp).');
+      return;
+    }
 
     const url = createWhatsAppLeadUrl({
-      name,
-      contact: contactInfo,
-      interest,
-      message,
-      origin: 'Formulário Principal da Seção Contato',
-    });
-
-    // Send background email copy to thiago91cassol@hotmail.com
-    submitLeadByEmail({
       name,
       contact: contactInfo,
       interest,
@@ -77,8 +78,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   };
 
   const handleQuickWhatsApp = () => {
-    const url = createQuickWhatsAppUrl('Quero Criar Meu Projeto');
-    window.open(url, '_blank', 'noopener,noreferrer');
+    openWhatsApp('project');
+  };
+
+  const handleSecondaryContact = () => {
+    if (onDirectContactClick) {
+      onDirectContactClick();
+    } else {
+      openWhatsApp('general');
+    }
   };
 
   return (
@@ -126,7 +134,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
             <motion.button
               type="button"
-              onClick={onDirectContactClick}
+              onClick={handleSecondaryContact}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="rounded-full border-2 border-[#AEB7C4]/40 hover:border-[#00D2F6] text-[#F3F5F7] hover:text-[#00D2F6] font-medium uppercase tracking-wider px-8 py-3.5 sm:px-9 sm:py-4 text-xs sm:text-sm md:text-base cursor-pointer hover:bg-[#00D2F6]/5 transition-all inline-flex items-center gap-2"
@@ -158,9 +166,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               {/* Direct Reach Out Links */}
               <div className="space-y-3 pt-2">
                 <a
-                  href={`https://wa.me/${CONTACT_CONFIG.whatsappNumber}`}
+                  href={getWhatsAppUrl('general')}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="flex items-center justify-between p-3.5 rounded-2xl bg-[#050914] border border-[#151F38] hover:border-[#00D2F6] transition-all group"
                 >
                   <div className="flex items-center gap-3">

@@ -1,21 +1,32 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { openWhatsApp, WhatsAppMessageType } from '../../utils/contactUtils';
 
 interface ContactButtonProps {
   onClick?: () => void;
   className?: string;
   label?: string;
+  whatsappContext?: WhatsAppMessageType;
 }
 
 export const ContactButton: React.FC<ContactButtonProps> = ({
   onClick,
   className = '',
   label = 'VAMOS CRIAR →',
+  whatsappContext = 'general',
 }) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      openWhatsApp(whatsappContext);
+    }
+  };
+
   return (
     <motion.button
       type="button"
-      onClick={onClick}
+      onClick={handleClick}
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.96 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}

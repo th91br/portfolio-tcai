@@ -5,6 +5,53 @@ export const CONTACT_CONFIG = {
   portfolioOrigin: 'Portfólio Thiago Cassol Antunes',
 };
 
+/**
+ * Mensagens contextualizadas para os CTAs do portfólio
+ */
+export const WHATSAPP_MESSAGES = {
+  // MENSAGEM 01 — CONTATO GERAL
+  general: `Olá, Thiago! 👋
+Conheci seu trabalho pelo seu portfólio e quero conversar sobre um projeto.
+
+Tenho uma ideia e gostaria de entender qual seria o melhor caminho para transformá-la em uma solução digital.
+
+Podemos conversar?`,
+
+  // MENSAGEM 02 — NOVO PROJETO
+  project: `Olá, Thiago! 👋
+Vi seu portfólio e tenho um projeto que gostaria de tirar do papel.
+
+Quero conversar sobre a ideia, entender as possibilidades e avaliar como podemos desenvolver uma solução profissional, segura e estratégica.
+
+Podemos falar sobre o projeto?`,
+
+  // MENSAGEM 03 — SERVIÇOS / SOLUÇÃO DIGITAL
+  services: `Olá, Thiago! 👋
+Conheci seu trabalho pelo portfólio e estou buscando uma solução digital para o meu negócio.
+
+Quero entender melhor como você pode me ajudar com meu projeto e qual tecnologia ou formato faz mais sentido para a necessidade.
+
+Podemos conversar?`,
+} as const;
+
+export type WhatsAppMessageType = keyof typeof WHATSAPP_MESSAGES;
+
+/**
+ * Gera a URL completa do WhatsApp com a mensagem codificada em URI
+ */
+export function getWhatsAppUrl(type: WhatsAppMessageType = 'general'): string {
+  const message = WHATSAPP_MESSAGES[type] || WHATSAPP_MESSAGES.general;
+  return `https://wa.me/${CONTACT_CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
+
+/**
+ * Abre o WhatsApp em nova aba com a mensagem contextualizada
+ */
+export function openWhatsApp(type: WhatsAppMessageType = 'general') {
+  const url = getWhatsAppUrl(type);
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
 export interface LeadSubmissionData {
   name: string;
   contact: string; // Email or WhatsApp

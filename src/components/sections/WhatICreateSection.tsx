@@ -13,6 +13,7 @@ import {
   Terminal,
 } from 'lucide-react';
 import { FadeIn } from '../common/FadeIn';
+import { openWhatsApp } from '../../utils/contactUtils';
 
 interface WhatICreateSectionProps {
   onSelectService?: (serviceName: string) => void;
@@ -28,6 +29,8 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
       onSelectService(serviceName);
     } else if (onContactClick) {
       onContactClick();
+    } else {
+      openWhatsApp('services');
     }
   };
 

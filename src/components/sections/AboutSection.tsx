@@ -3,12 +3,21 @@ import { ABOUT_DECORATIVE_ASSETS, ABOUT_DATA } from '../../data/portfolioData';
 import { FadeIn } from '../common/FadeIn';
 import { AnimatedText } from '../common/AnimatedText';
 import { ContactButton } from '../common/ContactButton';
+import { openWhatsApp } from '../../utils/contactUtils';
 
 interface AboutSectionProps {
-  onContactClick: () => void;
+  onContactClick?: () => void;
 }
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) => {
+  const handleAction = () => {
+    if (onContactClick) {
+      onContactClick();
+    } else {
+      openWhatsApp('general');
+    }
+  };
+
   return (
     <section
       id="about"
@@ -64,7 +73,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) =>
         <FadeIn delay={0.2} y={20}>
           <ContactButton
             label={ABOUT_DATA.ctaButton}
-            onClick={onContactClick}
+            onClick={handleAction}
+            whatsappContext="general"
           />
         </FadeIn>
       </div>
