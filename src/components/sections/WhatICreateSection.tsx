@@ -36,7 +36,7 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
 
   return (
     <section
-      id="services"
+      id="what-i-create"
       className="relative w-full bg-[#050914] text-[#F3F5F7] px-4 sm:px-8 md:px-10 pt-24 sm:pt-32 md:pt-36 pb-24 sm:pb-32 overflow-hidden z-10 border-t border-[#151F38]"
     >
       {/* Background ambient lighting accents */}

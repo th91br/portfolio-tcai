@@ -30,8 +30,10 @@ dist-ssr
 
 # Test & Tool artifacts
 .playwright-mcp
+.vercel
 testimonials-*
 project-card-*
 mobile-*
 tablet-*
 desktop-*
+
