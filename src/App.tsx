@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { HeroSection } from './components/sections/HeroSection';
 import { MarqueeSection } from './components/sections/MarqueeSection';
 import { AboutSection } from './components/sections/AboutSection';
-import { ServicesSection } from './components/sections/ServicesSection';
+import { WhatICreateSection } from './components/sections/WhatICreateSection';
 import { ProjectsSection } from './components/sections/ProjectsSection';
 import { ContactSection } from './components/sections/ContactSection';
 import { ContactModal } from './components/common/ContactModal';
@@ -39,18 +39,21 @@ export const App: React.FC = () => {
       {/* 1. Hero Section */}
       <HeroSection onContactClick={() => handleOpenContact('Tecnologia & Inovação')} />
 
-      {/* 2. Marquee Section */}
+      {/* 2. Marquee Section (Quem Confia na TCAI) */}
       <MarqueeSection />
 
       {/* 3. About Section */}
       <AboutSection onContactClick={() => handleOpenContact('Projetos & Consultoria')} />
 
-      {/* 4. Services Section */}
-      <ServicesSection />
-
-      {/* 5. Projects Section */}
+      {/* 4. Projects Section (Ideias que Saíram do Papel: 01 ao 05) */}
       <ProjectsSection
         onProjectSelect={handleSelectProject}
+        onContactClick={() => handleOpenContact('Novo Projeto Digital')}
+      />
+
+      {/* 5. O QUE EU CRIO (Bento Grid - DA IDEIA À SOLUÇÃO DIGITAL) */}
+      <WhatICreateSection
+        onSelectService={(service) => handleOpenContact(service)}
         onContactClick={() => handleOpenContact('Novo Projeto Digital')}
       />
 
