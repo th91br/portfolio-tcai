@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-cyan: #00D2F6;
+  --brand-light-blue: #0096F5;
+  --brand-blue: #015EEF;
+  --brand-deep-blue: #1D47EF;
+
+  --background-primary: #050914;
+  --background-secondary: #080D18;
+
+  --text-primary: #F3F5F7;
+  --text-secondary: #AEB7C4;
+  --text-muted: #7E8998;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  background-color: #050914;
+  font-family: 'Kanit', sans-serif;
+  color: #F3F5F7;
+  overflow-x: clip;
+  min-height: 100%;
+}
+
+/* Custom Hero Heading */
+.hero-heading {
+  color: #F3F5F7;
+  letter-spacing: -0.02em;
+}
+
+/* Brand Gradient Text Utility */
+.text-brand-gradient {
+  background: linear-gradient(135deg, #00D2F6 0%, #0096F5 35%, #015EEF 70%, #1D47EF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Brand Button Gradient */
+.btn-brand-primary {
+  background: linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%);
+  box-shadow: 0px 4px 14px rgba(0, 210, 246, 0.25), inset 0px 1px 1px rgba(255, 255, 255, 0.4);
+  transition: all 0.25s ease-out;
+}
+
+.btn-brand-primary:hover {
+  box-shadow: 0px 6px 20px rgba(0, 210, 246, 0.4), inset 0px 1px 2px rgba(255, 255, 255, 0.6);
+  filter: brightness(1.06);
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050914;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #151F38;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0096F5;
+}
