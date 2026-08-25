@@ -232,15 +232,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         ))}
       </motion.nav>
 
-      {/* 2. Hero Heading with Interactive GSAP 3D Typography (z-10, behind avatar) */}
+      {/* 2. Hero Heading with Interactive GSAP 3D Typography (z-10, framing top of avatar) */}
       <div
         ref={titleContainerRef}
         onMouseEnter={handleTitleHover}
         onTouchStart={handleTitleHover}
-        className="absolute top-0 inset-x-0 pt-16 sm:pt-20 md:pt-24 px-4 w-full overflow-hidden text-center z-10 select-none pointer-events-auto cursor-pointer"
+        className="absolute inset-0 z-10 flex items-center justify-center overflow-hidden text-center select-none pointer-events-auto cursor-pointer px-1 sm:px-4"
         style={{ perspective: '1000px' }}
       >
-        <h1 className="hero-heading font-black uppercase tracking-tight leading-none whitespace-nowrap w-full text-[5.2vw] sm:text-[6.2vw] md:text-[7.2vw] lg:text-[8.2vw] select-none inline-flex items-center justify-center gap-x-[0.25em]">
+        <h1
+          className="hero-heading font-black uppercase tracking-tight leading-none whitespace-nowrap w-full select-none inline-flex items-center justify-center gap-x-[0.2em] sm:gap-x-[0.25em] -translate-y-24 sm:-translate-y-28 md:-translate-y-32 lg:-translate-y-36"
+          style={{ fontSize: 'clamp(2.2rem, 8.6vw, 138px)' }}
+        >
           {words.map((word, wordIdx) => (
             <span key={wordIdx} className="inline-block whitespace-nowrap overflow-hidden py-2">
               {word.split('').map((char, charIdx) => (
@@ -261,7 +264,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       {/* 3. Hero Portrait (z-20, in front of the heading z-10) */}
-      <div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center pt-28 sm:pt-32 md:pt-36 lg:pt-40">
+      <div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center pt-10 sm:pt-14 md:pt-16 lg:pt-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -280,7 +283,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <img
               src={HERO_PORTRAIT_URL}
               alt="Thiago Cassol Antunes"
-              className="w-[280px] sm:w-[360px] md:w-[440px] lg:w-[510px] xl:w-[550px] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.95)] pointer-events-auto select-none"
+              className="w-[300px] sm:w-[370px] md:w-[450px] lg:w-[510px] xl:w-[550px] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.95)] pointer-events-auto select-none"
               loading="eager"
               draggable={false}
             />
