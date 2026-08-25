@@ -78,32 +78,31 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
           </FadeIn>
         </div>
 
-        {/* Asymmetric Bento Grid Composition */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-7">
+        {/* Asymmetric Bento Grid Composition: 01, 02, 03, 04, 05 */}
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 md:gap-7">
           
           {/* ========================================================= */}
-          {/* CARD 03 (FEATURED): SOFTWARE & SISTEMAS (7/12 col on lg) */}
+          {/* CARD 01: SITES (6/12 col on lg) */}
           {/* ========================================================= */}
           <FadeIn
             delay={0.1}
             y={30}
-            className="w-full col-span-1 lg:col-span-7 flex flex-col"
+            className="w-full col-span-1 lg:col-span-6 flex flex-col"
           >
             <div
-              onClick={() => handleCardClick('Software & Sistemas')}
-              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-5 sm:p-7 md:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
+              onClick={() => handleCardClick('Sites Profissionais')}
+              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-6 sm:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
             >
-              {/* Inner ambient corner glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
 
-              {/* Card Header: Number & Category Badge */}
-              <div className="flex items-center justify-between gap-4 mb-5 sm:mb-6 relative z-10">
+              {/* Header: Number & Tag */}
+              <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
                 <div className="flex items-center gap-3">
                   <span className="font-kanit font-black text-3xl sm:text-5xl text-[#151F38] group-hover:text-[#00D2F6] transition-colors duration-300 select-none">
-                    03
+                    01
                   </span>
                   <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/20 text-[#00D2F6]">
-                    SOFTWARE & SISTEMAS
+                    SITES
                   </span>
                 </div>
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#050914] border border-[#151F38] group-hover:border-[#00D2F6]/60 flex items-center justify-center text-[#AEB7C4] group-hover:text-[#00D2F6] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
@@ -111,8 +110,152 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                 </div>
               </div>
 
-              {/* Abstract Interactive Software Interface Mockup */}
-              <div className="relative z-10 my-3 sm:my-4 p-3 sm:p-4 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner">
+              {/* Graphic Wireframe */}
+              <div className="relative z-10 my-3 sm:my-4 p-4 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner space-y-2.5">
+                <div className="flex items-center justify-between pb-2 border-b border-[#151F38] text-[10px] font-mono text-[#AEB7C4]/70">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-[#00D2F6]/80" />
+                    <span>suamarca.com.br</span>
+                  </div>
+                  <Globe className="w-3.5 h-3.5 text-[#00D2F6]" />
+                </div>
+                <div className="space-y-2">
+                  <div className="h-4 w-3/4 rounded bg-gradient-to-r from-[#00D2F6]/30 to-transparent" />
+                  <div className="h-2 w-full rounded bg-white/5" />
+                  <div className="h-2 w-5/6 rounded bg-white/5" />
+                  <div className="pt-1.5 flex items-center gap-1.5 sm:gap-2">
+                    <span className="px-2 py-0.5 rounded-md bg-[#080D18] border border-[#151F38] text-[8px] sm:text-[9px] font-mono text-[#00D2F6]">
+                      DESKTOP
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-[#080D18] border border-[#151F38] text-[8px] sm:text-[9px] font-mono text-[#00D2F6]">
+                      TABLET
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-[#080D18] border border-[#151F38] text-[8px] sm:text-[9px] font-mono text-[#00D2F6]">
+                      MOBILE
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="mt-3 sm:mt-4 relative z-10">
+                <h4 className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-white mb-1.5 group-hover:text-[#00D2F6] transition-colors">
+                  Sites profissionais
+                </h4>
+                <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
+                  Experiências digitais modernas, responsivas e estratégicas para apresentar sua marca, fortalecer autoridade e transformar visitas em oportunidades.
+                </p>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* ========================================================= */}
+          {/* CARD 02: LANDING PAGES (6/12 col on lg) */}
+          {/* ========================================================= */}
+          <FadeIn
+            delay={0.15}
+            y={30}
+            className="w-full col-span-1 lg:col-span-6 flex flex-col"
+          >
+            <div
+              onClick={() => handleCardClick('Landing Pages')}
+              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-6 sm:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
+            >
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
+
+              {/* Header: Number & Tag */}
+              <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
+                <div className="flex items-center gap-3">
+                  <span className="font-kanit font-black text-3xl sm:text-5xl text-[#151F38] group-hover:text-[#00D2F6] transition-colors duration-300 select-none">
+                    02
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/20 text-[#00D2F6]">
+                    LANDING PAGES
+                  </span>
+                </div>
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#050914] border border-[#151F38] group-hover:border-[#00D2F6]/60 flex items-center justify-center text-[#AEB7C4] group-hover:text-[#00D2F6] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
+                  <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* Graphic Conversion Funnel */}
+              <div className="relative z-10 my-3 sm:my-4 p-4 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner space-y-2.5">
+                <div className="flex items-center justify-between text-[10px] font-mono text-[#00D2F6]">
+                  <span className="flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5 text-[#00D2F6]" />
+                    HIERARQUIA VISUAL
+                  </span>
+                  <span className="text-emerald-400 font-bold">+CONVERSÃO</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-[#080D18] border border-[#151F38] space-y-1.5">
+                  <div className="h-3 w-5/6 rounded bg-[#00D2F6]/30" />
+                  <div className="h-1.5 w-full rounded bg-white/10" />
+                  <div className="h-6 w-full rounded-lg bg-gradient-to-r from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-[9px] font-bold text-white uppercase tracking-wider">
+                    CTA / Ação Imediata
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="mt-3 sm:mt-4 relative z-10">
+                <h4 className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-white mb-1.5 group-hover:text-[#00D2F6] transition-colors">
+                  Landing Pages que convertem
+                </h4>
+                <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
+                  Páginas desenvolvidas com estratégia, hierarquia visual e experiência do usuário para campanhas, serviços, produtos e geração de leads.
+                </p>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* ========================================================================= */}
+          {/* CARD 03 (FEATURED HERO): SOFTWARE & SISTEMAS (12/12 col on lg) */}
+          {/* ========================================================================= */}
+          <FadeIn
+            delay={0.2}
+            y={30}
+            className="w-full col-span-1 lg:col-span-12 flex flex-col"
+          >
+            <div
+              onClick={() => handleCardClick('Software & Sistemas')}
+              className="group relative w-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-6 sm:p-8 md:p-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 sm:gap-8 overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
+            >
+              <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
+
+              {/* Left Column: Text & Value Proposition */}
+              <div className="lg:w-1/2 flex flex-col justify-between relative z-10 space-y-3 sm:space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="font-kanit font-black text-3xl sm:text-5xl text-[#151F38] group-hover:text-[#00D2F6] transition-colors duration-300 select-none">
+                    03
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-wider px-3 py-1 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/20 text-[#00D2F6]">
+                    SOFTWARE & SISTEMAS
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-xl sm:text-3xl font-bold uppercase tracking-tight text-white mb-2 sm:mb-3 group-hover:text-[#00D2F6] transition-colors">
+                    Soluções sob medida
+                  </h4>
+                  <p className="text-xs sm:text-sm md:text-base text-[#AEB7C4] font-light leading-relaxed">
+                    Software e sistemas desenvolvidos para organizar operações, simplificar processos e solucionar necessidades específicas do negócio com segurança e robustez.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
+                  {['Arquitetura Modular', 'Operações & Automação', 'APIs & Webhooks', 'Controle em Tempo Real'].map((item) => (
+                    <span
+                      key={item}
+                      className="text-[9px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-lg bg-[#050914] border border-[#151F38] text-[#AEB7C4]"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Abstract Interactive Software Interface Mockup */}
+              <div className="lg:w-1/2 w-full relative z-10 p-3.5 sm:p-5 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner space-y-3">
                 {/* Micro App Top Bar */}
                 <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#151F38]/80 text-[11px] font-mono">
                   <div className="flex items-center gap-1.5">
@@ -131,7 +274,6 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
 
                 {/* Micro Layout: Sidebar + Data Widgets */}
                 <div className="grid grid-cols-12 gap-2 sm:gap-3">
-                  {/* Left Mini Sidebar */}
                   <div className="col-span-3 space-y-1.5 hidden sm:block">
                     <div className="px-2 py-1 rounded bg-[#080D18] border border-[#151F38] text-[10px] font-mono text-[#00D2F6] font-semibold flex items-center gap-1.5">
                       <Activity className="w-3 h-3 text-[#00D2F6]" />
@@ -147,7 +289,6 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                     </div>
                   </div>
 
-                  {/* Main Data & KPI Grid */}
                   <div className="col-span-12 sm:col-span-9 space-y-2">
                     <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                       <div className="p-2 rounded-xl bg-[#080D18] border border-[#151F38]">
@@ -164,53 +305,41 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                       </div>
                     </div>
 
-                    {/* Dynamic Pipeline Status Bars */}
                     <div className="p-2 rounded-xl bg-[#080D18] border border-[#151F38] flex items-center justify-between text-[9px] sm:text-[10px] font-mono">
                       <div className="flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        <span className="text-[#AEB7C4]">Sincronização de Banco & API</span>
+                        <span className="text-[#AEB7C4] truncate">Sincronização de Banco & API</span>
                       </div>
-                      <span className="text-[#00D2F6] font-semibold">ATIVO</span>
+                      <span className="text-[#00D2F6] font-semibold flex-shrink-0 ml-2">ATIVO</span>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* Card Footer: Title & Strategic Description */}
-              <div className="mt-3 sm:mt-4 relative z-10">
-                <h4 className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-white mb-1.5 group-hover:text-[#00D2F6] transition-colors">
-                  Soluções sob medida
-                </h4>
-                <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
-                  Software e sistemas desenvolvidos para organizar operações, simplificar processos e solucionar necessidades específicas do negócio.
-                </p>
-              </div>
             </div>
           </FadeIn>
 
           {/* ========================================================= */}
-          {/* CARD 01: SITES PROFISSIONAIS (5/12 col on lg) */}
+          {/* CARD 04: SAAS & MICRO-SAAS (5/12 col on lg) */}
           {/* ========================================================= */}
           <FadeIn
-            delay={0.2}
+            delay={0.25}
             y={30}
             className="w-full col-span-1 lg:col-span-5 flex flex-col"
           >
             <div
-              onClick={() => handleCardClick('Sites Profissionais')}
-              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-5 sm:p-7 md:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
+              onClick={() => handleCardClick('SaaS & Micro-SaaS')}
+              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-6 sm:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
             >
-              {/* Inner ambient corner glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#015EEF]/10 via-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
 
-              {/* Card Header */}
-              <div className="flex items-center justify-between gap-4 mb-5 sm:mb-6 relative z-10">
+              {/* Header: Number & Tag */}
+              <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
                 <div className="flex items-center gap-3">
                   <span className="font-kanit font-black text-3xl sm:text-5xl text-[#151F38] group-hover:text-[#00D2F6] transition-colors duration-300 select-none">
-                    01
+                    04
                   </span>
                   <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/20 text-[#00D2F6]">
-                    SITES
+                    SAAS & MICRO-SAAS
                   </span>
                 </div>
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#050914] border border-[#151F38] group-hover:border-[#00D2F6]/60 flex items-center justify-center text-[#AEB7C4] group-hover:text-[#00D2F6] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
@@ -218,122 +347,71 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                 </div>
               </div>
 
-              {/* Abstract Browser Composition Graphic */}
-              <div className="relative z-10 my-3 sm:my-4 p-3.5 sm:p-4 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner space-y-2.5">
-                <div className="flex items-center justify-between pb-2 border-b border-[#151F38] text-[10px] font-mono text-[#AEB7C4]/70">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-[#00D2F6]/80" />
-                    <span>suamarca.com.br</span>
-                  </div>
-                  <Globe className="w-3.5 h-3.5 text-[#00D2F6]" />
-                </div>
-                <div className="space-y-2">
-                  <div className="h-4 w-3/4 rounded bg-gradient-to-r from-[#00D2F6]/30 to-transparent" />
-                  <div className="h-2 w-full rounded bg-white/5" />
-                  <div className="h-2 w-5/6 rounded bg-white/5" />
-                  <div className="pt-2 flex items-center gap-1.5 sm:gap-2">
-                    <span className="px-2 py-0.5 rounded-md bg-[#080D18] border border-[#151F38] text-[8px] sm:text-[9px] font-mono text-[#00D2F6]">
-                      DESKTOP
-                    </span>
-                    <span className="px-2 py-0.5 rounded-md bg-[#080D18] border border-[#151F38] text-[8px] sm:text-[9px] font-mono text-[#00D2F6]">
-                      TABLET
-                    </span>
-                    <span className="px-2 py-0.5 rounded-md bg-[#080D18] border border-[#151F38] text-[8px] sm:text-[9px] font-mono text-[#00D2F6]">
-                      MOBILE
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card Footer */}
-              <div className="mt-3 sm:mt-4 relative z-10">
-                <h4 className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-white mb-1.5 group-hover:text-[#00D2F6] transition-colors">
-                  Sites profissionais
-                </h4>
-                <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
-                  Experiências digitais modernas, responsivas e estratégicas para apresentar sua marca, fortalecer autoridade e transformar visitas em oportunidades.
-                </p>
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* ========================================================= */}
-          {/* CARD 02: LANDING PAGES (4/12 col on lg) */}
-          {/* ========================================================= */}
-          <FadeIn
-            delay={0.15}
-            y={30}
-            className="w-full col-span-1 lg:col-span-4 flex flex-col"
-          >
-            <div
-              onClick={() => handleCardClick('Landing Pages')}
-              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-5 sm:p-7 md:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
-            >
-              {/* Inner ambient glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
-
-              {/* Card Header */}
-              <div className="flex items-center justify-between gap-4 mb-5 sm:mb-6 relative z-10">
-                <div className="flex items-center gap-3">
-                  <span className="font-kanit font-black text-3xl sm:text-5xl text-[#151F38] group-hover:text-[#00D2F6] transition-colors duration-300 select-none">
-                    02
-                  </span>
-                  <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/20 text-[#00D2F6]">
-                    LANDING PAGES
-                  </span>
-                </div>
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#050914] border border-[#151F38] group-hover:border-[#00D2F6]/60 flex items-center justify-center text-[#AEB7C4] group-hover:text-[#00D2F6] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-
-              {/* Abstract Conversion Funnel Graphic */}
-              <div className="relative z-10 my-3 sm:my-4 p-3.5 sm:p-4 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner space-y-2.5">
-                <div className="flex items-center justify-between text-[10px] font-mono text-[#00D2F6]">
+              {/* Graphic Layered Architecture */}
+              <div className="relative z-10 my-3 sm:my-4 p-3.5 sm:p-4 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner space-y-2">
+                <div className="flex items-center justify-between pb-2 border-b border-[#151F38] text-[10px] font-mono text-[#AEB7C4]">
                   <span className="flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-[#00D2F6]" />
-                    HIERARQUIA VISUAL
+                    <Layers className="w-3.5 h-3.5 text-[#00D2F6]" />
+                    Camadas da Plataforma
                   </span>
-                  <span className="text-emerald-400 font-bold">+CONVERSÃO</span>
+                  <span className="text-[#00D2F6] font-bold">ESCALA PRONTA</span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-[#080D18] border border-[#151F38] space-y-1.5">
-                  <div className="h-3 w-5/6 rounded bg-[#00D2F6]/30" />
-                  <div className="h-1.5 w-full rounded bg-white/10" />
-                  <div className="h-6 w-full rounded-lg bg-gradient-to-r from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-[9px] font-bold text-white uppercase tracking-wider">
-                    CTA / Ação Imediata
+
+                <div className="space-y-1.5 text-[10px] font-mono">
+                  <div className="p-2 rounded-lg bg-[#080D18] border border-[#151F38] flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
+                      <span className="text-white truncate">Interface & Painel Web</span>
+                    </div>
+                    <span className="text-[#00D2F6] text-[9px] flex-shrink-0 ml-1.5">CAMADA 03</span>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-[#080D18] border border-[#151F38] flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#0096F5]" />
+                      <span className="text-white truncate">Regras, Auth & Cobrança</span>
+                    </div>
+                    <span className="text-[#0096F5] text-[9px] flex-shrink-0 ml-1.5">CAMADA 02</span>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-[#080D18] border border-[#151F38] flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#015EEF]" />
+                      <span className="text-white truncate">Nuvem & Segurança</span>
+                    </div>
+                    <span className="text-[#015EEF] text-[9px] flex-shrink-0 ml-1.5">CAMADA 01</span>
                   </div>
                 </div>
               </div>
 
-              {/* Card Footer */}
+              {/* Content */}
               <div className="mt-3 sm:mt-4 relative z-10">
                 <h4 className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-white mb-1.5 group-hover:text-[#00D2F6] transition-colors">
-                  Landing Pages que convertem
+                  Produtos digitais escaláveis
                 </h4>
                 <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
-                  Páginas desenvolvidas com estratégia, hierarquia visual e experiência do usuário para campanhas, serviços, produtos e geração de leads.
+                  Plataformas desenvolvidas para transformar ideias em produtos digitais reais, estruturados para crescer, evoluir e atender usuários.
                 </p>
               </div>
             </div>
           </FadeIn>
 
           {/* ========================================================================= */}
-          {/* CARD 05 (FEATURED SPECIAL): AGENTES DE IA (8/12 col on lg) */}
+          {/* CARD 05 (FEATURED SPECIAL): AGENTES DE IA (7/12 col on lg) */}
           {/* ========================================================================= */}
           <FadeIn
-            delay={0.25}
+            delay={0.3}
             y={30}
-            className="w-full col-span-1 lg:col-span-8 flex flex-col"
+            className="w-full col-span-1 lg:col-span-7 flex flex-col"
           >
             <div
               onClick={() => handleCardClick('Agentes de IA & Automação')}
-              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#00D2F6]/40 hover:border-[#00D2F6] p-5 sm:p-7 md:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer shadow-[0_0_40px_rgba(0,210,246,0.08)]"
+              className="group relative w-full h-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#00D2F6]/40 hover:border-[#00D2F6] p-6 sm:p-8 flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer shadow-[0_0_40px_rgba(0,210,246,0.08)]"
             >
-              {/* Inner ambient corner glow */}
               <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-[#00D2F6]/15 via-[#015EEF]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/30 transition-all duration-500" />
 
-              {/* Card Header */}
-              <div className="flex items-center justify-between gap-4 mb-5 sm:mb-6 relative z-10">
+              {/* Header: Number & Tag */}
+              <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
                 <div className="flex items-center gap-3">
                   <span className="font-kanit font-black text-3xl sm:text-5xl text-[#00D2F6] group-hover:text-white transition-colors duration-300 select-none">
                     05
@@ -348,7 +426,7 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
               </div>
 
               {/* Animated Intelligent Flow: ENTRADA -> ANALISAR -> EXECUTAR */}
-              <div className="relative z-10 my-3 sm:my-4 p-3.5 sm:p-5 rounded-2xl bg-[#050914] border border-[#151F38] group-hover:border-[#00D2F6]/30 transition-colors shadow-inner">
+              <div className="relative z-10 my-3 sm:my-4 p-3.5 sm:p-4 rounded-2xl bg-[#050914] border border-[#151F38] group-hover:border-[#00D2F6]/30 transition-colors shadow-inner">
                 <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#151F38] text-[11px] font-mono">
                   <span className="text-[#AEB7C4] flex items-center gap-1.5">
                     <Bot className="w-3.5 h-3.5 text-[#00D2F6]" />
@@ -362,7 +440,6 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
 
                 {/* 3 Interactive Connected Nodes */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 relative items-center">
-                  {/* Node 1: ENTRADA */}
                   <div className="p-3 rounded-xl bg-[#080D18] border border-[#151F38] group-hover:border-[#00D2F6]/30 transition-all flex flex-col justify-between h-[80px] sm:h-[86px]">
                     <div className="flex items-center justify-between text-[9px] font-mono text-[#7E8998]">
                       <span>01. GATILHO</span>
@@ -374,7 +451,6 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                     </div>
                   </div>
 
-                  {/* Node 2: ANALISAR (IA CORE) */}
                   <div className="p-3 rounded-xl bg-gradient-to-br from-[#080D18] to-[#00D2F6]/10 border border-[#00D2F6]/40 shadow-[0_0_20px_rgba(0,210,246,0.1)] flex flex-col justify-between h-[80px] sm:h-[86px] relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-12 h-12 bg-[#00D2F6]/20 rounded-full blur-lg pointer-events-none" />
                     <div className="flex items-center justify-between text-[9px] font-mono text-[#00D2F6]">
@@ -387,7 +463,6 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                     </div>
                   </div>
 
-                  {/* Node 3: EXECUTAR */}
                   <div className="p-3 rounded-xl bg-[#080D18] border border-[#151F38] group-hover:border-[#00D2F6]/30 transition-all flex flex-col justify-between h-[80px] sm:h-[86px]">
                     <div className="flex items-center justify-between text-[9px] font-mono text-[#7E8998]">
                       <span>03. DESFECHO</span>
@@ -401,7 +476,7 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                 </div>
               </div>
 
-              {/* Card Footer */}
+              {/* Content */}
               <div className="mt-3 sm:mt-4 relative z-10">
                 <h4 className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-white mb-1.5 group-hover:text-[#00D2F6] transition-colors">
                   Automação inteligente
@@ -409,93 +484,6 @@ export const WhatICreateSection: React.FC<WhatICreateSectionProps> = ({
                 <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
                   Agentes e automações com Inteligência Artificial para executar tarefas, integrar processos, agilizar operações e aumentar produtividade.
                 </p>
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* ========================================================================= */}
-          {/* CARD 04: SAAS & MICRO-SAAS (Full width 12/12 col on lg) */}
-          {/* ========================================================================= */}
-          <FadeIn
-            delay={0.3}
-            y={30}
-            className="w-full col-span-1 lg:col-span-12 flex flex-col"
-          >
-            <div
-              onClick={() => handleCardClick('SaaS & Micro-SaaS')}
-              className="group relative w-full rounded-[24px] sm:rounded-[36px] md:rounded-[40px] bg-[#080D18] border border-[#151F38] hover:border-[#00D2F6]/60 p-5 sm:p-7 md:p-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 sm:gap-8 overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer"
-            >
-              {/* Inner ambient glow */}
-              <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#015EEF]/10 via-[#00D2F6]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:from-[#00D2F6]/20 transition-all duration-500" />
-
-              {/* Left Column: Text & Value Proposition */}
-              <div className="lg:w-1/2 flex flex-col justify-between relative z-10 space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="font-kanit font-black text-3xl sm:text-5xl text-[#151F38] group-hover:text-[#00D2F6] transition-colors duration-300 select-none">
-                    04
-                  </span>
-                  <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-wider px-3 py-1 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/20 text-[#00D2F6]">
-                    SAAS & MICRO-SAAS
-                  </span>
-                </div>
-
-                <div>
-                  <h4 className="text-xl sm:text-3xl font-bold uppercase tracking-tight text-white mb-2 sm:mb-3 group-hover:text-[#00D2F6] transition-colors">
-                    Produtos digitais escaláveis
-                  </h4>
-                  <p className="text-xs sm:text-sm md:text-base text-[#AEB7C4] font-light leading-relaxed">
-                    Plataformas desenvolvidas para transformar ideias em produtos digitais reais, estruturados para crescer, evoluir e atender usuários com segurança e alta performance.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
-                  {['Multi-Tenant', 'Assinaturas & Cobrança', 'Arquitetura em Nuvem', 'APIs & Webhooks'].map((item) => (
-                    <span
-                      key={item}
-                      className="text-[9px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-lg bg-[#050914] border border-[#151F38] text-[#AEB7C4]"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right Column: Layered Multi-Tenant Platform Architecture Graphic */}
-              <div className="lg:w-1/2 w-full relative z-10 p-3.5 sm:p-5 rounded-2xl bg-[#050914] border border-[#151F38] shadow-inner space-y-2.5 sm:space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-[#151F38] text-[10px] sm:text-[11px] font-mono text-[#AEB7C4]">
-                  <span className="flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-[#00D2F6]" />
-                    Camadas da Plataforma
-                  </span>
-                  <span className="text-[#00D2F6] font-bold">ESCALABILIDADE PRONTA</span>
-                </div>
-
-                {/* 3 Layer Bars */}
-                <div className="space-y-2 text-[10px] sm:text-[11px] font-mono">
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#080D18] border border-[#151F38] flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#00D2F6]" />
-                      <span className="text-white font-medium truncate">Interface do Usuário & Painel Web</span>
-                    </div>
-                    <span className="text-[#00D2F6] text-[9px] sm:text-[10px] flex-shrink-0 ml-2">CAMADA 03</span>
-                  </div>
-
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#080D18] border border-[#151F38] flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#0096F5]" />
-                      <span className="text-white font-medium truncate">Regras de Negócio, Autenticação & Cobrança</span>
-                    </div>
-                    <span className="text-[#0096F5] text-[9px] sm:text-[10px] flex-shrink-0 ml-2">CAMADA 02</span>
-                  </div>
-
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#080D18] border border-[#151F38] flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#015EEF]" />
-                      <span className="text-white font-medium truncate">Infraestrutura em Nuvem, Banco & Segurança</span>
-                    </div>
-                    <span className="text-[#015EEF] text-[9px] sm:text-[10px] flex-shrink-0 ml-2">CAMADA 01</span>
-                  </div>
-                </div>
               </div>
             </div>
           </FadeIn>
