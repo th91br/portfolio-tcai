@@ -1,61 +1,121 @@
 import React from 'react';
-import { SERVICES_DATA } from '../../data/portfolioData';
-import { FadeIn } from '../common/FadeIn';
+import { ZoomReveal } from '../common/ZoomReveal';
+import { Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
+import { openWhatsApp } from '../../utils/contactUtils';
+
+interface ProcessStep {
+  step: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  tags: string[];
+}
+
+const PROCESS_STEPS: ProcessStep[] = [
+  {
+    step: '01',
+    title: 'Diagnóstico & Arquitetura',
+    subtitle: 'Planejamento Estratégico',
+    description:
+      'Mapeamento detalhado das regras de negócio, fluxos operacionais e modelagem do banco de dados antes de iniciar o código.',
+    tags: ['Requisitos', 'Modelagem de Dados', 'Definição de Stack'],
+  },
+  {
+    step: '02',
+    title: 'Design de Interface & UX',
+    subtitle: 'Direção de Arte & Conversão',
+    description:
+      'Prototipagem interativa de alta fidelidade com foco em usabilidade moderna, estética cinematográfica e alta taxa de conversão.',
+    tags: ['UX/UI Design', 'Design System', 'Mobile First'],
+  },
+  {
+    step: '03',
+    title: 'Engenharia Full-Stack',
+    subtitle: 'Código Limpo & Robusto',
+    description:
+      'Desenvolvimento em TypeScript, React, Node.js e Python com foco em velocidade máxima, segurança e testes rigorosos.',
+    tags: ['TypeScript', 'APIs Seguras', 'Performance 100'],
+  },
+  {
+    step: '04',
+    title: 'Deploy & Suporte Direto',
+    subtitle: 'Entrega em Produção',
+    description:
+      'Publicação em infraestrutura cloud de alta disponibilidade, testes finais, documentação clara e suporte direto com o desenvolvedor.',
+    tags: ['Cloud Deploy', 'Backups', 'Suporte Sem Intermediários'],
+  },
+];
 
 export const ServicesSection: React.FC = () => {
   return (
     <section
       id="services"
-      className="relative w-full bg-[#FFFFFF] text-[#050914] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 sm:-mt-12 md:-mt-14 px-5 sm:px-8 md:px-10 py-20 sm:py-24 md:py-32 z-10 shadow-2xl"
+      className="relative w-full h-full min-h-[100dvh] bg-transparent text-[#F3F5F7] px-4 sm:px-8 md:px-12 lg:px-16 py-4 sm:py-6 overflow-y-auto overflow-x-hidden flex flex-col justify-center select-none"
     >
-      <div className="max-w-5xl mx-auto w-full">
-        {/* Heading */}
-        <FadeIn delay={0} y={30} className="w-full text-center mb-16 sm:mb-20 md:mb-28">
-          <h2
-            className="text-[#050914] font-black uppercase tracking-tight leading-none text-center select-none"
-            style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
-          >
-            SERVIÇOS
-          </h2>
-        </FadeIn>
+      <div className="max-w-6xl mx-auto w-full relative z-10 my-auto">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-4 sm:mb-5">
+          <ZoomReveal delay={0.05} className="inline-block mb-1.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#060B18]/90 border border-[#00D2F6]/30 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
+              <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-widest text-[#00D2F6]">
+                METODOLOGIA DE TRABALHO
+              </span>
+            </div>
+          </ZoomReveal>
 
-        {/* Service Items List */}
-        <div className="flex flex-col border-t border-[rgba(5,9,20,0.12)]">
-          {SERVICES_DATA.map((service, index) => (
-            <FadeIn
-              key={service.id}
-              delay={index * 0.08}
-              y={25}
-              className="border-b border-[rgba(5,9,20,0.12)] py-8 sm:py-10 md:py-12 px-3 sm:px-6 rounded-2xl transition-all duration-300 hover:bg-[#0096F5]/[0.04] group"
+          <ZoomReveal delay={0.1}>
+            <h2 className="font-black text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-tight text-white leading-none mb-1">
+              Como Eu Trabalho: Engenharia Transparente
+            </h2>
+          </ZoomReveal>
+
+          <ZoomReveal delay={0.15}>
+            <p className="text-xs sm:text-sm text-[#CBD5E1] font-light leading-relaxed max-w-2xl mx-auto">
+              Processo estruturado em 4 etapas claras. Você acompanha a evolução do projeto passo a passo com prazos cumpridos e alinhamento constante.
+            </p>
+          </ZoomReveal>
+        </div>
+
+        {/* 4 Process Steps (Horizontal Flow in 4 Columns) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5 max-w-5xl mx-auto">
+          {PROCESS_STEPS.map((item, index) => (
+            <ZoomReveal
+              key={item.step}
+              delay={0.1 + index * 0.05}
+              className="w-full"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-12">
-                {/* Huge Number with subtle blue hover matching TCA logo */}
-                <div
-                  className="font-black text-[#050914] group-hover:text-[#0096F5] leading-none select-none tracking-tight flex-shrink-0 transition-colors duration-300"
-                  style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}
-                >
-                  {service.number}
+              <div className="p-4 sm:p-4.5 rounded-2xl bg-[#060B18]/90 border border-white/10 hover:border-[#00D2F6]/40 transition-all duration-300 group backdrop-blur-xl shadow-xl flex flex-col justify-between h-[180px] sm:h-[195px] hover:-translate-y-1">
+                <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                  <span className="font-mono font-black text-xl text-[#00D2F6]">
+                    {item.step}
+                  </span>
+                  <span className="text-[9px] font-mono uppercase font-semibold text-[#94A3B8] tracking-wider">
+                    {item.subtitle}
+                  </span>
                 </div>
 
-                {/* Title & Description Stack */}
-                <div className="flex flex-col gap-2 md:gap-3 flex-grow md:pl-4">
-                  <h3
-                    className="text-[#050914] group-hover:text-[#015EEF] font-bold uppercase tracking-tight transition-colors duration-200"
-                    style={{ fontSize: 'clamp(1.15rem, 2.3vw, 2.1rem)' }}
-                  >
-                    {service.name}
+                <div>
+                  <h3 className="text-xs sm:text-sm font-bold tracking-tight text-white group-hover:text-[#00D2F6] transition-colors mb-1">
+                    {item.title}
                   </h3>
-                  <p
-                    className="text-[#1E293B] font-light leading-relaxed max-w-2xl text-sm sm:text-base md:text-lg"
-                    style={{
-                      opacity: 0.85,
-                    }}
-                  >
-                    {service.description}
+                  <p className="text-[11px] text-[#94A3B8] font-light leading-snug line-clamp-3">
+                    {item.description}
                   </p>
                 </div>
+
+                <div className="flex flex-wrap gap-1 pt-1 border-t border-white/5">
+                  {item.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#020408] border border-white/10 text-slate-300"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </FadeIn>
+            </ZoomReveal>
           ))}
         </div>
       </div>

@@ -29,8 +29,8 @@ export const ThreeHeroCanvas: React.FC = () => {
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // 3. Create Brand Particle Constellation
-    const particleCount = 140;
+    // 3. Create Subtle Brand Atmospheric Particles
+    const particleCount = 75;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -46,13 +46,13 @@ export const ThreeHeroCanvas: React.FC = () => {
 
     for (let i = 0; i < particleCount; i++) {
       const i3 = i * 3;
-      positions[i3] = (Math.random() - 0.5) * 80;
-      positions[i3 + 1] = (Math.random() - 0.5) * 45;
+      positions[i3] = (Math.random() - 0.5) * 90;
+      positions[i3 + 1] = (Math.random() - 0.5) * 50;
       positions[i3 + 2] = (Math.random() - 0.5) * 40;
 
-      velocities[i3] = (Math.random() - 0.5) * 0.02;
-      velocities[i3 + 1] = (Math.random() - 0.5) * 0.02;
-      velocities[i3 + 2] = (Math.random() - 0.5) * 0.02;
+      velocities[i3] = (Math.random() - 0.5) * 0.012;
+      velocities[i3 + 1] = (Math.random() - 0.5) * 0.012;
+      velocities[i3 + 2] = (Math.random() - 0.5) * 0.012;
 
       const choice = colorChoices[Math.floor(Math.random() * colorChoices.length)];
       colors[i3] = choice.r;
@@ -71,8 +71,8 @@ export const ThreeHeroCanvas: React.FC = () => {
     if (ctx) {
       const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
       gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-      gradient.addColorStop(0.3, 'rgba(0, 210, 246, 0.8)');
-      gradient.addColorStop(0.8, 'rgba(1, 94, 239, 0.2)');
+      gradient.addColorStop(0.3, 'rgba(0, 210, 246, 0.7)');
+      gradient.addColorStop(0.8, 'rgba(1, 94, 239, 0.15)');
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, 32, 32);
@@ -80,11 +80,11 @@ export const ThreeHeroCanvas: React.FC = () => {
     const pointTexture = new THREE.CanvasTexture(canvasTexture);
 
     const particleMaterial = new THREE.PointsMaterial({
-      size: 1.8,
+      size: 2.2,
       vertexColors: true,
       map: pointTexture,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.6,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
@@ -92,8 +92,8 @@ export const ThreeHeroCanvas: React.FC = () => {
     const particles = new THREE.Points(geometry, particleMaterial);
     scene.add(particles);
 
-    // Dynamic Connections Lines (Neural Constellation)
-    const maxConnections = 600;
+    // Dynamic Connections Lines (Subtle ambient constellation)
+    const maxConnections = 250;
     const linePositions = new Float32Array(maxConnections * 6);
     const lineColors = new Float32Array(maxConnections * 6);
     const lineGeometry = new THREE.BufferGeometry();
@@ -103,7 +103,7 @@ export const ThreeHeroCanvas: React.FC = () => {
     const lineMaterial = new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.18,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });

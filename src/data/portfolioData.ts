@@ -1,7 +1,5 @@
 import { ServiceItem, ProjectItem, DecorativeAsset, ShowcaseCardItem, ReviewCardItem } from '../types';
 
-export const HERO_PORTRAIT_URL = '/thiago-portrait.png';
-
 export const REVIEWS_HEADER = {
   pill: 'AVALIAÇÕES 5.0 ★ • RESULTADOS REAIS',
   headline: 'QUEM CONFIA NA TCAI PARA CONSTRUIR O PRÓXIMO NÍVEL DO SEU NEGÓCIO',
@@ -248,9 +246,16 @@ export const SERVICES_DATA: ServiceItem[] = [
   {
     id: 'service-5',
     number: '05',
-    name: 'INTEGRAÇÕES & SOLUÇÕES',
+    name: 'INTEGRAÇÕES & APIS',
     description:
-      'Integrações entre sistemas, APIs, bancos de dados e ferramentas para criar operações digitais mais conectadas, eficientes e confiáveis.',
+      'Integrações avançadas entre sistemas legados, gateways de pagamento, CRMs e bancos de dados para operações digitais blindadas e em tempo real.',
+  },
+  {
+    id: 'service-6',
+    number: '06',
+    name: 'AGENTES AUTÔNOMOS & IA',
+    description:
+      'Modelagem e implantação de agentes inteligentes com LLMs para triagem estratégica, atendimento 24/7 de alta conversão e automação cognitiva profunda de fluxos de trabalho.',
   },
 ];
 
