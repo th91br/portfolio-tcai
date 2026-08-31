@@ -1,17 +1,17 @@
-import React from 'react';
-import { motion, Variants } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, Variants, useMotionValue, useSpring } from 'framer-motion';
 import {
   Zap,
   Bot,
   Code2,
   MessageCircle,
   ArrowDown,
-  ShieldCheck,
-  Clock,
   Sparkles,
 } from 'lucide-react';
 import { HERO_DATA } from '../../data/portfolioData';
 import { MagneticButton } from '../common/MagneticButton';
+import { HeroWaveCanvas } from '../hero/HeroWaveCanvas';
+import { HeroGlassCard } from '../hero/HeroGlassCard';
 import { createQuickWhatsAppUrl } from '../../utils/contactUtils';
 
 interface HeroExecutiveProps {
@@ -19,14 +19,81 @@ interface HeroExecutiveProps {
 }
 
 export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) => {
-  // Staggered Masked Reveal Animation Variants (Awwwards Grade)
+  const heroRef = useRef<HTMLElement>(null);
+  const [activeCardIndex, setActiveCardIndex] = useState<number>(-1);
+  const [isHeroVisible, setIsHeroVisible] = useState<boolean>(true);
+
+  // Subtle Mouse Parallax Physics for Left Column (2-4px max)
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { damping: 25, stiffness: 200, mass: 0.1 };
+  const parallaxX = useSpring(mouseX, springConfig);
+  const parallaxY = useSpring(mouseY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (!heroRef.current) return;
+    const { left, top, width, height } = heroRef.current.getBoundingClientRect();
+    const x = ((e.clientX - left) / width - 0.5) * 6; // Max 3px
+    const y = ((e.clientY - top) / height - 0.5) * 6;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  // IntersectionObserver to monitor Hero visibility
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsHeroVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  // 8-Second Master Timeline Cycle for sequential service cards highlight
+  useEffect(() => {
+    if (!isHeroVisible) return;
+
+    const interval = setInterval(() => {
+      // 0-3s: none active
+      setActiveCardIndex(-1);
+
+      // 3s: Card 0 (Sites)
+      const t1 = setTimeout(() => setActiveCardIndex(0), 3000);
+      // 4s: Card 1 (Automações)
+      const t2 = setTimeout(() => setActiveCardIndex(1), 4200);
+      // 5s: Card 2 (Softwares)
+      const t3 = setTimeout(() => setActiveCardIndex(2), 5400);
+      // 6.8s: Return to baseline
+      const t4 = setTimeout(() => setActiveCardIndex(-1), 6800);
+
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+        clearTimeout(t4);
+      };
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [isHeroVisible]);
+
+  // Framer Motion Variants for Masked Headline Entrance
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.15,
-        delayChildren: 0.15,
+        delayChildren: 0.1,
       },
     },
   };
@@ -45,25 +112,38 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
 
   return (
     <section
+      ref={heroRef}
       id="hero"
-      className="relative min-h-[92vh] lg:min-h-screen w-full bg-transparent text-[#F3F5F7] pt-28 sm:pt-32 pb-20 px-4 sm:px-6 md:px-10 flex items-center justify-center overflow-hidden z-10"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative min-h-[94vh] lg:min-h-screen w-full bg-transparent text-[#F3F5F7] pt-28 sm:pt-32 pb-20 px-4 sm:px-6 md:px-10 flex items-center justify-center overflow-hidden z-10 select-none"
     >
-      {/* Ambient background gradients */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] bg-[#00D2F6]/10 blur-[180px] pointer-events-none rounded-full" />
-      <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-[#015EEF]/10 blur-[180px] pointer-events-none rounded-full" />
+      {/* 1. Undulating 3D Wireframe Waves Background Canvas */}
+      <HeroWaveCanvas />
 
-      {/* Main Container */}
+      {/* 2. Ambient Lighting Glow Orbs */}
+      <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-[#00D2F6]/12 blur-[160px] pointer-events-none rounded-full" />
+      <div className="absolute bottom-12 right-1/4 w-[550px] h-[450px] bg-[#015EEF]/14 blur-[170px] pointer-events-none rounded-full" />
+
+      {/* 3. Main Master Grid Container */}
       <div className="max-w-7xl mx-auto w-full relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
         
-        {/* Left Column: Copywriting & High-Conversion Hooks (7 cols on lg) */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6">
-          
-          {/* Availability Status Badge */}
+        {/* Left Column: Semantic Copywriting & High-Conversion CTAs (7 cols on lg) */}
+        <motion.div
+          style={{ x: parallaxX, y: parallaxY }}
+          className="lg:col-span-7 flex flex-col items-start text-left space-y-6"
+        >
+          {/* Status Pill: Availability */}
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#080D18]/90 border border-[#00D2F6]/30 shadow-lg shadow-[#00D2F6]/10 backdrop-blur-md"
+            animate={{
+              boxShadow: [
+                '0 0 10px rgba(0,210,246,0.15)',
+                '0 0 22px rgba(0,210,246,0.4)',
+                '0 0 10px rgba(0,210,246,0.15)',
+              ],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#080D18]/90 border border-[#00D2F6]/40 shadow-lg shadow-[#00D2F6]/10 backdrop-blur-md"
           >
             <span className="w-2.5 h-2.5 rounded-full bg-[#00D2F6] animate-pulse" />
             <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
@@ -76,13 +156,13 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="w-full"
+            className="w-full relative"
           >
             {/* Line 1 Mask */}
             <div className="overflow-hidden pb-1">
               <motion.div
                 variants={lineMaskVariants}
-                className="font-kanit font-black uppercase tracking-tight text-white leading-[1.08] text-left select-none text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px]"
+                className="font-kanit font-black uppercase tracking-tight text-white leading-[1.08] text-left text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px]"
               >
                 {HERO_DATA.headlineP1}
               </motion.div>
@@ -92,7 +172,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             <div className="overflow-hidden pb-2">
               <motion.div
                 variants={lineMaskVariants}
-                className="font-kanit font-black uppercase tracking-tight text-[#00D2F6] leading-[1.08] text-left select-none text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px]"
+                className="font-kanit font-black uppercase tracking-tight text-[#00D2F6] leading-[1.08] text-left text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px]"
               >
                 {HERO_DATA.headlineP2}
               </motion.div>
@@ -103,52 +183,70 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
             className="text-[#AEB7C4] text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-2xl"
           >
             {HERO_DATA.subtext}
           </motion.p>
 
-          {/* SLA Delivery Timelines (3, 7, 10 Days Guarantee) */}
+          {/* 3 SLA Service Cards with Sequential 8s Master Timeline Highlight */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
             className="w-full grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 py-2"
           >
-            {HERO_DATA.slaBadges.map((badge, idx) => (
-              <div
-                key={idx}
-                className="p-3.5 rounded-2xl bg-[#080D18]/90 border border-[#151F38] hover:border-[#00D2F6]/50 transition-all duration-300 group shadow-lg"
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  {badge.icon === 'zap' && <Zap className="w-4 h-4 text-[#00D2F6] group-hover:scale-110 transition-transform" />}
-                  {badge.icon === 'bot' && <Bot className="w-4 h-4 text-[#0096F5] group-hover:scale-110 transition-transform" />}
-                  {badge.icon === 'code' && <Code2 className="w-4 h-4 text-[#015EEF] group-hover:scale-110 transition-transform" />}
-                  <span className="text-[11px] font-mono font-bold text-white uppercase">{badge.time}</span>
+            {HERO_DATA.slaBadges.map((badge, idx) => {
+              const isHighlighted = activeCardIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`p-3.5 rounded-2xl transition-all duration-500 shadow-lg cursor-pointer ${
+                    isHighlighted
+                      ? 'bg-[#081224] border-2 border-[#00D2F6] shadow-[0_0_20px_rgba(0,210,246,0.3)] scale-[1.02]'
+                      : 'bg-[#080D18]/90 border border-[#151F38] hover:border-[#00D2F6]/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    {badge.icon === 'zap' && <Zap className={`w-4 h-4 transition-transform ${isHighlighted ? 'text-[#00D2F6] scale-110' : 'text-[#00D2F6]'}`} />}
+                    {badge.icon === 'bot' && <Bot className={`w-4 h-4 transition-transform ${isHighlighted ? 'text-[#00D2F6] scale-110' : 'text-[#0096F5]'}`} />}
+                    {badge.icon === 'code' && <Code2 className={`w-4 h-4 transition-transform ${isHighlighted ? 'text-[#00D2F6] scale-110' : 'text-[#015EEF]'}`} />}
+                    <span className={`text-[11px] font-mono font-bold uppercase ${isHighlighted ? 'text-[#00D2F6]' : 'text-white'}`}>
+                      {badge.time}
+                    </span>
+                  </div>
+                  <div className={`text-xs font-medium transition-colors ${isHighlighted ? 'text-white' : 'text-[#AEB7C4]'}`}>
+                    {badge.type}
+                  </div>
                 </div>
-                <div className="text-xs text-[#AEB7C4] font-medium">{badge.type}</div>
-              </div>
-            ))}
+              );
+            })}
           </motion.div>
 
           {/* Action CTAs with Magnetic Attraction */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.55 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
             className="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto"
           >
             {/* Magnetic WhatsApp Call-to-Action */}
             <MagneticButton strength={0.35}>
-              <a
+              <motion.a
                 href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
                 target="_blank"
                 rel="noreferrer"
+                animate={{
+                  boxShadow: [
+                    '0 4px 20px rgba(0, 210, 246, 0.35)',
+                    '0 4px 32px rgba(0, 210, 246, 0.65)',
+                    '0 4px 20px rgba(0, 210, 246, 0.35)',
+                  ],
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 className="w-full sm:w-auto px-8 py-4 rounded-full text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
                 style={{
                   background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
-                  boxShadow: '0px 4px 24px rgba(0, 210, 246, 0.45), inset 0px 1px 2px rgba(255, 255, 255, 0.6)',
                   outline: '2px solid white',
                   outlineOffset: '-2px',
                 }}
@@ -157,67 +255,28 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
                 <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                   INICIAR PROJETO NO WHATSAPP →
                 </span>
-              </a>
+              </motion.a>
             </MagneticButton>
 
             {/* Secondary Link to Projects */}
             <a
               href="#projects"
-              className="w-full sm:w-auto px-7 py-4 rounded-full border border-[#151F38] hover:border-[#00D2F6] bg-[#080D18]/80 text-[#AEB7C4] hover:text-[#00D2F6] text-xs sm:text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 rounded-full border border-[#151F38] hover:border-[#00D2F6] bg-[#080D18]/80 text-[#AEB7C4] hover:text-[#00D2F6] text-xs sm:text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer hover:shadow-[0_0_15px_rgba(0,210,246,0.2)]"
             >
-              <span>{HERO_DATA.secondaryCta}</span>
+              <span>VER CASES REAIS</span>
               <ArrowDown className="w-3.5 h-3.5" />
             </a>
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* Right Column: Executive Portrait in High-Tech Glass Frame (5 cols on lg) */}
+        {/* Right Column: Founder Executive Glass Card with 3D Energy Ring (5 cols on lg) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
           className="lg:col-span-5 relative flex items-center justify-center"
         >
-          {/* Main Frame Container */}
-          <div className="relative w-full max-w-[400px]">
-            {/* Real Executive Portrait Image Box */}
-            <div className="relative w-full aspect-[4/5] rounded-[32px] sm:rounded-[40px] overflow-hidden bg-[#080D18] border border-[#151F38] shadow-2xl p-2 group hover:border-[#00D2F6]/60 transition-all duration-500">
-              <div className="relative w-full h-full rounded-[26px] sm:rounded-[34px] overflow-hidden">
-                <img
-                  src="/assets/branding/thiago_executive.jpg"
-                  alt="Thiago Cassol Antunes - Diretor de Tecnologia & Engenharia de IA"
-                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                  loading="eager"
-                />
-
-                {/* Gradient Bottom Scrim */}
-                <div className="absolute inset-x-0 bottom-0 pt-20 pb-5 px-5 bg-gradient-to-t from-[#050914] via-[#050914]/85 to-transparent flex flex-col justify-end text-left">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#00D2F6] uppercase tracking-wider mb-1">
-                    <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
-                    <span>Thiago Cassol Antunes</span>
-                  </div>
-                  <div className="text-sm font-bold text-white uppercase tracking-tight font-kanit">
-                    Full-Stack & Applied AI Engineer
-                  </div>
-                  <div className="text-xs text-[#AEB7C4] font-light mt-0.5">
-                    5+ Anos Desenvolvendo Ativos Digitais
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Floating Trust Badge 1: Top Right */}
-            <div className="absolute -top-3 -right-3 px-3.5 py-1.5 rounded-xl bg-[#050914] border border-[#00D2F6]/50 backdrop-blur-md shadow-2xl flex items-center gap-2 text-[10px] sm:text-xs font-mono font-bold text-[#00D2F6] z-20">
-              <Clock className="w-3.5 h-3.5 text-[#00D2F6]" />
-              <span>3 A 10 DIAS ÚTEIS</span>
-            </div>
-
-            {/* Floating Trust Badge 2: Bottom Left */}
-            <div className="absolute -bottom-3 -left-3 px-3.5 py-1.5 rounded-xl bg-[#050914] border border-emerald-500/50 backdrop-blur-md shadow-2xl flex items-center gap-2 text-[10px] sm:text-xs font-mono font-bold text-emerald-400 z-20">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>CÓDIGO 100% PROPRIETÁRIO</span>
-            </div>
-          </div>
+          <HeroGlassCard onContactClick={onContactClick} />
         </motion.div>
       </div>
     </section>
