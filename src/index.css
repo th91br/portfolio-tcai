@@ -22,12 +22,37 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: auto !important;
+}
+
 html, body, #root {
   background-color: #050914;
   font-family: 'Kanit', sans-serif;
   color: #F3F5F7;
   overflow-x: clip;
   min-height: 100%;
+}
+
+/* Official Lenis Smooth Scroll Optimization */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 /* Custom Hero Heading */
