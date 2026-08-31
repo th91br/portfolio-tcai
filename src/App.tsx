@@ -1,33 +1,21 @@
 import React, { useState } from 'react';
-import { useContinuousScroll } from './hooks/useContinuousScroll';
-import { ContinuousSectionStack, SectionItem } from './components/layout/ContinuousSectionStack';
-import { GlobalScrollVideo } from './components/common/GlobalScrollVideo';
-import { ZenrixaHero } from './components/sections/ZenrixaHero';
-import { ManifestoSection } from './components/sections/ManifestoSection';
-import { ProjectSimulator } from './components/sections/ProjectSimulator';
+import { Navbar } from './components/layout/Navbar';
+import { HeroExecutive } from './components/sections/HeroExecutive';
+import { MetricsBar } from './components/sections/MetricsBar';
+import { ComparisonSection } from './components/sections/ComparisonSection';
+import { CoreServicesSection } from './components/sections/CoreServicesSection';
 import { ProjectsSection } from './components/sections/ProjectsSection';
-import { WhatICreateSection } from './components/sections/WhatICreateSection';
-import { ServicesSection } from './components/sections/ServicesSection';
-import { AboutSection } from './components/sections/AboutSection';
+import { ProcessSection } from './components/sections/ProcessSection';
+import { AboutExecutive } from './components/sections/AboutExecutive';
 import { MarqueeSection } from './components/sections/MarqueeSection';
+import { ProjectSimulator } from './components/sections/ProjectSimulator';
 import { ContactSection } from './components/sections/ContactSection';
 import { ProjectModal } from './components/common/ProjectModal';
-
 import { ProjectItem } from './types';
 import { openWhatsApp } from './utils/contactUtils';
 
 export const App: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
-
-  const {
-    smoothProgress,
-    activeSection,
-    scrollToSection,
-  } = useContinuousScroll({
-    lerpFactor: 0.12,
-    wheelSensitivity: 0.00030,
-    touchSensitivity: 0.002,
-  });
 
   const handleSelectProject = (project: ProjectItem) => {
     setSelectedProject(project);
@@ -37,86 +25,47 @@ export const App: React.FC = () => {
     setSelectedProject(null);
   };
 
-  const sections: SectionItem[] = [
-    {
-      id: 'hero',
-      label: 'Início',
-      component: (
-        <ZenrixaHero
-          isActive={activeSection === 0}
-          onContactClick={() => openWhatsApp('general')}
-          onNavigate={(index) => scrollToSection(index)}
-        />
-      ),
-    },
-    {
-      id: 'manifesto',
-      label: 'Manifesto',
-      component: <ManifestoSection />,
-    },
-    {
-      id: 'simulator',
-      label: 'Simulador',
-      component: <ProjectSimulator />,
-    },
-    {
-      id: 'projects',
-      label: 'Projetos',
-      component: (
+  return (
+    <div className="w-full min-h-screen bg-[#050914] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-x-hidden">
+      {/* 1. Fixed Executive Navigation Header */}
+      <Navbar onContactClick={() => openWhatsApp('general')} />
+
+      <main className="w-full">
+        {/* 2. Hero Section: Supreme Authority + Real Executive Portrait + 3/7/10 Days SLA */}
+        <HeroExecutive onContactClick={() => openWhatsApp('general')} />
+
+        {/* 3. Hard Proof Metrics Bar */}
+        <MetricsBar />
+
+        {/* 4. Comparison Section: Agências Tradicionais vs. Método TCAI */}
+        <ComparisonSection />
+
+        {/* 5. The 3 Core Pillars with Guaranteed SLA Timelines */}
+        <CoreServicesSection />
+
+        {/* 6. Live Cases in Production (Esportiz, PrazoGuard, Compra de Ouro, Joias AG) */}
         <ProjectsSection
           onProjectSelect={handleSelectProject}
           onContactClick={() => openWhatsApp('project')}
         />
-      ),
-    },
-    {
-      id: 'what-i-create',
-      label: 'Capacidades',
-      component: (
-        <WhatICreateSection
-          onSelectService={() => openWhatsApp('services')}
-          onContactClick={() => openWhatsApp('services')}
-        />
-      ),
-    },
-    {
-      id: 'services',
-      label: 'Metodologia',
-      component: <ServicesSection />,
-    },
-    {
-      id: 'about',
-      label: 'Sobre Mim',
-      component: <AboutSection onContactClick={() => openWhatsApp('general')} />,
-    },
-    {
-      id: 'testimonials',
-      label: 'Depoimentos',
-      component: <MarqueeSection />,
-    },
-    {
-      id: 'contact',
-      label: 'Contato',
-      component: <ContactSection onDirectContactClick={() => openWhatsApp('general')} />,
-    },
-  ];
 
-  return (
-    <div className="w-full h-full h-[100dvh] bg-[#000000] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-hidden">
-      {/* 1. Global Persistent 60-120 FPS Video Driven by Real-Time Progress with Synchronized Audio */}
-      <GlobalScrollVideo
-        progress={smoothProgress}
-      />
+        {/* 7. The 4-Step Agile Delivery Method */}
+        <ProcessSection />
 
-      {/* 2. Continuous Synchronized Section Stack with Zero Delay */}
-      <ContinuousSectionStack
-        sections={sections}
-        progress={smoothProgress}
-        activeSection={activeSection}
-        onNavigate={scrollToSection}
-      />
+        {/* 8. Founder Story & Technical Authority: Thiago Cassol Antunes */}
+        <AboutExecutive />
 
-      {/* 3. Interactive Project Details Modal */}
+        {/* 9. Verified Client Testimonials & Star Reviews */}
+        <MarqueeSection />
+
+        {/* 10. Interactive Architecture & Scope Simulator */}
+        <ProjectSimulator />
+
+        {/* 11. Final High-Converting Contact & Lead Routing */}
+        <ContactSection onDirectContactClick={() => openWhatsApp('general')} />
+      </main>
+
+      {/* 12. Interactive Project Details Modal */}
       <ProjectModal
         project={selectedProject}
         onClose={handleCloseProject}

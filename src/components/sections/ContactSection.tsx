@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, ArrowUpRight, MessageCircle, Sparkles, Send } from 'lucide-react';
-import { FINAL_CTA_DATA, CONTACT_DATA } from '../../data/portfolioData';
-import { FadeIn } from '../common/FadeIn';
+import { Mail, ArrowUpRight, MessageCircle, Sparkles, Send, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
 import {
   CONTACT_CONFIG,
   createWhatsAppLeadUrl,
@@ -13,13 +11,13 @@ interface ContactSectionProps {
   onDirectContactClick?: () => void;
 }
 
-const PROJECT_TYPES = [
-  'Sistemas & Painéis Web',
-  'Plataformas SaaS',
-  'Websites & Landing Pages',
-  'Automações & IA Aplicada',
-  'Integrações & APIs',
-  'Outro / Consultoria',
+const PROJECT_OPTIONS = [
+  { label: '⚡ Sites & Landing Pages (3 Dias Úteis)', value: 'Sites & Landing Pages (3 Dias Úteis)' },
+  { label: '🤖 Automações & Agentes IA (7 Dias Úteis)', value: 'Automações & Agentes IA (7 Dias Úteis)' },
+  { label: '💻 Software & Sistemas Sob Medida (10 Dias Úteis)', value: 'Software & Sistemas Sob Medida (10 Dias Úteis)' },
+  { label: '🚀 Plataforma SaaS & Produtos Digitais', value: 'Plataforma SaaS & Produtos Digitais' },
+  { label: '🔌 Integrações & APIs Especializadas', value: 'Integrações & APIs Especializadas' },
+  { label: '💡 Outro Projeto / Consultoria Estratégica', value: 'Outro Projeto / Consultoria' },
 ];
 
 export const ContactSection: React.FC<ContactSectionProps> = ({
@@ -27,7 +25,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [contactInfo, setContactInfo] = useState('');
-  const [interest, setInterest] = useState('Sistemas & Painéis Web');
+  const [interest, setInterest] = useState(PROJECT_OPTIONS[0].value);
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -36,7 +34,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const handleSendWhatsApp = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !contactInfo) {
-      alert('Por favor, preencha seu nome e contato (e-mail ou telefone/whatsapp).');
+      alert('Por favor, preencha seu nome e contato (WhatsApp ou e-mail).');
       return;
     }
 
@@ -45,7 +43,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       contact: contactInfo,
       interest,
       message,
-      origin: 'Formulário Principal (via WhatsApp)',
+      origin: 'Formulário Principal de Contato (TCAI)',
     });
 
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -56,7 +54,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const handleSendEmail = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!name || !contactInfo) {
-      alert('Por favor, preencha seu nome e contato (e-mail ou telefone/whatsapp).');
+      alert('Por favor, preencha seu nome e contato (WhatsApp ou e-mail).');
       return;
     }
 
@@ -66,7 +64,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       contact: contactInfo,
       interest,
       message,
-      origin: 'Formulário Principal (via E-mail)',
+      origin: 'Formulário Principal de Contato (via E-mail)',
     });
 
     setIsSubmitting(false);
@@ -74,229 +72,211 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     setSubmissionType('email');
   };
 
-  const handleQuickWhatsApp = () => {
-    openWhatsApp('project');
-  };
-
-  const handleSecondaryContact = () => {
-    if (onDirectContactClick) {
-      onDirectContactClick();
-    } else {
-      openWhatsApp('general');
-    }
-  };
-
   return (
     <section
       id="contact"
-      className="relative w-full h-full min-h-[100dvh] bg-transparent text-[#F3F5F7] px-4 sm:px-8 md:px-12 lg:px-16 py-4 sm:py-6 flex flex-col justify-center items-center select-none"
+      className="relative w-full bg-[#050914] text-[#F3F5F7] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-[#151F38] overflow-hidden z-10"
     >
-      <div className="max-w-5xl mx-auto w-full relative z-10 my-auto">
-        
-        {/* 1. Top Call to Action Header */}
-        <div className="text-center max-w-3xl mx-auto mb-3 sm:mb-4">
-          <FadeIn delay={0} y={15} className="inline-block mb-1">
-            <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
+      {/* Background ambient accents */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-br from-[#00D2F6]/10 via-[#015EEF]/5 to-transparent blur-[180px] pointer-events-none rounded-full" />
+
+      <div className="max-w-6xl mx-auto w-full relative z-10">
+        {/* Top Call to Action Header */}
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#080D18] border border-[#151F38] shadow-inner mb-4">
+            <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <span className="text-xs font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
               VAMOS CONVERSAR SOBRE SEU PROJETO
             </span>
-          </FadeIn>
+          </div>
 
-          <FadeIn delay={0.1} y={15}>
-            <h2 className="font-black text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-tight text-white mb-1 leading-tight">
-              Pronto para construir o próximo nível digital da sua empresa?
-            </h2>
-          </FadeIn>
+          <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-white mb-4 leading-tight">
+            PRONTO PARA CONSTRUIR EM TEMPO RECORDE?
+          </h2>
 
-          <FadeIn delay={0.15} y={15}>
-            <p className="text-[11px] sm:text-xs text-[#CBD5E1] font-light leading-relaxed max-w-2xl mx-auto mb-2.5">
-              Entre em contato diretamente comigo. Retorno com viabilidade técnica, proposta de arquitetura e estimativa de prazo.
-            </p>
-          </FadeIn>
-
-          <FadeIn delay={0.2} y={15} className="flex flex-wrap items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={handleQuickWhatsApp}
-              className="rounded-full bg-[#00D2F6] hover:bg-[#38bdf8] text-black font-extrabold uppercase tracking-wider px-5 py-2 text-xs cursor-pointer shadow-lg shadow-[#00D2F6]/20 inline-flex items-center gap-1.5 transition-all hover:scale-102 active:scale-98"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>Chamar no WhatsApp Direto</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleSecondaryContact}
-              className="rounded-full border border-white/10 hover:border-[#00D2F6] text-[#CBD5E1] hover:text-[#00D2F6] font-medium uppercase tracking-wider px-4 py-2 text-xs cursor-pointer hover:bg-[#00D2F6]/5 transition-all inline-flex items-center gap-1.5"
-            >
-              <Mail className="w-3.5 h-3.5 text-[#00D2F6]" />
-              <span>Enviar E-mail Corporativo</span>
-            </button>
-          </FadeIn>
+          <p className="text-sm sm:text-base md:text-lg text-[#AEB7C4] font-light leading-relaxed max-w-2xl mx-auto">
+            Fale diretamente com Thiago Cassol Antunes. Receba direcionamento técnico, viabilidade e proposta em menos de 2 horas.
+          </p>
         </div>
 
-        {/* 2. Direct Lead Form & Channels Card */}
-        <FadeIn delay={0.2} y={15} className="w-full">
-          <div className="bg-[#060B18]/90 border border-white/10 rounded-2xl p-4 sm:p-5 md:p-6 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-5 items-center backdrop-blur-xl">
-            
-            {/* Left Column: Direct Channels */}
-            <div className="lg:col-span-5 space-y-3">
-              <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-widest text-[#00D2F6]">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>CANAIS DIRETOS</span>
+        {/* Lead Form & Channels Card */}
+        <div className="bg-[#080D18] border border-[#151F38] rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center backdrop-blur-xl">
+          
+          {/* Left Column: Direct Channels & Guarantees */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#00D2F6]">
+              <Sparkles className="w-4 h-4" />
+              <span>ATENDIMENTO DIRETO</span>
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-tight font-kanit uppercase">
+              Alinhamento Sem Intermediários
+            </h3>
+
+            <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
+              Você conversa com quem realmente vai desenhar, arquitetar e programar a sua solução.
+            </p>
+
+            {/* SLA recap chips */}
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center gap-2 text-xs text-[#F3F5F7]">
+                <Clock className="w-4 h-4 text-[#00D2F6] shrink-0" />
+                <span>Sites em 3 dias • IA em 7 dias • Softwares em 10 dias</span>
               </div>
-
-              <h3 className="text-sm sm:text-base md:text-lg font-bold tracking-tight text-white leading-tight">
-                Atendimento Direto com o Arquiteto
-              </h3>
-
-              <p className="text-xs text-[#94A3B8] font-light leading-relaxed">
-                Sem filas ou intermediários. Explique a necessidade da sua empresa e receba um direcionamento técnico claro.
-              </p>
-
-              {/* Direct Quick Buttons */}
-              <div className="space-y-1.5 pt-1">
-                <a
-                  href={`https://wa.me/${CONTACT_CONFIG.whatsappNumber}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-[#020408] border border-white/10 hover:border-[#00D2F6] transition-all text-xs font-mono text-white group"
-                >
-                  <div className="flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-[#00D2F6]" />
-                    <span className="font-bold">WhatsApp</span>
-                  </div>
-                  <span className="text-[11px] text-[#94A3B8] group-hover:text-[#00D2F6]">{CONTACT_CONFIG.whatsappDisplay}</span>
-                </a>
-
-                <a
-                  href={`mailto:${CONTACT_CONFIG.email}`}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-[#020408] border border-white/10 hover:border-[#00D2F6] transition-all text-xs font-mono text-white group"
-                >
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-[#00D2F6]" />
-                    <span className="font-bold">E-mail</span>
-                  </div>
-                  <span className="text-[11px] text-[#94A3B8] group-hover:text-[#00D2F6]">{CONTACT_CONFIG.email}</span>
-                </a>
+              <div className="flex items-center gap-2 text-xs text-[#F3F5F7]">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>100% Código Proprietário (Sem Mensalidades Ocultas)</span>
               </div>
             </div>
 
-            {/* Right Column: Proposal Form */}
-            <div className="lg:col-span-7 bg-[#020408]/90 rounded-xl border border-white/5 p-3.5 sm:p-4.5">
-              {isSubmitted ? (
-                <div className="py-6 text-center space-y-2">
-                  <div className="w-10 h-10 rounded-full bg-[#00D2F6]/20 border border-[#00D2F6] text-[#00D2F6] flex items-center justify-center mx-auto">
-                    <Sparkles className="w-5 h-5" />
+            {/* Direct Quick Buttons */}
+            <div className="space-y-2.5 pt-2">
+              <a
+                href={`https://wa.me/${CONTACT_CONFIG.whatsappNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#050914] border border-[#151F38] hover:border-[#00D2F6] transition-all text-xs font-mono text-white group shadow-md"
+              >
+                <div className="flex items-center gap-2.5">
+                  <MessageCircle className="w-4 h-4 text-[#00D2F6]" />
+                  <span className="font-bold">WhatsApp Direto</span>
+                </div>
+                <span className="text-xs text-[#AEB7C4] group-hover:text-[#00D2F6] font-bold">{CONTACT_CONFIG.whatsappDisplay}</span>
+              </a>
+
+              <a
+                href={`mailto:${CONTACT_CONFIG.email}`}
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#050914] border border-[#151F38] hover:border-[#00D2F6] transition-all text-xs font-mono text-white group shadow-md"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Mail className="w-4 h-4 text-[#00D2F6]" />
+                  <span className="font-bold">E-mail Profissional</span>
+                </div>
+                <span className="text-xs text-[#AEB7C4] group-hover:text-[#00D2F6]">{CONTACT_CONFIG.email}</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Right Column: Proposal Form */}
+          <div className="lg:col-span-7 bg-[#050914] rounded-2xl border border-[#151F38] p-5 sm:p-7 shadow-inner">
+            {isSubmitted ? (
+              <div className="py-10 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-[#00D2F6]/20 border border-[#00D2F6] text-[#00D2F6] flex items-center justify-center mx-auto shadow-lg shadow-[#00D2F6]/20">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <h4 className="text-lg font-bold uppercase text-white font-kanit">Solicitação Encaminhada!</h4>
+                <p className="text-xs sm:text-sm text-[#AEB7C4] max-w-sm mx-auto font-light">
+                  {submissionType === 'whatsapp'
+                    ? 'Você foi direcionado ao WhatsApp do Thiago. O retorno ocorrerá em instantes.'
+                    : 'E-mail enviado com sucesso para thiago91cassol@hotmail.com. Retornarei em breve.'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsSubmitted(false)}
+                  className="text-xs font-mono text-[#00D2F6] underline pt-2 cursor-pointer font-bold"
+                >
+                  Enviar outra mensagem
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSendWhatsApp} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="text-[11px] font-mono text-[#AEB7C4] block uppercase mb-1.5 font-medium">
+                      Seu Nome ou Empresa *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ex: Carlos Silva / Nexus"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
+                    />
                   </div>
-                  <h4 className="text-sm font-bold uppercase text-white">Mensagem Encaminhada!</h4>
-                  <p className="text-xs text-[#CBD5E1] max-w-sm mx-auto">
-                    {submissionType === 'whatsapp'
-                      ? 'Você foi direcionado ao WhatsApp do Thiago. O atendimento começará em instantes.'
-                      : 'E-mail enviado com sucesso. Thiago retornará em breve.'}
-                  </p>
-                  <button
-                    onClick={() => setIsSubmitted(false)}
-                    className="text-[11px] font-mono text-[#00D2F6] underline pt-2 cursor-pointer"
+
+                  <div>
+                    <label className="text-[11px] font-mono text-[#AEB7C4] block uppercase mb-1.5 font-medium">
+                      WhatsApp ou E-mail *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="(54) 99999-9999 ou email"
+                      value={contactInfo}
+                      onChange={(e) => setContactInfo(e.target.value)}
+                      className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-mono text-[#AEB7C4] block uppercase mb-1.5 font-medium">
+                    Solução de Interesse & Prazo
+                  </label>
+                  <select
+                    value={interest}
+                    onChange={(e) => setInterest(e.target.value)}
+                    className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#00D2F6] transition-colors"
                   >
-                    Enviar outra mensagem
+                    {PROJECT_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value} className="bg-[#080D18] text-white">
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-mono text-[#AEB7C4] block uppercase mb-1.5 font-medium">
+                    Resumo do Objetivo ou Dúvida
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Conte brevemente o que você deseja construir ou automatizar..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <button
+                    type="submit"
+                    className="w-full rounded-full text-white font-bold uppercase tracking-wider py-3 text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg hover:scale-102 active:scale-98"
+                    style={{
+                      background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
+                      boxShadow: '0px 4px 18px rgba(0, 210, 246, 0.4)',
+                      outline: '2px solid white',
+                      outlineOffset: '-2px',
+                    }}
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>ENVIAR NO WHATSAPP</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSendEmail}
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-full border border-[#151F38] hover:border-[#00D2F6] bg-[#080D18] text-[#AEB7C4] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Mail className="w-4 h-4 text-[#00D2F6]" />
+                    <span>{isSubmitting ? 'Enviando...' : 'Enviar por E-mail'}</span>
                   </button>
                 </div>
-              ) : (
-                <form onSubmit={handleSendWhatsApp} className="space-y-2.5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[10px] font-mono text-[#94A3B8] block uppercase mb-1">
-                        Seu Nome ou Empresa *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ex: Carlos Silva / Minha Empresa"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-[#060B18] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-[10px] font-mono text-[#94A3B8] block uppercase mb-1">
-                        WhatsApp ou E-mail *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="(54) 99999-9999 ou email"
-                        value={contactInfo}
-                        onChange={(e) => setContactInfo(e.target.value)}
-                        className="w-full bg-[#060B18] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[10px] font-mono text-[#94A3B8] block uppercase mb-1">
-                        Tipo de Projeto
-                      </label>
-                      <select
-                        value={interest}
-                        onChange={(e) => setInterest(e.target.value)}
-                        className="w-full bg-[#060B18] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#00D2F6] transition-colors"
-                      >
-                        {PROJECT_TYPES.map((type) => (
-                          <option key={type} value={type} className="bg-[#060B18] text-white">
-                            {type}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-[10px] font-mono text-[#94A3B8] block uppercase mb-1">
-                        Resumo do Objetivo
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Ex: Novo sistema de gestão ou site"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        className="w-full bg-[#060B18] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                    <button
-                      type="submit"
-                      className="w-full rounded-xl bg-[#00D2F6] hover:bg-[#38bdf8] text-black font-extrabold uppercase tracking-wider py-2 text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-[#00D2F6]/20 active:scale-98"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      <span>ENVIAR NO WHATSAPP</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleSendEmail}
-                      disabled={isSubmitting}
-                      className="w-full py-2 rounded-xl border border-white/10 hover:border-[#00D2F6] bg-[#060B18] text-[#CBD5E1] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <Mail className="w-3.5 h-3.5 text-[#00D2F6]" />
-                      <span>{isSubmitting ? 'Enviando...' : 'Enviar por E-mail'}</span>
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
+              </form>
+            )}
           </div>
-        </FadeIn>
+        </div>
 
-        {/* 3. Footer Signature */}
-        <div className="mt-4 pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-[#94A3B8] font-mono">
+        {/* Footer Signature */}
+        <div className="mt-12 pt-6 border-t border-[#151F38] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#AEB7C4]/80 font-mono">
           <div>
-            © {new Date().getFullYear()} <span className="text-white font-medium">Thiago Cassol Antunes (TCAI)</span>. Todos os direitos reservados.
+            © {new Date().getFullYear()} <span className="text-white font-bold">Thiago Cassol Antunes (TCAI)</span>. Todos os direitos reservados.
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-[#00D2F6]">• Caxias do Sul / RS • Atendimento Global</span>
+            <span className="text-[#00D2F6]">⚡ Caxias do Sul / RS • Atendimento Global</span>
           </div>
         </div>
 

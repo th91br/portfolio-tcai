@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FadeIn } from '../common/FadeIn';
 import {
   Cpu,
   Globe,
@@ -11,6 +10,7 @@ import {
   Clock,
   ArrowRight,
   Sparkles,
+  MessageCircle,
 } from 'lucide-react';
 
 interface ProjectArchetype {
@@ -23,19 +23,62 @@ interface ProjectArchetype {
   stack: string[];
   deliverables: string[];
   timeline: string;
+  slaTag: string;
   businessImpact: string;
   whatsappMessage: string;
 }
 
 const ARCHETYPES: ProjectArchetype[] = [
   {
+    id: 'authority-web',
+    title: 'Sites & Landing Pages',
+    category: 'PRESENÇA & CONVERSÃO',
+    icon: Globe,
+    headline: 'Presença digital de alto padrão que converte visitantes em clientes',
+    description:
+      'Websites institucionais e Landing Pages com design exclusivo, carregamento ultrarrápido, copywriting persuasivo e foco em captação contínua de leads qualificados.',
+    stack: ['React / Vite', 'TypeScript', 'Tailwind CSS', 'Framer Motion & GSAP', 'SEO Técnico 100/100'],
+    deliverables: [
+      'Design exclusivo de alto impacto sem templates prontos',
+      'Estrutura persuasiva focada em conversão comercial',
+      'Velocidade extrema e otimização total para mobile',
+      'Integração direta com WhatsApp, CRM e formulários',
+    ],
+    timeline: '3 DIAS ÚTEIS',
+    slaTag: '⚡ Entrega Recorde',
+    businessImpact: 'Percepção de marca de alto valor que justifica preços maiores e multiplica oportunidades comerciais.',
+    whatsappMessage:
+      'Olá Thiago! Gostaria de um orçamento para criar um Site/Landing Page de Alta Conversão com entrega em 3 dias úteis.',
+  },
+  {
+    id: 'ai-automation',
+    title: 'Automações & Agentes IA',
+    category: 'EFICIÊNCIA & PROCESSOS',
+    icon: Bot,
+    headline: 'Atendimento, triagem e tarefas operacionais 24/7 sem inchar a equipe',
+    description:
+      'Agentes inteligentes e fluxos automatizados integrados diretamente ao seu WhatsApp, CRM e banco de dados para qualificação e atendimento ágil de clientes.',
+    stack: ['WhatsApp Cloud API', 'Python / Node.js', 'Modelos de Linguagem & LLMs', 'Webhooks & CRMs'],
+    deliverables: [
+      'Agente inteligente treinado com as regras do seu negócio',
+      'Triagem cognitiva e qualificação de leads em tempo real',
+      'Disparos automáticos de orçamentos e agendamentos',
+      'Tempo de resposta imediato (< 3 segundos)',
+    ],
+    timeline: '7 DIAS ÚTEIS',
+    slaTag: '🤖 Operação 24/7',
+    businessImpact: 'Eliminação de tarefas manuais repetitivas e escala de atendimento sem aumentar custos com folha salarial.',
+    whatsappMessage:
+      'Olá Thiago! Quero implementar Automações & Agentes de IA na minha empresa com prazo de 7 dias úteis.',
+  },
+  {
     id: 'custom-software',
     title: 'Sistemas & Painéis Web',
     category: 'OPERAÇÃO SOB MEDIDA',
     icon: Cpu,
-    headline: 'Centralize sua operação e elimine planilhas manuais com sistema próprio',
+    headline: 'Centralize sua operação e elimine gargalos manuais com software sob medida',
     description:
-      'Aplicações web desenvolvidas sob medida para o fluxo exato da sua empresa: controle de pedidos, gestão de clientes, estoques, prazos e relatórios em tempo real.',
+      'Aplicações web desenvolvidas sob medida para o fluxo exato da sua empresa: controle de pedidos, gestão de clientes, processos jurídicos, estoques e relatórios em tempo real.',
     stack: ['React / Next.js', 'Node.js & TypeScript', 'PostgreSQL', 'Autenticação Segura & RBAC'],
     deliverables: [
       'Painéis administrativos em tempo real com controle de acessos',
@@ -43,151 +86,108 @@ const ARCHETYPES: ProjectArchetype[] = [
       'Código-fonte 100% proprietário da sua empresa (sem royalties)',
       'Deploy otimizado em nuvem com backups automáticos',
     ],
-    timeline: '3 a 5 semanas',
-    businessImpact: 'Eliminação total de erros manuais e controle absoluto da telemetria da empresa.',
+    timeline: '10 DIAS ÚTEIS',
+    slaTag: '💻 Sistemas Sob Medida',
+    businessImpact: 'Eliminação total de erros operacionais e controle absoluto dos números da empresa.',
     whatsappMessage:
-      'Olá Thiago! Gostaria de um orçamento para desenvolver um Sistema/Painel Web Sob Medida para a minha empresa.',
+      'Olá Thiago! Gostaria de um orçamento para desenvolver um Sistema/Painel Web Sob Medida com prazo de 10 dias úteis.',
   },
   {
     id: 'saas-product',
     title: 'Plataformas SaaS',
     category: 'PRODUTOS DIGITAIS',
     icon: Layers,
-    headline: 'Transforme uma oportunidade de mercado em um produto escalável e lucrativo',
+    headline: 'Transforme uma ideia de mercado em um produto digital escalável e lucrativo',
     description:
       'Desenvolvimento completo de plataformas SaaS com cobrança recorrente integrada, área de membros, faturamento automatizado e infraestrutura pronta para escala.',
-    stack: ['Next.js App Router', 'Stripe / Asaas / Gateway', 'PostgreSQL / Supabase', 'Infraestrutura Cloud'],
+    stack: ['Next.js / Vite', 'Stripe / Asaas / Gateway', 'PostgreSQL / Supabase', 'Infraestrutura Cloud'],
     deliverables: [
-      'Fluxo completo de checkout, assinaturas e webhooks de pagamento',
+      'Fluxo completo de checkout, assinaturas e webhooks',
       'Painel de controle multi-tenant para gestão de assinantes',
       'Onboarding intuitivo focado em retenção de usuários',
-      'Arquitetura escalável pronta para centenas de clientes simultâneos',
+      'Arquitetura escalável para milhares de usuários',
     ],
-    timeline: '4 a 6 semanas',
-    businessImpact: 'Lançamento rápido de MVP robusto e pronto para gerar receita recorrente.',
+    timeline: '10 A 14 DIAS ÚTEIS',
+    slaTag: '🚀 Produto Escalável',
+    businessImpact: 'Lançamento ágil de MVP robusto no ar gerando receita recorrente.',
     whatsappMessage:
-      'Olá Thiago! Quero tirar uma ideia de Plataforma SaaS/Produto Digital do papel com alto padrão de engenharia.',
-  },
-  {
-    id: 'authority-web',
-    title: 'Websites de Autoridade',
-    category: 'PRESENÇA & CONVERSÃO',
-    icon: Globe,
-    headline: 'Presença digital de alto nível que transmite credibilidade instantânea',
-    description:
-      'Websites institucionais e Landing Pages com direção de arte refinada, carregamento ultrarrápido, copywriting estratégico e foco em conversão de leads qualificados.',
-    stack: ['React / Tailwind CSS', 'Framer Motion & GSAP', 'SEO Técnico 100/100', 'Performance Mobile'],
-    deliverables: [
-      'Design exclusivo de alto impacto com padrões internacionais',
-      'Estrutura de conversão focada em geração de contatos comerciais',
-      'Otimização completa para mobile e mecanismos de busca (Google)',
-      'Conexão direta com WhatsApp e ferramentas de captação',
-    ],
-    timeline: '7 a 14 dias úteis',
-    businessImpact: 'Percepção de marca de alto valor que justifica preços maiores e multiplica contatos.',
-    whatsappMessage:
-      'Olá Thiago! Quero criar um Website/Landing Page de alto impacto para elevar a autoridade do meu negócio.',
-  },
-  {
-    id: 'ai-automation',
-    title: 'Automações & IA Prática',
-    category: 'EFICIÊNCIA & PROCESSOS',
-    icon: Bot,
-    headline: 'Atendimento e triagem 24/7 sem necessidade de aumentar a equipe',
-    description:
-      'Sistemas automatizados e fluxos inteligentes integrados diretamente ao seu WhatsApp, CRM e banco de dados para qualificação e processamento ágil de dados.',
-    stack: ['APIs & Webhooks', 'WhatsApp Cloud API', 'Python / Node.js', 'Modelos de Linguagem & IA'],
-    deliverables: [
-      'Agente ou fluxo automatizado com regras personalizadas do seu negócio',
-      'Integração direta com WhatsApp e sistema de atendimento',
-      'Histórico de interações e painel de acompanhamento',
-      'Redução drástica no tempo de resposta para clientes (< 3s)',
-    ],
-    timeline: '10 a 18 dias úteis',
-    businessImpact: 'Atendimento instantâneo 24/7 e eliminação de tarefas manuais repetitivas.',
-    whatsappMessage:
-      'Olá Thiago! Gostaria de entender mais sobre Automações & IA Prática para os processos da minha empresa.',
+      'Olá Thiago! Quero tirar uma ideia de Plataforma SaaS do papel com entrega ágil e alto padrão de engenharia.',
   },
 ];
 
 export const ProjectSimulator: React.FC = () => {
-  const [selectedId, setSelectedId] = useState<string>('custom-software');
+  const [selectedId, setSelectedId] = useState<string>('authority-web');
 
   const currentArchetype = ARCHETYPES.find((a) => a.id === selectedId) || ARCHETYPES[0];
 
   const handleStartProject = () => {
     const encoded = encodeURIComponent(currentArchetype.whatsappMessage);
-    window.open(`https://wa.me/5554981167720?text=${encoded}`, '_blank');
+    window.open(`https://wa.me/5554981167720?text=${encoded}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
     <section
       id="simulator"
-      className="relative w-full h-full min-h-[100dvh] bg-transparent text-[#F3F5F7] px-4 sm:px-8 md:px-12 lg:px-16 py-4 sm:py-6 overflow-y-auto overflow-x-hidden flex flex-col justify-center select-none"
+      className="relative w-full bg-[#050914] text-[#F3F5F7] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-[#151F38] overflow-hidden z-10"
     >
-      <div className="max-w-6xl mx-auto w-full relative z-10 my-auto">
+      <div className="max-w-6xl mx-auto w-full relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-3 sm:mb-4">
-          <FadeIn delay={0} y={15} className="inline-block mb-1.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#060B18]/90 border border-[#00D2F6]/30 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
-              <span className="text-[10px] sm:text-[11px] font-mono uppercase font-bold tracking-widest text-[#00D2F6]">
-                SIMULADOR DE ESCOPO &amp; ARQUITETURA
-              </span>
-            </div>
-          </FadeIn>
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#080D18] border border-[#151F38] shadow-inner mb-4">
+            <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <span className="text-xs font-mono uppercase font-bold tracking-widest text-[#00D2F6]">
+              SIMULADOR DE ESCOPO & PRAZOS
+            </span>
+          </div>
 
-          <FadeIn delay={0.1} y={15} className="w-full">
-            <h2 className="font-black text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-tight text-white mb-1.5">
-              Escolha seu desafio. Veja o raio-X da solução.
-            </h2>
-          </FadeIn>
+          <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-white mb-4">
+            ESCOLHA SEU DESAFIO. VEJA O RAIO-X DA SOLUÇÃO.
+          </h2>
 
-          <FadeIn delay={0.15} y={15}>
-            <p className="text-[#CBD5E1] text-xs sm:text-sm font-light leading-relaxed max-w-2xl mx-auto">
-              Selecione o tipo de projeto para visualizar a arquitetura técnica recomendada, entregáveis e estimativa de prazo.
-            </p>
-          </FadeIn>
+          <p className="text-sm sm:text-base md:text-lg text-[#AEB7C4] font-light leading-relaxed">
+            Selecione o tipo de projeto para visualizar a arquitetura técnica recomendada, entregáveis e prazo de execução:
+          </p>
         </div>
 
         {/* Archetype Selector Tabs */}
-        <FadeIn delay={0.15} y={15} className="w-full mb-3 sm:mb-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 max-w-5xl mx-auto">
+        <div className="w-full mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto">
             {ARCHETYPES.map((archetype) => {
               const Icon = archetype.icon;
               const isSelected = archetype.id === selectedId;
 
               return (
                 <button
+                  type="button"
                   key={archetype.id}
                   onClick={() => setSelectedId(archetype.id)}
-                  className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between h-[85px] sm:h-[92px] cursor-pointer relative overflow-hidden group ${
+                  className={`p-4 sm:p-5 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between h-[95px] sm:h-[105px] cursor-pointer relative overflow-hidden group ${
                     isSelected
-                      ? 'bg-[#060B18] border-[#00D2F6] shadow-xl shadow-[#00D2F6]/10 scale-[1.02]'
-                      : 'bg-[#060B18]/70 border-white/10 hover:border-white/25 hover:bg-[#060B18]/90'
+                      ? 'bg-[#080D18] border-[#00D2F6] shadow-xl shadow-[#00D2F6]/15 scale-[1.02]'
+                      : 'bg-[#080D18]/70 border-[#151F38] hover:border-[#00D2F6]/40 hover:bg-[#080D18]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <Icon
-                      className={`w-4 h-4 transition-colors ${
-                        isSelected ? 'text-[#00D2F6]' : 'text-[#94A3B8] group-hover:text-white'
+                      className={`w-5 h-5 transition-colors ${
+                        isSelected ? 'text-[#00D2F6]' : 'text-[#AEB7C4] group-hover:text-white'
                       }`}
                     />
                     <span
-                      className={`text-[8px] sm:text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded ${
+                      className={`text-[9px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded ${
                         isSelected
                           ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30'
-                          : 'bg-[#020408] text-[#94A3B8]'
+                          : 'bg-[#050914] text-[#AEB7C4]'
                       }`}
                     >
-                      {archetype.category}
+                      {archetype.timeline}
                     </span>
                   </div>
 
                   <span
-                    className={`text-[11px] sm:text-xs font-bold tracking-tight block truncate ${
-                      isSelected ? 'text-white' : 'text-[#CBD5E1] group-hover:text-white'
+                    className={`text-xs sm:text-sm font-bold tracking-tight block truncate font-kanit uppercase ${
+                      isSelected ? 'text-white' : 'text-[#AEB7C4] group-hover:text-white'
                     }`}
                   >
                     {archetype.title}
@@ -196,7 +196,7 @@ export const ProjectSimulator: React.FC = () => {
               );
             })}
           </div>
-        </FadeIn>
+        </div>
 
         {/* Dynamic Blueprint Card Display */}
         <AnimatePresence mode="wait">
@@ -205,35 +205,40 @@ export const ProjectSimulator: React.FC = () => {
             initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -10 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-5xl mx-auto rounded-2xl bg-[#060B18]/90 border border-white/10 p-4 sm:p-5 shadow-2xl backdrop-blur-xl relative overflow-hidden"
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-5xl mx-auto rounded-3xl bg-[#080D18] border border-[#151F38] p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
               
               {/* Left Column: Solution Scope & Strategy (7 cols) */}
-              <div className="lg:col-span-7 space-y-3.5">
+              <div className="lg:col-span-7 space-y-4">
                 <div>
-                  <span className="text-[#00D2F6] font-mono text-[10px] uppercase font-bold tracking-widest block mb-1">
-                    // ESCOPO E ARQUITETURA RECOMENDADA
-                  </span>
-                  <h3 className="text-sm sm:text-base md:text-lg font-bold tracking-tight text-white mb-1">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[#00D2F6] font-mono text-[10px] sm:text-[11px] uppercase font-bold tracking-widest">
+                      // ESCOPO E ARQUITETURA RECOMENDADA
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-[#00D2F6]/10 text-[#00D2F6] border border-[#00D2F6]/20">
+                      {currentArchetype.slaTag}
+                    </span>
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white mb-2 font-kanit uppercase">
                     {currentArchetype.headline}
                   </h3>
-                  <p className="text-xs text-[#94A3B8] font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
                     {currentArchetype.description}
                   </p>
                 </div>
 
                 {/* Stack Pills */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-mono text-[#64748B] block uppercase tracking-wider font-semibold">
-                    Stack Tecnológica:
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] font-mono text-[#AEB7C4]/70 block uppercase tracking-wider font-semibold">
+                    Stack Tecnológica Recomendada:
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {currentArchetype.stack.map((tech) => (
                       <span
                         key={tech}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#020408] border border-white/10 text-[#00D2F6]"
+                        className="text-[10px] sm:text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#050914] border border-[#151F38] text-[#00D2F6]"
                       >
                         {tech}
                       </span>
@@ -242,15 +247,15 @@ export const ProjectSimulator: React.FC = () => {
                 </div>
 
                 {/* Deliverables List */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-mono text-[#64748B] block uppercase tracking-wider font-semibold">
-                    O que será entregue:
+                <div className="space-y-2 pt-1">
+                  <span className="text-[10px] font-mono text-[#AEB7C4]/70 block uppercase tracking-wider font-semibold">
+                    O Que Será Entregue:
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {currentArchetype.deliverables.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-1.5 text-xs text-[#F1F5F9]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#00D2F6] flex-shrink-0 mt-0.5" />
-                        <span className="font-light text-[11px] leading-tight">{item}</span>
+                      <div key={idx} className="flex items-start gap-2 text-xs text-[#F3F5F7]">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <span className="font-light text-[11px] sm:text-xs leading-snug">{item}</span>
                       </div>
                     ))}
                   </div>
@@ -258,39 +263,46 @@ export const ProjectSimulator: React.FC = () => {
               </div>
 
               {/* Right Column: Execution Metrics & Direct Action (5 cols) */}
-              <div className="lg:col-span-5 flex flex-col justify-between h-full bg-[#020408]/90 rounded-xl border border-white/5 p-4 space-y-3.5">
+              <div className="lg:col-span-5 flex flex-col justify-between h-full bg-[#050914] rounded-2xl border border-[#151F38] p-5 space-y-4">
                 
                 {/* Timeline Box */}
-                <div className="flex items-center justify-between pb-2.5 border-b border-white/5">
+                <div className="flex items-center justify-between pb-3 border-b border-[#151F38]">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[#00D2F6]" />
-                    <span className="text-xs font-mono text-[#94A3B8] uppercase">Prazo Estimado</span>
+                    <span className="text-xs font-mono text-[#AEB7C4] uppercase">Prazo de Entrega</span>
                   </div>
-                  <span className="text-xs sm:text-sm font-bold text-white font-mono">
+                  <span className="text-xs sm:text-sm font-bold text-white font-mono bg-[#080D18] px-3 py-1 rounded-lg border border-[#00D2F6]/30 text-[#00D2F6]">
                     {currentArchetype.timeline}
                   </span>
                 </div>
 
                 {/* Business Impact Box */}
-                <div className="p-3 rounded-lg bg-[#00D2F6]/5 border border-[#00D2F6]/20">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Zap className="w-3.5 h-3.5 text-[#00D2F6]" />
+                <div className="p-3.5 rounded-xl bg-[#00D2F6]/5 border border-[#00D2F6]/20">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Zap className="w-4 h-4 text-[#00D2F6]" />
                     <span className="text-[10px] font-mono uppercase font-bold text-[#00D2F6] tracking-wider">
                       IMPACTO NO NEGÓCIO
                     </span>
                   </div>
-                  <p className="text-xs text-[#E2E8F0] font-light leading-relaxed">
+                  <p className="text-xs text-[#CBD5E1] font-light leading-relaxed">
                     {currentArchetype.businessImpact}
                   </p>
                 </div>
 
                 {/* Direct Action Button */}
                 <button
+                  type="button"
                   onClick={handleStartProject}
-                  className="w-full py-2.5 rounded-xl bg-[#00D2F6] hover:bg-[#38bdf8] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg shadow-[#00D2F6]/20 active:scale-98"
+                  className="w-full py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg hover:scale-102 active:scale-98"
+                  style={{
+                    background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
+                    boxShadow: '0px 4px 18px rgba(0, 210, 246, 0.4)',
+                    outline: '2px solid white',
+                    outlineOffset: '-2px',
+                  }}
                 >
-                  <span>Falar com o Thiago Sobre Este Projeto</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <MessageCircle className="w-4 h-4 text-white" />
+                  <span>SOLICITAR ESTE PROJETO NO WHATSAPP</span>
                 </button>
 
               </div>
