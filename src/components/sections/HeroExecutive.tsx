@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import gsap from 'gsap';
+import React from 'react';
+import { motion, Variants } from 'framer-motion';
 import {
   Zap,
   Bot,
@@ -12,7 +11,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { HERO_DATA } from '../../data/portfolioData';
-import { ThreeHeroCanvas } from '../common/ThreeHeroCanvas';
+import { MagneticButton } from '../common/MagneticButton';
 import { createQuickWhatsAppUrl } from '../../utils/contactUtils';
 
 interface HeroExecutiveProps {
@@ -20,70 +19,45 @@ interface HeroExecutiveProps {
 }
 
 export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) => {
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!headlineRef.current) return;
-    const letters = headlineRef.current.querySelectorAll('.hero-letter');
-    if (!letters || letters.length === 0) return;
-
-    gsap.fromTo(
-      letters,
-      {
-        opacity: 0,
-        y: 30,
-        rotateX: -50,
-        scale: 0.95,
+  // Staggered Masked Reveal Animation Variants (Awwwards Grade)
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.15,
       },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        scale: 1,
-        stagger: 0.012,
-        duration: 0.75,
-        ease: 'power3.out',
-        delay: 0.1,
-      }
-    );
-  }, []);
+    },
+  };
 
-  const renderWords = (text: string, isGradient = false) => {
-    return text.split(' ').map((word, wIdx) => (
-      <span key={wIdx} className="inline-block whitespace-nowrap mr-2.5 sm:mr-3.5">
-        {word.split('').map((char, cIdx) => (
-          <span
-            key={cIdx}
-            className={`hero-letter inline-block transition-transform duration-200 hover:scale-110 ${
-              isGradient ? 'text-[#00D2F6] hover:text-white' : 'text-white hover:text-[#00D2F6]'
-            }`}
-            style={{ transformOrigin: 'bottom' }}
-          >
-            {char}
-          </span>
-        ))}
-      </span>
-    ));
+  const lineMaskVariants: Variants = {
+    hidden: { y: 65, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.85,
+        ease: [0.22, 1, 0.36, 1] as const,
+      },
+    },
   };
 
   return (
     <section
       id="hero"
-      ref={containerRef}
-      className="relative min-h-[92vh] lg:min-h-screen w-full bg-[#050914] text-[#F3F5F7] pt-28 sm:pt-32 pb-20 px-4 sm:px-6 md:px-10 flex items-center justify-center overflow-hidden z-10"
+      className="relative min-h-[92vh] lg:min-h-screen w-full bg-transparent text-[#F3F5F7] pt-28 sm:pt-32 pb-20 px-4 sm:px-6 md:px-10 flex items-center justify-center overflow-hidden z-10"
     >
-      {/* 1. Interactive Three.js Constellation Background */}
-      <ThreeHeroCanvas />
-
-      {/* Ambient background glows */}
+      {/* Ambient background gradients */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] bg-[#00D2F6]/10 blur-[180px] pointer-events-none rounded-full" />
       <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-[#015EEF]/10 blur-[180px] pointer-events-none rounded-full" />
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto w-full relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        
         {/* Left Column: Copywriting & High-Conversion Hooks (7 cols on lg) */}
         <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6">
+          
           {/* Availability Status Badge */}
           <motion.div
             initial={{ opacity: 0, y: -15 }}
@@ -97,26 +71,39 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             </span>
           </motion.div>
 
-          {/* Main Headline */}
-          <div className="w-full">
-            <h1
-              ref={headlineRef}
-              className="font-kanit font-black uppercase tracking-tight leading-[1.08] text-left select-none text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px]"
-            >
-              <span className="block text-white mb-1.5 sm:mb-2">
-                {renderWords(HERO_DATA.headlineP1, false)}
-              </span>
-              <span className="block text-[#00D2F6]">
-                {renderWords(HERO_DATA.headlineP2, true)}
-              </span>
-            </h1>
-          </div>
+          {/* Masked Animated Main Headline */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="w-full"
+          >
+            {/* Line 1 Mask */}
+            <div className="overflow-hidden pb-1">
+              <motion.div
+                variants={lineMaskVariants}
+                className="font-kanit font-black uppercase tracking-tight text-white leading-[1.08] text-left select-none text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px]"
+              >
+                {HERO_DATA.headlineP1}
+              </motion.div>
+            </div>
+
+            {/* Line 2 Mask */}
+            <div className="overflow-hidden pb-2">
+              <motion.div
+                variants={lineMaskVariants}
+                className="font-kanit font-black uppercase tracking-tight text-[#00D2F6] leading-[1.08] text-left select-none text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px]"
+              >
+                {HERO_DATA.headlineP2}
+              </motion.div>
+            </div>
+          </motion.div>
 
           {/* Subtext */}
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
             className="text-[#AEB7C4] text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-2xl"
           >
             {HERO_DATA.subtext}
@@ -126,7 +113,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
             className="w-full grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 py-2"
           >
             {HERO_DATA.slaBadges.map((badge, idx) => (
@@ -145,31 +132,35 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             ))}
           </motion.div>
 
-          {/* Action CTAs */}
+          {/* Action CTAs with Magnetic Attraction */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
             className="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto"
           >
-            <a
-              href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full sm:w-auto px-8 py-4 rounded-full text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
-              style={{
-                background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
-                boxShadow: '0px 4px 22px rgba(0, 210, 246, 0.45), inset 0px 1px 2px rgba(255, 255, 255, 0.6)',
-                outline: '2px solid white',
-                outlineOffset: '-2px',
-              }}
-            >
-              <MessageCircle className="w-4 h-4 text-white" />
-              <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                INICIAR PROJETO NO WHATSAPP →
-              </span>
-            </a>
+            {/* Magnetic WhatsApp Call-to-Action */}
+            <MagneticButton strength={0.35}>
+              <a
+                href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto px-8 py-4 rounded-full text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
+                  boxShadow: '0px 4px 24px rgba(0, 210, 246, 0.45), inset 0px 1px 2px rgba(255, 255, 255, 0.6)',
+                  outline: '2px solid white',
+                  outlineOffset: '-2px',
+                }}
+              >
+                <MessageCircle className="w-4 h-4 text-white" />
+                <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  INICIAR PROJETO NO WHATSAPP →
+                </span>
+              </a>
+            </MagneticButton>
 
+            {/* Secondary Link to Projects */}
             <a
               href="#projects"
               className="w-full sm:w-auto px-7 py-4 rounded-full border border-[#151F38] hover:border-[#00D2F6] bg-[#080D18]/80 text-[#AEB7C4] hover:text-[#00D2F6] text-xs sm:text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
@@ -232,3 +223,5 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
     </section>
   );
 };
+
+export default HeroExecutive;
