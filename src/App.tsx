@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ReactLenis } from '@studio-freight/react-lenis';
 import { Navbar } from './components/layout/Navbar';
 import { HeroExecutive } from './components/sections/HeroExecutive';
 import { MetricsBar } from './components/sections/MetricsBar';
@@ -26,51 +27,53 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#050914] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-x-hidden">
-      {/* 1. Fixed Executive Navigation Header */}
-      <Navbar onContactClick={() => openWhatsApp('general')} />
+    <ReactLenis root options={{ lerp: 0.09, duration: 1.2, smoothWheel: true }}>
+      <div className="w-full min-h-screen bg-[#050914] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-x-hidden">
+        {/* 1. Fixed Executive Navigation Header */}
+        <Navbar onContactClick={() => openWhatsApp('general')} />
 
-      <main className="w-full">
-        {/* 2. Hero Section: Supreme Authority + Real Executive Portrait + 3/7/10 Days SLA */}
-        <HeroExecutive onContactClick={() => openWhatsApp('general')} />
+        <main className="w-full">
+          {/* 2. Hero Section: Supreme Authority + Real Executive Portrait + 3/7/10 Days SLA */}
+          <HeroExecutive onContactClick={() => openWhatsApp('general')} />
 
-        {/* 3. Hard Proof Metrics Bar */}
-        <MetricsBar />
+          {/* 3. Hard Proof Metrics Bar */}
+          <MetricsBar />
 
-        {/* 4. Comparison Section: Agências Tradicionais vs. Método TCAI */}
-        <ComparisonSection />
+          {/* 4. Comparison Section: Agências Tradicionais vs. Método TCAI */}
+          <ComparisonSection />
 
-        {/* 5. The 3 Core Pillars with Guaranteed SLA Timelines */}
-        <CoreServicesSection />
+          {/* 5. The 3 Core Pillars with Guaranteed SLA Timelines */}
+          <CoreServicesSection />
 
-        {/* 6. Live Cases in Production (Esportiz, PrazoGuard, Compra de Ouro, Joias AG) */}
-        <ProjectsSection
-          onProjectSelect={handleSelectProject}
-          onContactClick={() => openWhatsApp('project')}
+          {/* 6. Live Cases in Production (Esportiz, PrazoGuard, Compra de Ouro, Joias AG) */}
+          <ProjectsSection
+            onProjectSelect={handleSelectProject}
+            onContactClick={() => openWhatsApp('project')}
+          />
+
+          {/* 7. The 4-Step Agile Delivery Method */}
+          <ProcessSection />
+
+          {/* 8. Founder Story & Technical Authority: Thiago Cassol Antunes */}
+          <AboutExecutive />
+
+          {/* 9. Verified Client Testimonials & Star Reviews */}
+          <MarqueeSection />
+
+          {/* 10. Interactive Architecture & Scope Simulator */}
+          <ProjectSimulator />
+
+          {/* 11. Final High-Converting Contact & Lead Routing */}
+          <ContactSection onDirectContactClick={() => openWhatsApp('general')} />
+        </main>
+
+        {/* 12. Interactive Project Details Modal */}
+        <ProjectModal
+          project={selectedProject}
+          onClose={handleCloseProject}
         />
-
-        {/* 7. The 4-Step Agile Delivery Method */}
-        <ProcessSection />
-
-        {/* 8. Founder Story & Technical Authority: Thiago Cassol Antunes */}
-        <AboutExecutive />
-
-        {/* 9. Verified Client Testimonials & Star Reviews */}
-        <MarqueeSection />
-
-        {/* 10. Interactive Architecture & Scope Simulator */}
-        <ProjectSimulator />
-
-        {/* 11. Final High-Converting Contact & Lead Routing */}
-        <ContactSection onDirectContactClick={() => openWhatsApp('general')} />
-      </main>
-
-      {/* 12. Interactive Project Details Modal */}
-      <ProjectModal
-        project={selectedProject}
-        onClose={handleCloseProject}
-      />
-    </div>
+      </div>
+    </ReactLenis>
   );
 };
 
