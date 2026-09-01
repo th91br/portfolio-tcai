@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, Variants, useMotionValue, useSpring } from 'framer-motion';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { motion, Variants, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   Zap,
   Bot,
@@ -15,33 +15,211 @@ interface HeroExecutiveProps {
   onContactClick: () => void;
 }
 
+// ─────────────────────────────────────────────────────────────
+// 1. COMPONENTE: Partículas Ópticas Flutuantes no Espaço 3D
+// ─────────────────────────────────────────────────────────────
+const HeroFloatingParticles: React.FC<{ isVisible: boolean }> = React.memo(({ isVisible }) => {
+  const particles = useMemo(() => [
+    { id: 1, top: '16%', left: '8%', size: 3, color: '#00D2F6', opacity: 0.35, duration: 12, delay: 0 },
+    { id: 2, top: '28%', left: '22%', size: 2, color: '#FFFFFF', opacity: 0.25, duration: 15, delay: 2 },
+    { id: 3, top: '65%', left: '12%', size: 3.5, color: '#00D2F6', opacity: 0.30, duration: 14, delay: 1 },
+    { id: 4, top: '82%', left: '28%', size: 2, color: '#38BDF8', opacity: 0.20, duration: 16, delay: 3 },
+    { id: 5, top: '14%', left: '78%', size: 2.5, color: '#00D2F6', opacity: 0.35, duration: 13, delay: 0.5 },
+    { id: 6, top: '24%', left: '92%', size: 4, color: '#0088CC', opacity: 0.25, duration: 18, delay: 2.5 },
+    { id: 7, top: '48%', left: '84%', size: 2, color: '#FFFFFF', opacity: 0.30, duration: 11, delay: 1.5 },
+    { id: 8, top: '72%', left: '74%', size: 3, color: '#00D2F6', opacity: 0.28, duration: 15, delay: 4 },
+    { id: 9, top: '88%', left: '88%', size: 2.5, color: '#38BDF8', opacity: 0.22, duration: 17, delay: 3 },
+    { id: 10, top: '38%', left: '48%', size: 2, color: '#00D2F6', opacity: 0.18, duration: 19, delay: 1 },
+    { id: 11, top: '58%', left: '52%', size: 2.5, color: '#FFFFFF', opacity: 0.20, duration: 14, delay: 5 },
+    { id: 12, top: '12%', left: '42%', size: 3, color: '#38BDF8', opacity: 0.22, duration: 16, delay: 2 },
+  ], []);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-10 select-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          initial={{ y: 0, opacity: p.opacity }}
+          animate={{
+            y: [-12, 14, -12],
+            x: [-6, 8, -6],
+            opacity: [p.opacity * 0.7, p.opacity * 1.3, p.opacity * 0.7],
+          }}
+          transition={{
+            duration: p.duration,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: p.delay,
+          }}
+          style={{
+            position: 'absolute',
+            top: p.top,
+            left: p.left,
+            width: p.size,
+            height: p.size,
+            backgroundColor: p.color,
+            borderRadius: '50%',
+            boxShadow: `0 0 ${p.size * 3}px ${p.color}`,
+            filter: 'blur(0.5px)',
+          }}
+        />
+      ))}
+    </div>
+  );
+});
+HeroFloatingParticles.displayName = 'HeroFloatingParticles';
+
+// ─────────────────────────────────────────────────────────────
+// 2. COMPONENTE: Tipografia Interativa de Alto Luxo (Hover Sem Mudar Cor)
+// Iluminação especular de laser/cristal ao passar o mouse nas palavras
+// ─────────────────────────────────────────────────────────────
+interface InteractiveWordsLineProps {
+  text: string;
+  className?: string;
+  highlightSecondary?: boolean;
+}
+
+const InteractiveWordsLine: React.FC<InteractiveWordsLineProps> = ({ text, className = '', highlightSecondary = false }) => {
+  const words = useMemo(() => text.split(' '), [text]);
+
+  return (
+    <span className={`inline-flex flex-wrap gap-x-3 sm:gap-x-4 ${className}`}>
+      {words.map((word, idx) => (
+        <motion.span
+          key={idx}
+          whileHover={{
+            y: -3,
+            textShadow: '0 0 24px rgba(255,255,255,0.95), 0 0 45px rgba(0,210,246,0.6)',
+            letterSpacing: '0.015em',
+            transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
+          }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="inline-block cursor-default transition-all duration-300 relative select-none will-change-transform"
+        >
+          {word}
+        </motion.span>
+      ))}
+    </span>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────
+// 3. COMPONENTE: Pedestal Holográfico de Base no Solo (Zero Cards)
+// O Thiago como projeção tecnológica materializada do Hero
+// ─────────────────────────────────────────────────────────────
+const HolographicFloorEmitter: React.FC<{ isHovered: boolean }> = ({ isHovered }) => {
+  return (
+    <div className="absolute -bottom-8 inset-x-0 flex flex-col items-center justify-center pointer-events-none z-10 select-none">
+      
+      {/* 3D Perspective Emitter Disc (No Solo, rotateX 75deg) */}
+      <div className="relative w-[88%] max-w-[480px] h-[100px] flex items-center justify-center [perspective:1000px]">
+        
+        {/* Anel Externo de Telemetria com Rotação Lenta */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+          className={`absolute w-full h-full rounded-[100%] border border-dashed transition-all duration-700 [transform:rotateX(75deg)] ${
+            isHovered
+              ? 'border-[#00D2F6]/60 shadow-[0_0_30px_rgba(0,210,246,0.35)] scale-105'
+              : 'border-[#00D2F6]/25 shadow-[0_0_15px_rgba(0,210,246,0.15)]'
+          }`}
+        />
+
+        {/* Anel Interno Focado com Pulso Holográfico */}
+        <motion.div
+          animate={{
+            scale: isHovered ? [1, 1.04, 1] : [0.98, 1.02, 0.98],
+            opacity: isHovered ? [0.6, 0.9, 0.6] : [0.35, 0.55, 0.35],
+          }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute w-[68%] h-[68%] rounded-[100%] border border-[#00D2F6]/50 [transform:rotateX(75deg)]"
+        />
+
+        {/* Micro Marcadores de Telemetria nos 4 Quadrantes */}
+        <div className="absolute inset-0 flex items-center justify-between px-2 [transform:rotateX(75deg)] opacity-40 text-[9px] font-mono text-[#00D2F6]">
+          <span>+</span>
+          <span>+</span>
+        </div>
+
+        {/* Foco Central de Emissão de Luz no Chão */}
+        <div
+          className={`absolute w-[76%] h-8 rounded-[100%] transition-all duration-700 blur-xl ${
+            isHovered
+              ? 'bg-gradient-to-r from-transparent via-[#00D2F6]/35 to-transparent'
+              : 'bg-gradient-to-r from-transparent via-[#00D2F6]/18 to-transparent'
+          }`}
+        />
+
+        {/* Linha Óptica Horizontal de Acoplamento da Mesa ao Solo */}
+        <motion.div
+          animate={{
+            opacity: isHovered ? [0.4, 0.8, 0.4] : [0.25, 0.5, 0.25],
+          }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-1/2 -translate-y-1/2 w-[58%] h-[1.5px] bg-gradient-to-r from-transparent via-[#00D2F6]/60 to-transparent blur-[0.7px]"
+        />
+      </div>
+
+      {/* Feixes Verticais Sutis de Projeção Ascendente */}
+      <div className="absolute bottom-10 w-[70%] h-32 flex justify-between px-8 pointer-events-none opacity-20">
+        <div className="w-[1px] h-full bg-gradient-to-t from-[#00D2F6]/60 to-transparent" />
+        <div className="w-[1px] h-full bg-gradient-to-t from-[#00D2F6]/40 to-transparent" />
+        <div className="w-[1px] h-full bg-gradient-to-t from-[#00D2F6]/60 to-transparent" />
+      </div>
+
+    </div>
+  );
+};
+
 export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) => {
   const heroRef = useRef<HTMLElement>(null);
+  const headlineRef = useRef<HTMLDivElement>(null);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(-1);
   const [isHeroVisible, setIsHeroVisible] = useState<boolean>(true);
+  const [isThiagoHovered, setIsThiagoHovered] = useState<boolean>(false);
 
-  // Subtle Mouse Parallax Physics for Left Column Elements (Desktop only)
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springConfig = { damping: 25, stiffness: 200, mass: 0.1 };
-  const parallaxX = useSpring(mouseX, springConfig);
-  const parallaxY = useSpring(mouseY, springConfig);
+  // ─────────────────────────────────────────────────────────────
+  // Parallax Multi-Camadas e 3D Tilt com Física Apple (Framer Motion)
+  // ─────────────────────────────────────────────────────────────
+  const rawMouseX = useMotionValue(0);
+  const rawMouseY = useMotionValue(0);
+
+  const springConfig = { damping: 26, stiffness: 180, mass: 0.12 };
+  
+  // Parallax coluna texto
+  const leftColX = useSpring(rawMouseX, springConfig);
+  const leftColY = useSpring(rawMouseY, springConfig);
+
+  // Parallax arte Thiago (contraponto 3D)
+  const artRawX = useTransform(rawMouseX, (val) => -val * 1.6);
+  const artRawY = useTransform(rawMouseY, (val) => -val * 1.3);
+  const artParallaxX = useSpring(artRawX, springConfig);
+  const artParallaxY = useSpring(artRawY, springConfig);
+
+  // 3D Tilt da projeção holográfica ao mover o mouse
+  const tiltRawX = useTransform(rawMouseY, (val) => -val * 0.45); // inclinação vertical suave
+  const tiltRawY = useTransform(rawMouseX, (val) => val * 0.6);   // rotação lateral
+  const tiltRotateX = useSpring(tiltRawX, springConfig);
+  const tiltRotateY = useSpring(tiltRawY, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!heroRef.current || window.innerWidth < 1024) return;
     const { left, top, width, height } = heroRef.current.getBoundingClientRect();
     const x = ((e.clientX - left) / width - 0.5) * 8; // Max 4px
     const y = ((e.clientY - top) / height - 0.5) * 8;
-    mouseX.set(x);
-    mouseY.set(y);
+    rawMouseX.set(x);
+    rawMouseY.set(y);
   };
 
   const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
+    rawMouseX.set(0);
+    rawMouseY.set(0);
+    setIsThiagoHovered(false);
   };
 
-  // IntersectionObserver to monitor Hero visibility
+  // IntersectionObserver
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -56,7 +234,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
     return () => observer.disconnect();
   }, []);
 
-  // 9-Second Master Timeline Cycle for sequential service cards highlight when not hovered
+  // 9-Second Master Timeline Cycle
   useEffect(() => {
     if (!isHeroVisible) return;
 
@@ -72,7 +250,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
     return () => clearInterval(interval);
   }, [isHeroVisible]);
 
-  // Framer Motion Variants for Masked Headline Entrance
+  // Framer Motion Variants
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -122,13 +300,18 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
+          1.1 PARTÍCULAS ÓPTICAS FLUTUANTES (Tech Dust / Atmosfera 3D, z-10)
+         ───────────────────────────────────────────────────────────── */}
+      <HeroFloatingParticles isVisible={isHeroVisible} />
+
+      {/* ─────────────────────────────────────────────────────────────
           2. MAIN CONTENT STREAM (À Frente do Efeito, z-20)
          ───────────────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto w-full relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center my-auto">
         
         {/* Left Column: Copywriting, Authority & High-Conversion CTAs */}
         <motion.div
-          style={{ x: parallaxX, y: parallaxY }}
+          style={{ x: leftColX, y: leftColY }}
           className="lg:col-span-7 xl:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-6 max-w-2xl lg:max-w-none mx-auto lg:mx-0"
         >
           {/* 1. Status Pill: Availability */}
@@ -149,7 +332,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             </span>
           </motion.div>
 
-          {/* 2. ARTE THIAGO NO MOBILE / TABLET (Solta, sem card, com reflexo de base e rim light) */}
+          {/* 2. ARTE THIAGO NO MOBILE / TABLET (Solta, sem card, com emissor de base holográfica) */}
           <motion.div
             initial={{ opacity: 0, y: 15, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -160,26 +343,28 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
               <img
                 src="/thiagotcai.png"
                 alt="Thiago Cassol Antunes — Especialista em Tecnologia, Software e IA"
-                className="w-full h-auto aspect-[1312/1199] max-h-[360px] sm:max-h-[400px] md:max-h-[440px] object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.72)] drop-shadow-[0_0_12px_rgba(0,210,246,0.14)] drop-shadow-[0_1px_3px_rgba(0,210,246,0.18)] transform-gpu"
+                className="w-full h-auto aspect-[1312/1199] max-h-[360px] sm:max-h-[400px] md:max-h-[440px] object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.75)] drop-shadow-[0_0_14px_rgba(0,210,246,0.18)] transform-gpu relative z-20"
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
               />
 
-              {/* Reflexo sutil de base integrado ao fundo no mobile */}
-              <div className="absolute -bottom-1 inset-x-0 flex flex-col items-center justify-center pointer-events-none">
-                <div className="w-[66%] h-5 rounded-[100%] bg-gradient-to-r from-transparent via-[#00D2F6]/14 to-transparent blur-lg" />
-                <div className="w-[48%] h-[1px] bg-gradient-to-r from-transparent via-[#00D2F6]/25 to-transparent blur-[0.6px] -mt-1.5" />
+              {/* Pedestal de emissão holográfica no solo do mobile */}
+              <div className="absolute -bottom-3 inset-x-0 flex flex-col items-center justify-center pointer-events-none z-10">
+                <div className="w-[78%] h-6 rounded-[100%] border border-dashed border-[#00D2F6]/35 [transform:rotateX(75deg)]" />
+                <div className="w-[66%] h-5 rounded-[100%] bg-gradient-to-r from-transparent via-[#00D2F6]/20 to-transparent blur-lg -mt-3" />
+                <div className="w-[48%] h-[1px] bg-gradient-to-r from-transparent via-[#00D2F6]/45 to-transparent blur-[0.6px] -mt-2" />
               </div>
             </div>
           </motion.div>
 
-          {/* 3. Masked Editorial Luxury Headline */}
+          {/* 3. Masked Editorial Luxury Headline com Efeito Interativo de Passar o Mouse */}
           <motion.div
+            ref={headlineRef}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="w-full relative"
+            className="w-full relative group/headline cursor-default"
           >
             {/* Line 1 Mask */}
             <div className="overflow-hidden pb-1">
@@ -187,7 +372,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
                 variants={lineMaskVariants}
                 className="font-['Playfair_Display',serif] font-black uppercase tracking-tight text-white leading-[1.1] text-2xl sm:text-4xl md:text-5xl lg:text-[42px] xl:text-[50px]"
               >
-                {HERO_DATA.headlineP1}
+                <InteractiveWordsLine text={HERO_DATA.headlineP1} />
               </motion.h1>
             </div>
 
@@ -197,17 +382,22 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
                 variants={lineMaskVariants}
                 className="font-['Playfair_Display',serif] font-black uppercase tracking-tight text-white leading-[1.1] text-2xl sm:text-4xl md:text-5xl lg:text-[42px] xl:text-[50px] drop-shadow-[0_2px_15px_rgba(255,255,255,0.15)]"
               >
-                {HERO_DATA.headlineP2}
+                <InteractiveWordsLine text={HERO_DATA.headlineP2} highlightSecondary />
               </motion.div>
             </div>
           </motion.div>
 
-          {/* 4. Subtext */}
+          {/* 4. Subtext com Iluminação Suave de Leitura ao Passar o Mouse */}
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
+            whileHover={{
+              color: '#E2E8F0',
+              textShadow: '0 0 16px rgba(255,255,255,0.2)',
+              transition: { duration: 0.3 }
+            }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-[#94A3B8] text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-xl xl:max-w-2xl"
+            className="text-[#94A3B8] text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-xl xl:max-w-2xl cursor-default transition-colors duration-300"
           >
             {HERO_DATA.subtext}
           </motion.p>
@@ -293,34 +483,55 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
         </motion.div>
 
         {/* ─────────────────────────────────────────────────────────────
-            Right Column: ARTE THIAGO NO DESKTOP (Solta, sem card, com reflexo de base e rim light)
+            Right Column: ARTE THIAGO NO DESKTOP 
+            Projeção Tecnológica do Hero com Efeito Holográfico, Emitter no Solo e 3D Tilt
            ───────────────────────────────────────────────────────────── */}
         <motion.div
+          style={{
+            x: artParallaxX,
+            y: artParallaxY,
+            rotateX: tiltRotateX,
+            rotateY: tiltRotateY,
+            perspective: 1200,
+          }}
           initial={{ opacity: 0, y: 20, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+          onMouseEnter={() => setIsThiagoHovered(true)}
+          onMouseLeave={() => setIsThiagoHovered(false)}
           className="hidden lg:flex lg:col-span-5 xl:col-span-5 items-center justify-center relative select-none z-20"
         >
-          {/* Container limpo relativo, sem fundo e sem bordas */}
+          {/* Container limpo, 100% livre de cards ou molduras */}
           <div className="relative w-full max-w-[490px] xl:max-w-[550px] 2xl:max-w-[600px] flex flex-col items-center justify-center">
             
-            {/* Imagem com Rim Light e Sombra de Silhueta Orgânica */}
-            <img
+            {/* Imagem do Thiago com Efeito de Rim Light Tecnológico e Sombra Nobre */}
+            <motion.img
               src="/thiagotcai.png"
               alt="Thiago Cassol Antunes — Especialista em Tecnologia, Software e IA"
-              className="w-full h-auto aspect-[1312/1199] max-h-[80vh] xl:max-h-[84vh] object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.75)] drop-shadow-[0_0_15px_rgba(0,210,246,0.16)] drop-shadow-[0_2px_4px_rgba(0,210,246,0.22)] transform-gpu transition-transform duration-700 hover:scale-[1.01]"
+              animate={{
+                filter: isThiagoHovered
+                  ? 'drop-shadow(0 25px 40px rgba(0,0,0,0.85)) drop-shadow(0 0 24px rgba(0,210,246,0.28)) drop-shadow(0 2px 6px rgba(0,210,246,0.35))'
+                  : 'drop-shadow(0 20px 35px rgba(0,0,0,0.75)) drop-shadow(0 0 15px rgba(0,210,246,0.16)) drop-shadow(0 2px 4px rgba(0,210,246,0.22))',
+              }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-auto aspect-[1312/1199] max-h-[80vh] xl:max-h-[84vh] object-contain transform-gpu transition-transform duration-700 hover:scale-[1.015] relative z-20"
               loading="eager"
               fetchPriority="high"
               decoding="async"
             />
 
-            {/* Glow Ambiente e Reflexo Discreto Estritamente na Base Inferior */}
-            <div className="absolute -bottom-2 inset-x-0 flex flex-col items-center justify-center pointer-events-none">
-              {/* Reflexo difuso elíptico na base do Hero */}
-              <div className="w-[72%] h-7 rounded-[100%] bg-gradient-to-r from-transparent via-[#00D2F6]/14 to-transparent blur-xl" />
-              {/* Linha de reflexo horizontal discreta integrada ao horizonte da base */}
-              <div className="w-[55%] h-[1px] bg-gradient-to-r from-transparent via-[#00D2F6]/30 to-transparent blur-[0.8px] -mt-2" />
-            </div>
+            {/* Linha Holográfica de Varredura que Percorre a Imagem no Hover */}
+            {isThiagoHovered && (
+              <motion.div
+                initial={{ y: '100%', opacity: 0 }}
+                animate={{ y: '-80%', opacity: [0, 0.85, 0] }}
+                transition={{ duration: 0.9, ease: 'easeInOut' }}
+                className="absolute inset-x-4 h-[2px] bg-gradient-to-r from-transparent via-[#00D2F6] to-transparent pointer-events-none z-30 blur-[0.5px]"
+              />
+            )}
+
+            {/* Pedestal Holográfico de Base no Solo (A Projeção que Origina o Thiago) */}
+            <HolographicFloorEmitter isHovered={isThiagoHovered} />
 
           </div>
         </motion.div>
