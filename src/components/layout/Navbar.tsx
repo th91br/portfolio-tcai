@@ -134,12 +134,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
               </a>
             ))}
 
+            <div className="flex items-center justify-center gap-2 py-2 px-3 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[11px] font-mono text-[#FF6B35] font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-pulse" />
+              <span>DISPONIBILIDADE: 2 VAGAS ESTE MÊS</span>
+            </div>
+
             <a
               href={createQuickWhatsAppUrl('Novo Projeto Mobile')}
               target="_blank"
               rel="noreferrer"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full mt-2 py-3.5 rounded-full text-center font-bold text-xs uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF]"
+              className="w-full py-3.5 rounded-full text-center font-bold text-xs uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF]"
             >
               <MessageCircle className="w-4 h-4" />
               <span>FALAR COM THIAGO NO WHATSAPP</span>
