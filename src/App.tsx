@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SmoothScrollProvider } from './components/providers/SmoothScrollProvider';
 import { HeroScene } from './components/3d/HeroScene';
+import { ReadingProgressBar } from './components/common/ReadingProgressBar';
 import { Navbar } from './components/layout/Navbar';
 import { HeroExecutive } from './components/sections/HeroExecutive';
 import { MetricsBar } from './components/sections/MetricsBar';
@@ -30,13 +31,16 @@ export const App: React.FC = () => {
   return (
     <SmoothScrollProvider>
       <div className="w-full min-h-screen bg-[#F8FAFC] text-[#0F172A] font-kanit antialiased selection:bg-[#0284C7]/20 selection:text-[#0284C7] relative overflow-x-hidden">
-        {/* 1. Global Subtle Ambient 3D Depth Layer */}
+        {/* 1. Global Reading Progress Bar (Fixed Top, 4px, Laranja Energético #FF6B35) */}
+        <ReadingProgressBar />
+
+        {/* 2. Global Subtle Ambient 3D Depth Layer */}
         <HeroScene />
 
-        {/* 2. Fixed Executive Navigation Header with Luxury Light Styling */}
+        {/* 3. Fixed Executive Navigation Header */}
         <Navbar onContactClick={() => openWhatsApp('general')} />
 
-        {/* 3. Main Content Stream */}
+        {/* 4. Main Content Stream */}
         <main className="w-full relative z-10">
           {/* Hero Section: Supreme Authority + Masked Typography + Magnetic Button + 3/7/10 Days SLA */}
           <HeroExecutive onContactClick={() => openWhatsApp('general')} />
@@ -72,7 +76,7 @@ export const App: React.FC = () => {
           <ContactSection onDirectContactClick={() => openWhatsApp('general')} />
         </main>
 
-        {/* 4. Interactive Project Details Modal */}
+        {/* 5. Interactive Project Details Modal */}
         <ProjectModal
           project={selectedProject}
           onClose={handleCloseProject}
