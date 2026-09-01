@@ -149,20 +149,29 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             </span>
           </motion.div>
 
-          {/* 2. NOVA ARTE DO THIAGO NO MOBILE (Sem nenhum card, sem mancha retangular, 100% pura) */}
+          {/* 2. ARTE THIAGO NO MOBILE / TABLET (Solta, sem card, com reflexo de base e rim light) */}
           <motion.div
             initial={{ opacity: 0, y: 15, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-            className="lg:hidden w-full max-w-[290px] sm:max-w-[330px] my-2 sm:my-3 flex items-center justify-center select-none"
+            className="lg:hidden w-full max-w-[320px] sm:max-w-[360px] md:max-w-[440px] my-2 sm:my-3 flex flex-col items-center justify-center relative select-none"
           >
-            <img
-              src="/thiagotcai.png"
-              alt="Thiago Cassol Antunes — Tecnologia & IA"
-              className="w-full h-auto max-h-[360px] sm:max-h-[400px] object-contain transform-gpu"
-              loading="eager"
-              fetchPriority="high"
-            />
+            <div className="relative w-full flex flex-col items-center justify-center">
+              <img
+                src="/thiagotcai.png"
+                alt="Thiago Cassol Antunes — Especialista em Tecnologia, Software e IA"
+                className="w-full h-auto aspect-[1312/1199] max-h-[360px] sm:max-h-[400px] md:max-h-[440px] object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.72)] drop-shadow-[0_0_12px_rgba(0,210,246,0.14)] drop-shadow-[0_1px_3px_rgba(0,210,246,0.18)] transform-gpu"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+
+              {/* Reflexo sutil de base integrado ao fundo no mobile */}
+              <div className="absolute -bottom-1 inset-x-0 flex flex-col items-center justify-center pointer-events-none">
+                <div className="w-[66%] h-5 rounded-[100%] bg-gradient-to-r from-transparent via-[#00D2F6]/14 to-transparent blur-lg" />
+                <div className="w-[48%] h-[1px] bg-gradient-to-r from-transparent via-[#00D2F6]/25 to-transparent blur-[0.6px] -mt-1.5" />
+              </div>
+            </div>
           </motion.div>
 
           {/* 3. Masked Editorial Luxury Headline */}
@@ -284,7 +293,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
         </motion.div>
 
         {/* ─────────────────────────────────────────────────────────────
-            Right Column: NOVA ARTE NO DESKTOP (100% Pura, Sem Fundo, Sem Card, Sem Moldura)
+            Right Column: ARTE THIAGO NO DESKTOP (Solta, sem card, com reflexo de base e rim light)
            ───────────────────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -292,13 +301,28 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
           className="hidden lg:flex lg:col-span-5 xl:col-span-5 items-center justify-center relative select-none z-20"
         >
-          <img
-            src="/thiagotcai.png"
-            alt="Thiago Cassol Antunes — Tecnologia & IA"
-            className="w-full h-auto max-h-[84vh] xl:max-h-[88vh] object-contain transform-gpu transition-transform duration-700 hover:scale-[1.01]"
-            loading="eager"
-            fetchPriority="high"
-          />
+          {/* Container limpo relativo, sem fundo e sem bordas */}
+          <div className="relative w-full max-w-[490px] xl:max-w-[550px] 2xl:max-w-[600px] flex flex-col items-center justify-center">
+            
+            {/* Imagem com Rim Light e Sombra de Silhueta Orgânica */}
+            <img
+              src="/thiagotcai.png"
+              alt="Thiago Cassol Antunes — Especialista em Tecnologia, Software e IA"
+              className="w-full h-auto aspect-[1312/1199] max-h-[80vh] xl:max-h-[84vh] object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.75)] drop-shadow-[0_0_15px_rgba(0,210,246,0.16)] drop-shadow-[0_2px_4px_rgba(0,210,246,0.22)] transform-gpu transition-transform duration-700 hover:scale-[1.01]"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+            />
+
+            {/* Glow Ambiente e Reflexo Discreto Estritamente na Base Inferior */}
+            <div className="absolute -bottom-2 inset-x-0 flex flex-col items-center justify-center pointer-events-none">
+              {/* Reflexo difuso elíptico na base do Hero */}
+              <div className="w-[72%] h-7 rounded-[100%] bg-gradient-to-r from-transparent via-[#00D2F6]/14 to-transparent blur-xl" />
+              {/* Linha de reflexo horizontal discreta integrada ao horizonte da base */}
+              <div className="w-[55%] h-[1px] bg-gradient-to-r from-transparent via-[#00D2F6]/30 to-transparent blur-[0.8px] -mt-2" />
+            </div>
+
+          </div>
         </motion.div>
 
       </div>
