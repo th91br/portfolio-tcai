@@ -299,3 +299,5 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     </section>
   );
 };
+
+export default ProjectsSection;

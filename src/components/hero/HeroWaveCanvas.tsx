@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
 interface HeroWaveCanvasProps {
-  timelineProgress?: number; // 0 to 1 over 8s master cycle
+  timelineProgress?: number;
   isHovered?: boolean;
 }
 
@@ -11,9 +11,15 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
   const isVisibleRef = useRef<boolean>(true);
   const isTabActiveRef = useRef<boolean>(true);
   const prefersReducedMotionRef = useRef<boolean>(false);
+  const mousePosRef = useRef<{ x: number; y: number; targetX: number; targetY: number }>({
+    x: 0,
+    y: 0,
+    targetX: 0,
+    targetY: 0,
+  });
 
   useEffect(() => {
-    // Check prefers-reduced-motion
+    // Prefers-reduced-motion check
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     prefersReducedMotionRef.current = mediaQuery.matches;
     const handleMotionChange = (e: MediaQueryListEvent) => {
@@ -33,17 +39,34 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
 
-    const handleResize = () => {
+    const resize = () => {
       if (!canvas || !canvas.parentElement) return;
-      width = canvas.width = canvas.parentElement.clientWidth;
-      height = canvas.height = canvas.parentElement.clientHeight;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width;
+      height = rect.height;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
     };
-    window.addEventListener('resize', handleResize);
 
-    // IntersectionObserver to pause when offscreen
+    resize();
+    window.addEventListener('resize', resize);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      mousePosRef.current.targetX = x * 35;
+      mousePosRef.current.targetY = y * 20;
+    };
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -56,41 +79,49 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
       observer.observe(canvas.parentElement);
     }
 
-    // Grid definition for 3D undulating wireframe
-    const cols = Math.max(32, Math.min(50, Math.floor(width / 35)));
-    const rows = 20;
+    // Grid definition for 3D undulating dual-tone wireframe (Cyan + Magenta/Purple)
+    const cols = Math.max(45, Math.min(75, Math.floor((width || window.innerWidth) / 24)));
+    const rows = 32;
 
-    // Energy light pulses
+    // Glowing energy nodes traveling along peaks
     interface EnergyPulse {
       col: number;
       row: number;
       speed: number;
-      intensity: number;
-      life: number;
+      radius: number;
+      color: string;
+      coreColor: string;
     }
 
     const pulses: EnergyPulse[] = [
-      { col: 0, row: 8, speed: 0.12, intensity: 1.0, life: 1.0 },
-      { col: 10, row: 12, speed: 0.15, intensity: 0.85, life: 0.7 },
-      { col: 20, row: 6, speed: 0.11, intensity: 0.9, life: 0.9 },
-      { col: 5, row: 15, speed: 0.14, intensity: 0.8, life: 0.6 },
+      { col: 5, row: 8, speed: 0.18, radius: 18, color: 'rgba(0, 210, 246, 0.95)', coreColor: '#FFFFFF' },
+      { col: 18, row: 14, speed: 0.14, radius: 16, color: 'rgba(168, 85, 247, 0.95)', coreColor: '#F3E8FF' },
+      { col: 30, row: 6, speed: 0.20, radius: 20, color: 'rgba(0, 150, 245, 0.95)', coreColor: '#FFFFFF' },
+      { col: 10, row: 22, speed: 0.16, radius: 17, color: 'rgba(192, 132, 252, 0.9)', coreColor: '#FFFFFF' },
+      { col: 40, row: 18, speed: 0.15, radius: 19, color: 'rgba(0, 210, 246, 0.95)', coreColor: '#FFFFFF' },
+      { col: 22, row: 10, speed: 0.17, radius: 16, color: 'rgba(236, 72, 153, 0.9)', coreColor: '#FFFFFF' },
     ];
 
     let time = 0;
 
     const render = () => {
       if (isVisibleRef.current && isTabActiveRef.current && !prefersReducedMotionRef.current) {
-        time += 0.016; // ~60fps step
+        time += 0.016;
+
+        // Smooth mouse spring physics
+        mousePosRef.current.x += (mousePosRef.current.targetX - mousePosRef.current.x) * 0.05;
+        mousePosRef.current.y += (mousePosRef.current.targetY - mousePosRef.current.y) * 0.05;
+
         ctx.clearRect(0, 0, width, height);
 
-        // Center perspective origin around the right card area
-        const originX = width * 0.62;
-        const originY = height * 0.48;
-        const gridWidth = width * 0.9;
-        const gridHeight = height * 0.75;
+        // Perspective origin centered across right 2/3 (behind card and spreading to left)
+        const originX = width * 0.62 + mousePosRef.current.x;
+        const originY = height * 0.45 + mousePosRef.current.y;
+        const gridWidth = width * 1.15;
+        const gridHeight = height * 0.92;
 
         // Calculate 3D points
-        const points: { x: number; y: number; z: number; alpha: number }[][] = [];
+        const points: { x: number; y: number; z: number; alpha: number; isPurple: boolean }[][] = [];
 
         for (let r = 0; r < rows; r++) {
           points[r] = [];
@@ -101,27 +132,32 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
             const u = c / (cols - 1); // 0 to 1
             const xBase = (u - 0.5) * gridWidth;
 
-            // Fluid dual-sine wave elevation math
-            const wave1 = Math.sin(u * 5.2 + time * 0.9 + v * 2.8) * 32;
-            const wave2 = Math.cos(v * 4.5 - time * 0.7 + u * 3.1) * 24;
-            const wave3 = Math.sin((u + v) * 4.0 + time * 1.2) * 16;
-            const z = wave1 + wave2 + wave3;
+            // Harmonically rich 3D wave topography matching reference image
+            const wave1 = Math.sin(u * 6.2 + time * 1.05 + v * 3.5) * 44;
+            const wave2 = Math.cos(v * 5.2 - time * 0.9 + u * 3.8) * 34;
+            const wave3 = Math.sin((u + v) * 5.0 + time * 1.3) * 22;
+            const wave4 = Math.sin(u * 9.5 - time * 0.6) * 12;
+            const z = wave1 + wave2 + wave3 + wave4;
 
-            // Perspective projection with slight isometric tilt
-            const depthFactor = 0.65 + v * 0.45;
+            // Depth factor
+            const depthFactor = 0.58 + v * 0.56;
             const px = originX + xBase * depthFactor;
-            const py = originY + yBase * 0.55 + z * depthFactor;
+            const py = originY + yBase * 0.58 + z * depthFactor;
 
-            // Opacity fades toward edges for cinematic luxury vignette
+            // Edge fade
             const edgeFadeX = Math.sin(u * Math.PI);
             const edgeFadeY = Math.sin(v * Math.PI);
-            const alpha = Math.max(0, Math.min(1, edgeFadeX * edgeFadeY * (0.45 + (z + 40) / 100)));
+            const heightBoost = (z + 55) / 125;
+            const alpha = Math.max(0, Math.min(1, edgeFadeX * edgeFadeY * (0.55 + heightBoost * 0.45)));
 
-            points[r][c] = { x: px, y: py, z, alpha };
+            // Color zoning: Cyan towards front/left, Purple/Magenta towards mid/right
+            const isPurple = u > 0.45 && v < 0.65;
+
+            points[r][c] = { x: px, y: py, z, alpha, isPurple };
           }
         }
 
-        // Draw horizontal grid lines with gradient
+        // Draw horizontal undulating ribbons
         for (let r = 0; r < rows; r++) {
           ctx.beginPath();
           for (let c = 0; c < cols; c++) {
@@ -130,22 +166,23 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
             else ctx.lineTo(p.x, p.y);
           }
           const rowProgress = r / (rows - 1);
-          const strokeAlpha = (0.12 + rowProgress * 0.25) * Math.sin(rowProgress * Math.PI);
-          
-          // TCA Identity: Cyan to Blue
+          const strokeAlpha = (0.18 + rowProgress * 0.38) * Math.sin(rowProgress * Math.PI);
+
+          // Vivid Multi-Harmonic Gradient: Cyan (#00D2F6) -> Electric Blue (#0096F5) -> Purple (#9333EA) -> Magenta (#C084FC)
           const grad = ctx.createLinearGradient(0, 0, width, 0);
           grad.addColorStop(0, `rgba(0, 210, 246, 0)`);
-          grad.addColorStop(0.35, `rgba(0, 210, 246, ${strokeAlpha * 0.7})`);
-          grad.addColorStop(0.65, `rgba(0, 150, 245, ${strokeAlpha})`);
-          grad.addColorStop(0.9, `rgba(1, 94, 239, ${strokeAlpha * 0.8})`);
-          grad.addColorStop(1, `rgba(29, 71, 239, 0)`);
+          grad.addColorStop(0.2, `rgba(0, 210, 246, ${strokeAlpha * 0.95})`);
+          grad.addColorStop(0.5, `rgba(0, 150, 245, ${strokeAlpha * 0.9})`);
+          grad.addColorStop(0.75, `rgba(147, 51, 234, ${strokeAlpha * 0.95})`);
+          grad.addColorStop(0.9, `rgba(192, 132, 252, ${strokeAlpha * 0.75})`);
+          grad.addColorStop(1, `rgba(147, 51, 234, 0)`);
 
           ctx.strokeStyle = grad;
-          ctx.lineWidth = 1.0 + rowProgress * 0.4;
+          ctx.lineWidth = 1.15 + rowProgress * 0.65;
           ctx.stroke();
         }
 
-        // Draw vertical grid lines connecting depth
+        // Draw vertical connector ribs
         for (let c = 0; c < cols; c += 2) {
           ctx.beginPath();
           for (let r = 0; r < rows; r++) {
@@ -154,18 +191,23 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
             else ctx.lineTo(p.x, p.y);
           }
           const colProgress = c / (cols - 1);
-          const vertAlpha = 0.08 * Math.sin(colProgress * Math.PI);
-          ctx.strokeStyle = `rgba(0, 210, 246, ${vertAlpha})`;
-          ctx.lineWidth = 0.8;
+          const vertAlpha = 0.14 * Math.sin(colProgress * Math.PI);
+          
+          if (colProgress > 0.5) {
+            ctx.strokeStyle = `rgba(168, 85, 247, ${vertAlpha})`;
+          } else {
+            ctx.strokeStyle = `rgba(0, 210, 246, ${vertAlpha})`;
+          }
+          ctx.lineWidth = 0.85;
           ctx.stroke();
         }
 
-        // Update and draw traveling energy pulses
+        // Update and draw traveling glowing energy pulses
         pulses.forEach((pulse) => {
           pulse.col += pulse.speed;
           if (pulse.col >= cols - 1) {
             pulse.col = 0;
-            pulse.row = Math.floor(Math.random() * (rows - 4)) + 2;
+            pulse.row = Math.floor(Math.random() * (rows - 6)) + 3;
           }
 
           const cIdx = Math.floor(pulse.col);
@@ -179,22 +221,22 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
             const curX = p1.x + (p2.x - p1.x) * fract;
             const curY = p1.y + (p2.y - p1.y) * fract;
 
-            // Glowing energy node
-            const glowGrad = ctx.createRadialGradient(curX, curY, 0, curX, curY, 16);
-            glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-            glowGrad.addColorStop(0.25, 'rgba(0, 210, 246, 0.75)');
-            glowGrad.addColorStop(0.6, 'rgba(0, 150, 245, 0.3)');
-            glowGrad.addColorStop(1, 'rgba(1, 94, 239, 0)');
+            // Radiant Energy Bloom
+            const glowGrad = ctx.createRadialGradient(curX, curY, 0, curX, curY, pulse.radius);
+            glowGrad.addColorStop(0, pulse.coreColor);
+            glowGrad.addColorStop(0.25, pulse.color);
+            glowGrad.addColorStop(0.7, 'rgba(0, 150, 245, 0.25)');
+            glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
             ctx.fillStyle = glowGrad;
             ctx.beginPath();
-            ctx.arc(curX, curY, 16, 0, Math.PI * 2);
+            ctx.arc(curX, curY, pulse.radius, 0, Math.PI * 2);
             ctx.fill();
 
-            // Core bright point
-            ctx.fillStyle = '#FFFFFF';
+            // Core brilliant point
+            ctx.fillStyle = pulse.coreColor;
             ctx.beginPath();
-            ctx.arc(curX, curY, 1.8, 0, Math.PI * 2);
+            ctx.arc(curX, curY, 2.2, 0, Math.PI * 2);
             ctx.fill();
           }
         });
@@ -207,7 +249,8 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
 
     return () => {
       cancelAnimationFrame(animFrameId.current);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       mediaQuery.removeEventListener('change', handleMotionChange);
       observer.disconnect();
@@ -217,7 +260,7 @@ export const HeroWaveCanvas: React.FC<HeroWaveCanvasProps> = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-0 select-none opacity-85"
+      className="absolute inset-0 w-full h-full pointer-events-none z-0 select-none opacity-95"
       aria-hidden="true"
     />
   );

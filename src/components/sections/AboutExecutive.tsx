@@ -17,10 +17,10 @@ export const AboutExecutive: React.FC = () => {
   return (
     <section
       id="about"
-      className="relative w-full bg-[#050914] text-[#F3F5F7] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-[#151F38] overflow-hidden z-10"
+      className="relative w-full bg-[#F8FAFC] text-[#0F172A] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-slate-200/80 overflow-hidden z-10"
     >
       {/* Background ambient lighting */}
-      <div className="absolute top-1/3 right-1/4 translate-x-1/2 w-[550px] h-[550px] bg-[#00D2F6]/5 blur-[180px] pointer-events-none rounded-full" />
+      <div className="absolute top-1/3 right-1/4 translate-x-1/2 w-[550px] h-[550px] bg-sky-100/50 blur-[180px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
@@ -33,8 +33,8 @@ export const AboutExecutive: React.FC = () => {
             className="lg:col-span-5 relative flex justify-center"
           >
             <div className="relative w-full max-w-[420px]">
-              <div className="relative w-full aspect-[4/5] rounded-[32px] sm:rounded-[40px] overflow-hidden bg-[#080D18] border border-[#151F38] p-2 shadow-2xl group hover:border-[#00D2F6]/50 transition-all duration-500">
-                <div className="relative w-full h-full rounded-[26px] sm:rounded-[34px] overflow-hidden">
+              <div className="relative w-full aspect-[4/5] rounded-[32px] sm:rounded-[40px] overflow-hidden bg-white border-2 border-slate-200/90 p-2 shadow-[0_20px_50px_rgba(15,23,42,0.08)] group hover:border-[#0284C7]/50 transition-all duration-500">
+                <div className="relative w-full h-full rounded-[26px] sm:rounded-[34px] overflow-hidden bg-slate-100">
                   <img
                     src="/assets/branding/thiago_sunset.jpg"
                     alt="Thiago Cassol Antunes - Fundador & Desenvolvedor Estratégico TCAI"
@@ -43,14 +43,14 @@ export const AboutExecutive: React.FC = () => {
                   />
 
                   {/* Scrim overlay */}
-                  <div className="absolute inset-x-0 bottom-0 pt-16 pb-5 px-5 bg-gradient-to-t from-[#050914] via-[#050914]/85 to-transparent flex flex-col justify-end text-left">
-                    <div className="text-xs font-bold text-[#00D2F6] uppercase tracking-wider mb-1">
+                  <div className="absolute inset-x-0 bottom-0 pt-16 pb-5 px-5 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent flex flex-col justify-end text-left text-white">
+                    <div className="text-xs font-bold text-sky-400 uppercase tracking-wider mb-1">
                       Thiago Cassol Antunes • 35 Anos
                     </div>
                     <div className="text-sm font-bold text-white uppercase tracking-tight font-kanit">
                       Diretor de Tecnologia & Engenharia de IA
                     </div>
-                    <div className="text-xs text-[#AEB7C4] font-light">
+                    <div className="text-xs text-slate-300 font-light">
                       Caxias do Sul / Atendimento Global
                     </div>
                   </div>
@@ -58,8 +58,8 @@ export const AboutExecutive: React.FC = () => {
               </div>
 
               {/* Floating Verified Badge */}
-              <div className="absolute -bottom-3 -right-3 px-3.5 py-1.5 rounded-xl bg-[#050914] border border-[#00D2F6]/50 backdrop-blur-md shadow-2xl flex items-center gap-2 text-[10px] sm:text-xs font-mono font-bold text-[#00D2F6] z-20">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#00D2F6]" />
+              <div className="absolute -bottom-3 -right-3 px-3.5 py-1.5 rounded-xl bg-white border border-[#0284C7]/50 backdrop-blur-md shadow-xl flex items-center gap-2 text-[10px] sm:text-xs font-mono font-bold text-[#0284C7] z-20">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
                 <span>EXPERIÊNCIA PRÁTICA 5+ ANOS</span>
               </div>
             </div>
@@ -73,22 +73,22 @@ export const AboutExecutive: React.FC = () => {
             transition={{ duration: 0.7 }}
             className="lg:col-span-7 flex flex-col items-start space-y-6"
           >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#080D18] border border-[#151F38] shadow-inner">
-              <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
-              <span className="text-xs font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 border border-sky-200 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-[#0284C7]" />
+              <span className="text-xs font-mono font-bold tracking-widest text-[#0284C7] uppercase">
                 QUEM ESTÁ POR TRÁS DA SUA SOLUÇÃO
               </span>
             </div>
 
-            <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-white leading-tight">
+            <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-[#090D1A] leading-tight">
               {ABOUT_DATA.heading}
             </h2>
 
-            <div className="text-xs font-mono text-[#00D2F6] font-bold uppercase tracking-wider">
+            <div className="text-xs font-mono text-[#0284C7] font-bold uppercase tracking-wider">
               {ABOUT_DATA.role}
             </div>
 
-            <div className="space-y-4 text-sm sm:text-base text-[#AEB7C4] font-light leading-relaxed">
+            <div className="space-y-4 text-sm sm:text-base text-[#475569] font-normal leading-relaxed">
               <p>
                 Sou Thiago Cassol Antunes, tenho 35 anos e sou movido pela curiosidade por tecnologia, inovação e Inteligência Artificial. Há mais de 5 anos estudo, desenvolvo e aplico tecnologia na teoria e na prática, transformando ideias e problemas reais em soluções digitais funcionais.
               </p>
@@ -99,16 +99,16 @@ export const AboutExecutive: React.FC = () => {
 
             {/* Competencies Grid */}
             <div className="w-full pt-2">
-              <div className="text-xs font-mono text-white uppercase font-bold tracking-wider mb-3">
+              <div className="text-xs font-mono text-slate-800 uppercase font-bold tracking-wider mb-3">
                 Pilares de Especialidade Técnica:
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
                 {competencies.map((comp, cIdx) => (
                   <div
                     key={cIdx}
-                    className="p-2.5 rounded-xl bg-[#080D18] border border-[#151F38] flex items-center gap-2.5 text-xs text-[#F3F5F7]"
+                    className="p-2.5 rounded-xl bg-white border border-slate-200 flex items-center gap-2.5 text-xs text-slate-800 font-medium shadow-xs"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-[#00D2F6] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#0284C7] shrink-0" />
                     <span>{comp}</span>
                   </div>
                 ))}
@@ -121,16 +121,10 @@ export const AboutExecutive: React.FC = () => {
                 href={createQuickWhatsAppUrl('Conversa Direta com Thiago')}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto px-8 py-4 rounded-full text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
-                  boxShadow: '0px 4px 22px rgba(0, 210, 246, 0.45), inset 0px 1px 2px rgba(255, 255, 255, 0.6)',
-                  outline: '2px solid white',
-                  outlineOffset: '-2px',
-                }}
+                className="w-full sm:w-auto px-8 py-4 rounded-full text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer bg-gradient-to-r from-[#0284C7] via-[#0096F5] to-[#015EEF]"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>{ABOUT_DATA.ctaButton}</span>
+                <MessageCircle className="w-4 h-4 text-white" />
+                <span className="font-kanit tracking-wide">{ABOUT_DATA.ctaButton}</span>
               </a>
             </div>
           </motion.div>
@@ -139,3 +133,5 @@ export const AboutExecutive: React.FC = () => {
     </section>
   );
 };
+
+export default AboutExecutive;

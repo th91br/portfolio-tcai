@@ -177,7 +177,7 @@ export const ProjectSimulator: React.FC = () => {
                     <span
                       className={`text-[9px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded ${
                         isSelected
-                          ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30'
+                          ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 font-bold'
                           : 'bg-[#050914] text-[#AEB7C4]'
                       }`}
                     >
@@ -217,7 +217,7 @@ export const ProjectSimulator: React.FC = () => {
                     <span className="text-[#00D2F6] font-mono text-[10px] sm:text-[11px] uppercase font-bold tracking-widest">
                       // ESCOPO E ARQUITETURA RECOMENDADA
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-[#00D2F6]/10 text-[#00D2F6] border border-[#00D2F6]/20">
+                    <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-[#00D2F6]/10 text-[#00D2F6] border border-[#00D2F6]/20 font-bold">
                       {currentArchetype.slaTag}
                     </span>
                   </div>
@@ -263,7 +263,7 @@ export const ProjectSimulator: React.FC = () => {
               </div>
 
               {/* Right Column: Execution Metrics & Direct Action (5 cols) */}
-              <div className="lg:col-span-5 flex flex-col justify-between h-full bg-[#050914] rounded-2xl border border-[#151F38] p-5 space-y-4">
+              <div className="lg:col-span-5 flex flex-col justify-between h-full bg-[#050914] rounded-2xl border border-[#151F38] p-5 space-y-4 shadow-inner">
                 
                 {/* Timeline Box */}
                 <div className="flex items-center justify-between pb-3 border-b border-[#151F38]">
@@ -293,13 +293,7 @@ export const ProjectSimulator: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleStartProject}
-                  className="w-full py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg hover:scale-102 active:scale-98"
-                  style={{
-                    background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
-                    boxShadow: '0px 4px 18px rgba(0, 210, 246, 0.4)',
-                    outline: '2px solid white',
-                    outlineOffset: '-2px',
-                  }}
+                  className="w-full py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg hover:scale-102 active:scale-98 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF]"
                 >
                   <MessageCircle className="w-4 h-4 text-white" />
                   <span>SOLICITAR ESTE PROJETO NO WHATSAPP</span>
@@ -313,3 +307,5 @@ export const ProjectSimulator: React.FC = () => {
     </section>
   );
 };
+
+export default ProjectSimulator;

@@ -29,14 +29,14 @@ export const App: React.FC = () => {
 
   return (
     <SmoothScrollProvider>
-      <div className="w-full min-h-screen bg-[#050914] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-x-hidden">
-        {/* 1. Global High-Performance 3D WebGL Scene (R3F Layer: fixed inset-0 -z-10) */}
+      <div className="w-full min-h-screen bg-[#F8FAFC] text-[#0F172A] font-kanit antialiased selection:bg-[#0284C7]/20 selection:text-[#0284C7] relative overflow-x-hidden">
+        {/* 1. Global Subtle Ambient 3D Depth Layer */}
         <HeroScene />
 
-        {/* 2. Fixed Executive Navigation Header with Official Logo */}
+        {/* 2. Fixed Executive Navigation Header with Luxury Light Styling */}
         <Navbar onContactClick={() => openWhatsApp('general')} />
 
-        {/* 3. Main Transparent Content Stream */}
+        {/* 3. Main Content Stream */}
         <main className="w-full relative z-10">
           {/* Hero Section: Supreme Authority + Masked Typography + Magnetic Button + 3/7/10 Days SLA */}
           <HeroExecutive onContactClick={() => openWhatsApp('general')} />

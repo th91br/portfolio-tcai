@@ -34,24 +34,24 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'bg-[#050914]/95 backdrop-blur-xl border-b border-[#151F38] py-2.5 shadow-2xl'
+            ? 'bg-[#03060C]/95 backdrop-blur-xl border-b border-[#152238] py-2.5 shadow-2xl'
             : 'bg-transparent py-4 sm:py-5'
         }`}
       >
         <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 lg:gap-5">
           
-          {/* 1. Official Brand Logo */}
+          {/* 1. Official Brand Logo (Sem caixas brancas, 100% transparente e integrado) */}
           <a
             href="#hero"
-            className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3.5 group cursor-pointer shrink-0"
             aria-label="Thiago Cassol Antunes - Página Inicial"
           >
-            {/* Official Logo Badge */}
-            <div className="h-9 sm:h-10 px-2 py-0.5 bg-white rounded-xl shadow-lg shadow-[#00D2F6]/10 border border-white/20 flex items-center justify-center group-hover:scale-105 group-hover:shadow-[#00D2F6]/30 transition-all duration-300">
+            {/* Logo Oficial Transparente */}
+            <div className="h-10 sm:h-12 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <img
-                src="/assets/branding/tca_logo.png"
+                src="/logo_tca.png"
                 alt="Logo Oficial TCA - Thiago Cassol Antunes"
-                className="h-full w-auto max-h-6 sm:max-h-7 object-contain block"
+                className="h-full w-auto max-h-9 sm:max-h-11 object-contain block drop-shadow-[0_2px_12px_rgba(0,210,246,0.35)]"
                 loading="eager"
               />
             </div>
@@ -68,7 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
           </a>
 
           {/* 2. Desktop Centered Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 px-4.5 xl:px-5 py-2 rounded-full bg-[#080D18]/90 border border-[#151F38] backdrop-blur-md shadow-lg shadow-black/40">
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 px-5 py-2 rounded-full bg-[#060B18]/90 border border-[#152238] backdrop-blur-md shadow-lg shadow-black/40">
             {navLinks.map((link) => (
               <a
                 key={link.label}
@@ -83,7 +83,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
           {/* 3. Right Action CTAs & Mobile Toggle */}
           <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             {/* Availability Pill on Desktop */}
-            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#080D18] border border-emerald-500/30 text-[10px] font-mono text-emerald-400 font-bold shadow-inner">
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#060B18] border border-emerald-500/30 text-[10px] font-mono text-emerald-400 font-bold shadow-inner">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span>2 VAGAS ESTE MÊS</span>
             </div>
@@ -93,12 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
               href={createQuickWhatsAppUrl('Novo Projeto pelo Cabeçalho')}
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:scale-105 shadow-xl shadow-[#00D2F6]/25 shrink-0 cursor-pointer whitespace-nowrap"
-              style={{
-                background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
-                outline: '2px solid white',
-                outlineOffset: '-2px',
-              }}
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:scale-105 shadow-xl shadow-[#00D2F6]/25 shrink-0 cursor-pointer whitespace-nowrap bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF]"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               <span>FALAR NO WHATSAPP</span>
@@ -108,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl bg-[#080D18] border border-[#151F38] text-[#AEB7C4] hover:text-white hover:border-[#00D2F6]/50 transition-colors cursor-pointer"
+              className="lg:hidden p-2 rounded-xl bg-[#060B18] border border-[#152238] text-[#AEB7C4] hover:text-white hover:border-[#00D2F6]/50 transition-colors cursor-pointer"
               aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -125,14 +120,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-x-0 top-[60px] z-40 bg-[#050914]/98 border-b border-[#151F38] backdrop-blur-2xl p-6 lg:hidden flex flex-col gap-4 shadow-2xl"
+            className="fixed inset-x-0 top-[60px] z-40 bg-[#03060C]/98 border-b border-[#152238] backdrop-blur-2xl p-6 lg:hidden flex flex-col gap-4 shadow-2xl"
           >
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-base uppercase font-bold text-[#F3F5F7] hover:text-[#00D2F6] transition-colors py-2.5 border-b border-[#151F38]/50 flex items-center justify-between"
+                className="text-base uppercase font-bold text-[#F3F5F7] hover:text-[#00D2F6] transition-colors py-2.5 border-b border-[#152238]/50 flex items-center justify-between"
               >
                 <span>{link.label}</span>
                 <ArrowUpRight className="w-4 h-4 text-slate-500" />
@@ -144,12 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
               target="_blank"
               rel="noreferrer"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full mt-2 py-3.5 rounded-full text-center font-bold text-xs uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
-                outline: '2px solid white',
-                outlineOffset: '-2px',
-              }}
+              className="w-full mt-2 py-3.5 rounded-full text-center font-bold text-xs uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF]"
             >
               <MessageCircle className="w-4 h-4" />
               <span>FALAR COM THIAGO NO WHATSAPP</span>
@@ -160,3 +150,5 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
     </>
   );
 };
+
+export default Navbar;

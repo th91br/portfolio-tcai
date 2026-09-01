@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, ArrowUpRight, MessageCircle, Sparkles, Send, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
+import { Mail, ArrowUpRight, MessageCircle, Sparkles, Send, ShieldCheck, Clock, CheckCircle2, ChevronUp } from 'lucide-react';
 import {
   CONTACT_CONFIG,
   createWhatsAppLeadUrl,
@@ -72,18 +72,22 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     setSubmissionType('email');
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <section
       id="contact"
-      className="relative w-full bg-[#050914] text-[#F3F5F7] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-[#151F38] overflow-hidden z-10"
+      className="relative w-full bg-[#03060C] text-[#F3F5F7] pt-20 sm:pt-28 pb-8 sm:pb-10 px-4 sm:px-6 md:px-10 border-t border-[#151F38] overflow-hidden z-10"
     >
       {/* Background ambient accents */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-br from-[#00D2F6]/10 via-[#015EEF]/5 to-transparent blur-[180px] pointer-events-none rounded-full" />
 
       <div className="max-w-6xl mx-auto w-full relative z-10">
         {/* Top Call to Action Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#080D18] border border-[#151F38] shadow-inner mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#060B18] border border-[#151F38] shadow-inner mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
             <span className="text-xs font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
               VAMOS CONVERSAR SOBRE SEU PROJETO
@@ -100,7 +104,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         </div>
 
         {/* Lead Form & Channels Card */}
-        <div className="bg-[#080D18] border border-[#151F38] rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center backdrop-blur-xl">
+        <div className="bg-[#060B18] border border-[#151F38] rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center backdrop-blur-xl">
           
           {/* Left Column: Direct Channels & Guarantees */}
           <div className="lg:col-span-5 space-y-6">
@@ -135,18 +139,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 href={`https://wa.me/${CONTACT_CONFIG.whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#050914] border border-[#151F38] hover:border-[#00D2F6] transition-all text-xs font-mono text-white group shadow-md"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#040813] border border-[#151F38] hover:border-[#00D2F6] transition-all text-xs font-mono text-white group shadow-md"
               >
                 <div className="flex items-center gap-2.5">
                   <MessageCircle className="w-4 h-4 text-[#00D2F6]" />
                   <span className="font-bold">WhatsApp Direto</span>
                 </div>
-                <span className="text-xs text-[#AEB7C4] group-hover:text-[#00D2F6] font-bold">{CONTACT_CONFIG.whatsappDisplay}</span>
+                <span className="text-xs text-[#00D2F6] font-bold">{CONTACT_CONFIG.whatsappDisplay}</span>
               </a>
 
               <a
                 href={`mailto:${CONTACT_CONFIG.email}`}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#050914] border border-[#151F38] hover:border-[#00D2F6] transition-all text-xs font-mono text-white group shadow-md"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#040813] border border-[#151F38] hover:border-[#00D2F6] transition-all text-xs font-mono text-white group shadow-md"
               >
                 <div className="flex items-center gap-2.5">
                   <Mail className="w-4 h-4 text-[#00D2F6]" />
@@ -158,7 +162,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           </div>
 
           {/* Right Column: Proposal Form */}
-          <div className="lg:col-span-7 bg-[#050914] rounded-2xl border border-[#151F38] p-5 sm:p-7 shadow-inner">
+          <div className="lg:col-span-7 bg-[#040813] rounded-2xl border border-[#151F38] p-5 sm:p-7 shadow-inner">
             {isSubmitted ? (
               <div className="py-10 text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-[#00D2F6]/20 border border-[#00D2F6] text-[#00D2F6] flex items-center justify-center mx-auto shadow-lg shadow-[#00D2F6]/20">
@@ -191,7 +195,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       placeholder="Ex: Carlos Silva / Nexus"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
+                      className="w-full bg-[#060B18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#00D2F6] transition-colors"
                     />
                   </div>
 
@@ -205,7 +209,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       placeholder="(54) 99999-9999 ou email"
                       value={contactInfo}
                       onChange={(e) => setContactInfo(e.target.value)}
-                      className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
+                      className="w-full bg-[#060B18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#00D2F6] transition-colors"
                     />
                   </div>
                 </div>
@@ -217,10 +221,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <select
                     value={interest}
                     onChange={(e) => setInterest(e.target.value)}
-                    className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#00D2F6] transition-colors"
+                    className="w-full bg-[#060B18] border border-[#151F38] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#00D2F6] transition-colors"
                   >
                     {PROJECT_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value} className="bg-[#080D18] text-white">
+                      <option key={opt.value} value={opt.value} className="bg-[#060B18] text-white">
                         {opt.label}
                       </option>
                     ))}
@@ -236,22 +240,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     placeholder="Conte brevemente o que você deseja construir ou automatizar..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full bg-[#080D18] border border-[#151F38] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors resize-none"
+                    className="w-full bg-[#060B18] border border-[#151F38] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#00D2F6] transition-colors resize-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <button
                     type="submit"
-                    className="w-full rounded-full text-white font-bold uppercase tracking-wider py-3 text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg hover:scale-102 active:scale-98"
-                    style={{
-                      background: 'linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%)',
-                      boxShadow: '0px 4px 18px rgba(0, 210, 246, 0.4)',
-                      outline: '2px solid white',
-                      outlineOffset: '-2px',
-                    }}
+                    className="w-full rounded-full text-white font-bold uppercase tracking-wider py-3 text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg hover:scale-102 active:scale-98 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF]"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-4 h-4 text-white" />
                     <span>ENVIAR NO WHATSAPP</span>
                   </button>
 
@@ -259,7 +257,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     type="button"
                     onClick={handleSendEmail}
                     disabled={isSubmitting}
-                    className="w-full py-3 rounded-full border border-[#151F38] hover:border-[#00D2F6] bg-[#080D18] text-[#AEB7C4] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    className="w-full py-3 rounded-full border border-[#151F38] hover:border-[#00D2F6] bg-[#060B18] text-[#AEB7C4] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
                   >
                     <Mail className="w-4 h-4 text-[#00D2F6]" />
                     <span>{isSubmitting ? 'Enviando...' : 'Enviar por E-mail'}</span>
@@ -270,13 +268,49 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           </div>
         </div>
 
-        {/* Footer Signature */}
-        <div className="mt-12 pt-6 border-t border-[#151F38] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#AEB7C4]/80 font-mono">
-          <div>
-            © {new Date().getFullYear()} <span className="text-white font-bold">Thiago Cassol Antunes (TCAI)</span>. Todos os direitos reservados.
+        {/* ─────────────────────────────────────────────────────────────
+            Executive Footer (Enquadramento Perfeito & Zero Espaço Vazio)
+           ───────────────────────────────────────────────────────────── */}
+        <div className="mt-12 sm:mt-16 pt-6 border-t border-[#151F38] flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono">
+          {/* Brand & Copyright */}
+          <div className="flex items-center gap-3 text-[#AEB7C4]">
+            <img
+              src="/logo_tca.png"
+              alt="Logo TCA"
+              className="h-6 w-auto object-contain opacity-90"
+            />
+            <span>
+              © {new Date().getFullYear()} <span className="text-white font-bold">Thiago Cassol Antunes (TCAI)</span>. Todos os direitos reservados.
+            </span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-[#00D2F6]">⚡ Caxias do Sul / RS • Atendimento Global</span>
+
+          {/* Quick Nav Links */}
+          <div className="flex items-center gap-4 text-[11px] text-[#AEB7C4]">
+            <a href="#hero" className="hover:text-[#00D2F6] transition-colors">Início</a>
+            <span>•</span>
+            <a href="#services" className="hover:text-[#00D2F6] transition-colors">Soluções</a>
+            <span>•</span>
+            <a href="#projects" className="hover:text-[#00D2F6] transition-colors">Cases</a>
+            <span>•</span>
+            <a href="#about" className="hover:text-[#00D2F6] transition-colors">Sobre</a>
+          </div>
+
+          {/* Location & Back to Top */}
+          <div className="flex items-center gap-3">
+            <span className="text-[#00D2F6] flex items-center gap-1.5 text-[11px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
+              Caxias do Sul / RS • Atendimento Global
+            </span>
+
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="p-1.5 rounded-lg bg-[#060B18] border border-[#151F38] text-[#AEB7C4] hover:text-[#00D2F6] hover:border-[#00D2F6]/40 transition-all cursor-pointer"
+              title="Voltar ao topo"
+              aria-label="Voltar ao topo"
+            >
+              <ChevronUp className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 
@@ -284,3 +318,5 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     </section>
   );
 };
+
+export default ContactSection;

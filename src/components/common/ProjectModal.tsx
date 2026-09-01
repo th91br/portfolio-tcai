@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Sparkles, Layers, Check } from 'lucide-react';
+import { X, ExternalLink, Sparkles, Layers, Check, Copy } from 'lucide-react';
 import { ProjectItem } from '../../types';
 
 interface ProjectModalProps {
@@ -14,8 +14,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
 
   if (!project) return null;
 
-  const images = [project.col1TopImage, project.col1BottomImage, project.col2Image];
-  const currentPreview = activeImage || project.col2Image;
+  const images = [project.col1TopImage, project.col1BottomImage, project.col2Image].filter(Boolean) as string[];
+  const currentPreview = activeImage || project.col2Image || project.col1TopImage;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -32,7 +32,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/85 backdrop-blur-md"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-md"
         />
 
         {/* Modal Window */}
@@ -41,135 +41,118 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 20 }}
           transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-          className="relative w-full max-w-4xl bg-[#080D18] border border-[#151F38] rounded-3xl overflow-hidden shadow-2xl z-10 text-[#F3F5F7] flex flex-col max-h-[90vh]"
+          className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl z-10 text-[#0F172A] flex flex-col max-h-[90vh]"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#151F38] bg-[#050914]/80">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/80">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#00D2F6]/15 border border-[#00D2F6]/40 text-[#00D2F6] uppercase tracking-wider">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-sky-50 border border-sky-200 text-[#0284C7] uppercase tracking-wider">
                 {project.category}
               </span>
-              <h2 className="text-xl font-bold uppercase tracking-tight text-white">
+              <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#090D1A] font-kanit">
                 {project.name}
               </h2>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 transition-colors cursor-pointer"
               aria-label="Fechar modal de projeto"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Content Body */}
-          <div className="p-6 overflow-y-auto space-y-6">
-            {/* Main Stage Image with Browser Frame */}
-            <div className="relative w-full rounded-2xl overflow-hidden border border-[#151F38] bg-[#050914] flex flex-col shadow-2xl group">
-              {/* Browser Bar */}
-              <div className="w-full bg-[#080D18] px-4 py-2 border-b border-[#151F38] flex items-center justify-between select-none">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#EF4444]/80" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]/80" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#10B981]/80" />
-                </div>
-                <span className="text-xs font-mono text-[#00D2F6] truncate">
-                  {project.liveUrl}
-                </span>
-                <span className="text-[11px] font-mono text-[#AEB7C4] uppercase">
-                  1440 × 900 HD
-                </span>
-              </div>
-
-              <div className="relative w-full aspect-[16/10] overflow-hidden bg-[#050914]">
+          {/* Scrollable Body */}
+          <div className="overflow-y-auto p-6 sm:p-8 space-y-6 flex-1">
+            {/* Main Preview Image */}
+            {currentPreview && (
+              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-md">
                 <img
                   src={currentPreview}
                   alt={project.name}
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
-            </div>
+            )}
 
-            {/* Thumbnail Selectors */}
-            <div className="grid grid-cols-3 gap-3">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setActiveImage(img)}
-                  className={`relative aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                    currentPreview === img
-                      ? 'border-[#00D2F6] ring-2 ring-[#00D2F6]/30 scale-[1.02]'
-                      : 'border-[#151F38] hover:border-[#0096F5] opacity-70 hover:opacity-100'
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`Prévia ${idx + 1}`}
-                    className="w-full h-full object-cover object-top"
-                  />
-                </button>
-              ))}
-            </div>
-
-            {/* Project Details */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-              <div className="md:col-span-2 space-y-3">
-                <h3 className="text-sm uppercase tracking-widest font-semibold text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#00D2F6]" />
-                  Visão Geral do Projeto
-                </h3>
-                <p className="text-[#AEB7C4] text-sm leading-relaxed font-light">
-                  {project.description ||
-                    'Solução digital estratégica desenvolvida para aliar robustez tecnológica, experiência do usuário e foco em resultados de negócio.'}
-                </p>
-
-                {project.technologies && project.technologies.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {project.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-xs font-mono px-2.5 py-1 rounded-md bg-[#00D2F6]/10 border border-[#00D2F6]/20 text-[#00D2F6]"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="bg-[#050914] p-4 rounded-2xl border border-[#151F38] space-y-3 flex flex-col justify-between">
-                <div>
-                  <div className="text-xs uppercase text-slate-500 tracking-wider">Identificador</div>
-                  <div className="text-lg font-bold text-white font-mono">{project.number} // {project.category}</div>
-                </div>
-
-                <div className="flex gap-2">
+            {/* Thumbnails row */}
+            {images.length > 1 && (
+              <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                {images.map((img, idx) => (
                   <button
+                    key={idx}
                     type="button"
-                    onClick={handleCopyLink}
-                    className="flex-1 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs uppercase font-medium tracking-wider flex items-center justify-center gap-1.5 transition-colors text-[#AEB7C4] cursor-pointer"
+                    onClick={() => setActiveImage(img)}
+                    className={`relative w-24 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
+                      currentPreview === img
+                        ? 'border-[#0284C7] shadow-md scale-105'
+                        : 'border-slate-200 opacity-70 hover:opacity-100'
+                    }`}
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Layers className="w-3.5 h-3.5" />}
-                    <span>{copied ? 'Copiado' : 'Link'}</span>
+                    <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
                   </button>
+                ))}
+              </div>
+            )}
 
-                  <a
-                    href={project.liveUrl || '#'}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 py-2 px-3 rounded-xl bg-[#00D2F6] hover:bg-[#0096F5] text-[#050914] text-xs uppercase font-bold tracking-wider flex items-center justify-center gap-1.5 transition-colors shadow-sm"
-                  >
-                    <span>Abrir</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+            {/* Description & Narrative */}
+            <div>
+              <h3 className="text-sm font-mono text-[#0284C7] uppercase font-bold tracking-wider mb-2">
+                Sobre a Solução & Impacto
+              </h3>
+              <p className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed">
+                {project.description}
+              </p>
+            </div>
+
+            {/* Technologies */}
+            {project.technologies && project.technologies.length > 0 && (
+              <div>
+                <h3 className="text-xs font-mono text-slate-500 uppercase font-bold tracking-wider mb-2">
+                  Stack Tecnológico Empregado
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((t) => (
+                    <span
+                      key={t}
+                      className="px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-mono text-slate-700 font-medium"
+                    >
+                      {t}
+                    </span>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
+          </div>
+
+          {/* Footer Actions */}
+          <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? 'Link Copiado!' : 'Copiar Link'}</span>
+            </button>
+
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0096F5] to-[#015EEF] hover:scale-105 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer shadow-md shadow-sky-500/20"
+              >
+                <span>Acessar Projeto ao Vivo</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
           </div>
         </motion.div>
       </div>
     </AnimatePresence>
   );
 };
+
+export default ProjectModal;
