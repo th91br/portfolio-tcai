@@ -105,9 +105,9 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
       className="relative w-full min-h-[100dvh] h-auto lg:h-[100dvh] bg-[#03060C] text-[#F3F5F7] pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 md:px-10 lg:px-12 xl:px-16 flex items-center justify-center overflow-hidden z-10 select-none"
     >
       {/* ─────────────────────────────────────────────────────────────
-          1. EFEITO IRIDESCENCE EM TODO O FUNDO DO HERO (Atrás de tudo, z-0)
+          1. EFEITO IRIDESCENCE EM TODO O FUNDO DO HERO (O Efeito É o Hero, z-0)
          ───────────────────────────────────────────────────────────── */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto z-0 opacity-40 lg:opacity-55">
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto z-0 opacity-45 lg:opacity-60">
         <Iridescence
           color={[0.0, 0.82, 0.96]} // Ciano Elétrico TCAI (#00D2F6)
           speed={0.7}
@@ -120,18 +120,6 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#03060C] via-[#03060C]/70 to-transparent pointer-events-none z-10" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#03060C] via-[#03060C]/70 to-transparent pointer-events-none z-10" />
       </div>
-
-      {/* ─────────────────────────────────────────────────────────────
-          LIGHT BRIDGE: Faixa difusa e visível azul-ciano conectando opticamente a Headline à Imagem
-         ───────────────────────────────────────────────────────────── */}
-      <motion.div
-        animate={{
-          opacity: [0.65, 0.90, 0.65],
-          scaleY: [0.94, 1.06, 0.94],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="hidden lg:block absolute top-[45%] left-[26%] -translate-y-1/2 w-[54%] h-44 bg-[radial-gradient(ellipse_at_center,rgba(0,210,246,0.22)_0%,rgba(0,180,216,0.08)_50%,transparent_75%)] blur-[75px] pointer-events-none z-20"
-      />
 
       {/* ─────────────────────────────────────────────────────────────
           2. MAIN CONTENT STREAM (À Frente do Efeito, z-20)
@@ -161,42 +149,21 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             </span>
           </motion.div>
 
-          {/* 2. NOVA ARTE DO THIAGO NO MOBILE COM AMBIENT TECH LIGHT SPILL VISÍVEL (Abaixo de Disponibilidade e Acima de Headline) */}
-          <div className="lg:hidden w-full max-w-[290px] sm:max-w-[330px] relative isolate my-2 sm:my-3 flex items-center justify-center select-none">
-            
-            {/* Movimento e Camadas de Iluminação Ambiental com Stacking Context Isolado */}
-            <motion.div
-              animate={{
-                opacity: [0.90, 1, 0.90],
-                scale: [0.98, 1.02, 0.98],
-              }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-0 pointer-events-none z-0"
-            >
-              {/* Fonte 1: Ciano Tecnológico Vivo nos hologramas superiores */}
-              <div className="absolute -top-3 inset-x-0 h-44 bg-[radial-gradient(ellipse_at_top,rgba(0,210,246,0.45)_0%,rgba(1,94,239,0.20)_45%,transparent_75%)] blur-[40px]" />
-              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-48 h-28 bg-[radial-gradient(ellipse_at_center,rgba(0,210,246,0.60)_0%,transparent_70%)] blur-[25px]" />
-              
-              {/* Fonte 2: Laranja Forte de Contraste na base do Reveal */}
-              <div className="absolute -bottom-4 inset-x-0 h-36 bg-[radial-gradient(ellipse_at_bottom,rgba(255,107,53,0.45)_0%,rgba(255,140,0,0.18)_45%,transparent_75%)] blur-[35px]" />
-              <div className="absolute bottom-0 right-4 w-40 h-24 bg-[radial-gradient(ellipse_at_center,rgba(255,107,53,0.55)_0%,transparent_70%)] blur-[20px]" />
-
-              {/* Fonte 3: Branco Premium para separação nítida na nuca/ombros */}
-              <div className="absolute top-[22%] left-1/2 -translate-x-1/2 w-32 h-32 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.20)_0%,transparent_70%)] blur-[25px]" />
-            </motion.div>
-
-            {/* Imagem em alta definição com drop-shadows luminescentes visíveis */}
-            <motion.img
-              initial={{ opacity: 0, y: 15, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          {/* 2. NOVA ARTE DO THIAGO NO MOBILE (Sem nenhum card, sem mancha retangular, 100% pura) */}
+          <motion.div
+            initial={{ opacity: 0, y: 15, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+            className="lg:hidden w-full max-w-[290px] sm:max-w-[330px] my-2 sm:my-3 flex items-center justify-center select-none"
+          >
+            <img
               src="/thiagotcai.png"
               alt="Thiago Cassol Antunes — Tecnologia & IA"
-              className="relative z-10 w-full h-auto max-h-[360px] sm:max-h-[400px] object-contain drop-shadow-[0_0_25px_rgba(0,210,246,0.65)] drop-shadow-[0_15px_35px_rgba(255,107,53,0.45)] drop-shadow-[0_-5px_15px_rgba(255,255,255,0.20)] [mask-image:linear-gradient(to_bottom,black_90%,transparent_100%)] transform-gpu"
+              className="w-full h-auto max-h-[360px] sm:max-h-[400px] object-contain transform-gpu"
               loading="eager"
               fetchPriority="high"
             />
-          </div>
+          </motion.div>
 
           {/* 3. Masked Editorial Luxury Headline */}
           <motion.div
@@ -317,54 +284,22 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
         </motion.div>
 
         {/* ─────────────────────────────────────────────────────────────
-            Right Column: NOVA ARTE NO DESKTOP COM AMBIENT TECH LIGHT SPILL VISÍVEL & VIBRANTE
+            Right Column: NOVA ARTE NO DESKTOP (100% Pura, Sem Fundo, Sem Card, Sem Moldura)
            ───────────────────────────────────────────────────────────── */}
-        <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 items-center justify-center relative isolate select-none z-20">
-          
-          {/* SISTEMA DE ILUMINAÇÃO AMBIENTAL MULTICAMADA COM STACKING ISOLADO (EM FRENTE AO FUNDO) */}
-          <motion.div
-            animate={{
-              opacity: [0.92, 1, 0.92],
-              scale: [0.99, 1.025, 0.99],
-              y: [-4, 4, -4],
-            }}
-            transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute inset-0 pointer-events-none z-0"
-          >
-            {/* Fonte 1A: Ciano Tecnológico Amplo Superior-Esquerdo (Atrás dos Escudos e Códigos) */}
-            <div className="absolute -top-12 -left-10 w-[110%] h-[68%] bg-[radial-gradient(ellipse_at_top_left,rgba(0,210,246,0.42)_0%,rgba(1,94,239,0.18)_50%,transparent_75%)] blur-[70px]" />
-            <div className="absolute top-0 -left-4 w-72 h-56 bg-[radial-gradient(ellipse_at_center,rgba(0,210,246,0.60)_0%,transparent_70%)] blur-[40px]" />
-
-            {/* Fonte 1B: Ciano Tecnológico Superior-Direito (Atrás dos Hologramas de IA e Gráficos) */}
-            <div className="absolute top-0 -right-12 w-[90%] h-[58%] bg-[radial-gradient(ellipse_at_top_right,rgba(0,210,246,0.38)_0%,rgba(0,180,216,0.15)_45%,transparent_70%)] blur-[65px]" />
-
-            {/* Fonte 2A: Laranja Forte de Contraste na base do Notebook e Reveal Inferior */}
-            <div className="absolute -bottom-8 -right-8 w-[95%] h-[52%] bg-[radial-gradient(ellipse_at_bottom_right,rgba(255,107,53,0.45)_0%,rgba(255,140,0,0.18)_45%,transparent_75%)] blur-[60px]" />
-
-            {/* Fonte 2B: Ponto focal quente sob o funil de dados do Reveal */}
-            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[70%] h-36 bg-[radial-gradient(ellipse_at_center,rgba(255,107,53,0.55)_0%,transparent_70%)] blur-[45px]" />
-
-            {/* Fonte 3: Branco Premium para separação óptica e profundidade na silhueta */}
-            <div className="absolute top-[16%] left-1/2 -translate-x-1/2 w-52 h-52 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.22)_0%,transparent_70%)] blur-[45px]" />
-          </motion.div>
-
-          {/* Wrapper transparente para posicionamento visual de alta definição */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
-            className="relative z-10 w-full max-w-[460px] xl:max-w-[520px] 2xl:max-w-[560px] flex items-center justify-center"
-          >
-            <img
-              src="/thiagotcai.png"
-              alt="Thiago Cassol Antunes — Tecnologia & IA"
-              className="w-full h-auto max-h-[82vh] xl:max-h-[86vh] object-contain drop-shadow-[0_0_28px_rgba(0,210,246,0.65)] drop-shadow-[0_0_60px_rgba(0,210,246,0.35)] drop-shadow-[0_20px_45px_rgba(255,107,53,0.50)] drop-shadow-[0_-5px_15px_rgba(255,255,255,0.20)] [mask-image:linear-gradient(to_bottom,black_93%,transparent_100%)] transform-gpu transition-transform duration-700 hover:scale-[1.01]"
-              loading="eager"
-              fetchPriority="high"
-            />
-          </motion.div>
-
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+          className="hidden lg:flex lg:col-span-5 xl:col-span-5 items-center justify-center relative select-none z-20"
+        >
+          <img
+            src="/thiagotcai.png"
+            alt="Thiago Cassol Antunes — Tecnologia & IA"
+            className="w-full h-auto max-h-[84vh] xl:max-h-[88vh] object-contain transform-gpu transition-transform duration-700 hover:scale-[1.01]"
+            loading="eager"
+            fetchPriority="high"
+          />
+        </motion.div>
 
       </div>
     </section>
