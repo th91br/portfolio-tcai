@@ -169,15 +169,24 @@ export const ProjectSimulator: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <Icon
-                      className={`w-5 h-5 transition-colors ${
-                        isSelected ? 'text-[#00D2F6]' : 'text-[#AEB7C4] group-hover:text-white'
-                      }`}
-                    />
+                    <div className="flex items-center gap-1.5">
+                      <Icon
+                        className={`w-5 h-5 transition-colors ${
+                          isSelected ? 'text-[#00D2F6]' : 'text-[#AEB7C4] group-hover:text-white'
+                        }`}
+                      />
+                      {archetype.id === 'authority-web' && (
+                        <span className="text-[8px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/30">
+                          🔥 TOP
+                        </span>
+                      )}
+                    </div>
                     <span
                       className={`text-[9px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded ${
                         isSelected
-                          ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 font-bold'
+                          ? archetype.id === 'authority-web'
+                            ? 'bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/30 font-bold'
+                            : 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 font-bold'
                           : 'bg-[#050914] text-[#AEB7C4]'
                       }`}
                     >

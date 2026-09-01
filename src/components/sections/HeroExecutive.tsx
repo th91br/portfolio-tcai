@@ -292,21 +292,26 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
           >
             {HERO_DATA.slaBadges.map((badge, idx) => {
               const isHighlighted = activeCardIndex === idx;
+              const isFastTrack = idx === 0; // 3 Dias Úteis
               return (
                 <div
                   key={idx}
                   onMouseEnter={() => setActiveCardIndex(idx)}
                   className={`p-3.5 rounded-2xl transition-all duration-300 shadow-lg cursor-pointer select-none backdrop-blur-md ${
                     isHighlighted
-                      ? 'bg-[#061226]/95 border-2 border-[#00D2F6] shadow-[0_0_25px_rgba(0,210,246,0.4)] scale-[1.03]'
+                      ? isFastTrack
+                        ? 'bg-[#180F08]/95 border-2 border-[#FF6B35] shadow-[0_0_25px_rgba(255,107,53,0.4)] scale-[1.03]'
+                        : 'bg-[#061226]/95 border-2 border-[#00D2F6] shadow-[0_0_25px_rgba(0,210,246,0.4)] scale-[1.03]'
+                      : isFastTrack
+                      ? 'bg-[#060B18]/85 border border-[#FF6B35]/40 hover:border-[#FF6B35] hover:bg-[#180F08]'
                       : 'bg-[#060B18]/85 border border-[#152238] hover:border-[#00D2F6]/70 hover:bg-[#081226]'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    {badge.icon === 'zap' && <Zap className={`w-4 h-4 transition-transform ${isHighlighted ? 'text-[#00D2F6] scale-110' : 'text-[#00D2F6]'}`} />}
+                    {badge.icon === 'zap' && <Zap className={`w-4 h-4 transition-transform ${isHighlighted ? 'text-[#FF6B35] scale-110' : 'text-[#FF6B35]'}`} />}
                     {badge.icon === 'bot' && <Bot className={`w-4 h-4 transition-transform ${isHighlighted ? 'text-[#00D2F6] scale-110' : 'text-[#00D2F6]'}`} />}
                     {badge.icon === 'code' && <Code2 className={`w-4 h-4 transition-transform ${isHighlighted ? 'text-[#00D2F6] scale-110' : 'text-[#00D2F6]'}`} />}
-                    <span className={`text-[11px] font-mono font-bold uppercase ${isHighlighted ? 'text-[#00D2F6]' : 'text-white'}`}>
+                    <span className={`text-[11px] font-mono font-bold uppercase ${isFastTrack ? 'text-[#FF6B35]' : isHighlighted ? 'text-[#00D2F6]' : 'text-white'}`}>
                       {badge.time}
                     </span>
                   </div>

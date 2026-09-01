@@ -40,7 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
       >
         <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 lg:gap-5">
           
-          {/* 1. Official Brand Logo (Sem caixas brancas, 100% transparente e integrado) */}
+          {/* 1. Official Brand Logo (100% transparente, sem caixas brancas) */}
           <a
             href="#hero"
             className="flex items-center gap-2.5 sm:gap-3.5 group cursor-pointer shrink-0"
@@ -82,9 +82,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
 
           {/* 3. Right Action CTAs & Mobile Toggle */}
           <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-            {/* Availability Pill on Desktop */}
-            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#060B18] border border-emerald-500/30 text-[10px] font-mono text-emerald-400 font-bold shadow-inner">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            {/* Availability Pill on Desktop with subtle #FF6B35 urgency accent */}
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/40 text-[10px] font-mono text-[#FF6B35] font-bold shadow-[0_0_12px_rgba(255,107,53,0.15)]">
+              <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-pulse" />
               <span>2 VAGAS ESTE MÊS</span>
             </div>
 

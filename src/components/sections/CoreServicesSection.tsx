@@ -74,7 +74,11 @@ export const CoreServicesSection: React.FC = () => {
                   <span className="font-kanit font-black text-3xl sm:text-4xl text-slate-300 group-hover:text-[#0284C7] transition-colors select-none">
                     {offer.number}
                   </span>
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs font-mono font-bold text-[#0284C7] shadow-sm">
+                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold shadow-sm ${
+                    index === 0
+                      ? 'bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35]'
+                      : 'bg-sky-50 border border-sky-200 text-[#0284C7]'
+                  }`}>
                     <Clock className="w-3.5 h-3.5" />
                     <span>{offer.sla}</span>
                   </div>
