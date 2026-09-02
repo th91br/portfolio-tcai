@@ -104,21 +104,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
               <span>2 VAGAS ESTE MÊS</span>
             </div>
 
-            {/* Primary Action Button: WhatsApp Direto */}
-            <a
-              href={createQuickWhatsAppUrl('Novo Projeto pelo Cabeçalho')}
-              target="_blank"
-              rel="noreferrer"
-              className="group relative inline-flex items-center gap-2 pl-3.5 sm:pl-4 pr-1.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#00D2F6]/15 shrink-0 cursor-pointer whitespace-nowrap bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
-            >
-              <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
-                FALAR NO WHATSAPP
-              </span>
-              <span className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 shadow-inner">
-                <MessageCircle className="w-3.5 h-3.5 text-white" />
-              </span>
-            </a>
-
             {/* Mobile Hamburger Toggle */}
             <button
               type="button"
