@@ -1,14 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Zap,
-  Bot,
-  Code2,
   CheckCircle2,
   ArrowRight,
-  Clock,
-  Sparkles,
-  MessageCircle,
+  ShieldCheck,
+  Globe,
+  Bot,
+  Cpu,
 } from 'lucide-react';
 import { CORE_OFFERS } from '../../data/portfolioData';
 import { createWhatsAppLeadUrl } from '../../utils/contactUtils';
@@ -19,133 +17,157 @@ export const CoreServicesSection: React.FC = () => {
       name: '',
       contact: '',
       interest: `${serviceName} (${sla})`,
-      message: `Olá Thiago! Tenho interesse na contratação de ${serviceName} com prazo de ${sla}. Gostaria de alinhar o escopo e orçamento.`,
+      message: `Olá Thiago! Gostaria de alinhar o escopo para contratação de ${serviceName} com prazo de ${sla}.`,
       origin: 'Seção de Soluções & Prazos (TCAI)',
     });
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const getIconForIndex = (index: number) => {
+    switch (index) {
+      case 0:
+        return <Globe className="w-5 h-5 text-[#00D2F6]" />;
+      case 1:
+        return <Bot className="w-5 h-5 text-[#0096F5]" />;
+      case 2:
+        return <Cpu className="w-5 h-5 text-[#015EEF]" />;
+      default:
+        return <Globe className="w-5 h-5 text-[#00D2F6]" />;
+    }
+  };
+
   return (
     <section
       id="services"
-      className="relative w-full bg-white text-[#0F172A] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-slate-200/80 overflow-hidden z-10"
+      className="relative w-full bg-[#07111F] text-[#F3F5F7] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-white/[0.06] overflow-hidden z-10"
     >
       {/* Ambient background glows */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-[550px] h-[550px] bg-sky-100/40 blur-[180px] pointer-events-none rounded-full" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 w-[550px] h-[550px] bg-blue-100/40 blur-[180px] pointer-events-none rounded-full" />
+      <div
+        className="absolute top-1/3 right-1/4 translate-x-1/2 w-[550px] h-[550px] pointer-events-none rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(0, 210, 246, 0.04) 0%, transparent 70%)',
+          filter: 'blur(160px)',
+        }}
+        aria-hidden="true"
+      />
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 border border-sky-200 shadow-sm mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-[#0284C7]" />
-            <span className="text-xs font-mono font-bold tracking-widest text-[#0284C7] uppercase">
-              SOLUÇÕES DE ALTO PADRÃO
-            </span>
+        
+        {/* Header Editorial */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 sm:mb-20">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624] border border-[#00D2F6]/25 shadow-sm mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
+              <span className="text-[10px] font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
+                03 / CAPACIDADES & PRAZOS
+              </span>
+            </div>
+
+            <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-[#F8FAFC] leading-[1.08]">
+              O QUE EU CONSTRUO & <br />
+              <span className="bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent">
+                PRAZOS GARANTIDOS EM CONTRATO
+              </span>
+            </h2>
           </div>
 
-          <h2 className="font-kanit font-black text-3xl sm:text-5xl md:text-6xl uppercase tracking-tight text-[#090D1A] mb-4">
-            O QUE EU DESENVOLVO & PRAZOS
-          </h2>
-
-          <p className="text-sm sm:text-base md:text-lg text-[#475569] font-normal leading-relaxed">
-            Ativos digitais construídos com código limpo, inteligência artificial e foco absoluto em retorno financeiro. Escolha o pilar ideal para sua empresa:
+          <p className="text-sm sm:text-base text-[#94A3B8] font-light leading-relaxed max-w-[42ch]">
+            Ativos digitais de alta conversão e software proprietário. Três pilares de especialização técnica com cronogramas objetivos e zero enrolação.
           </p>
         </div>
 
-        {/* 3 Core Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          {CORE_OFFERS.map((offer, index) => (
-            <motion.div
-              key={offer.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
-              onClick={() => handleServiceClick(offer.name, offer.sla)}
-              className="group relative rounded-3xl bg-white border border-slate-200/90 hover:border-[#0284C7]/60 p-6 sm:p-8 flex flex-col justify-between overflow-hidden shadow-[0_10px_35px_rgba(15,23,42,0.05)] hover:shadow-2xl hover:shadow-sky-500/10 transition-all duration-500 hover:-translate-y-2 cursor-pointer"
-            >
-              {/* Card top lighting accent */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-sky-100/50 to-transparent rounded-full blur-2xl pointer-events-none group-hover:from-sky-200/60 transition-all duration-500" />
+        {/* 3 Architectural Columns with Monumental Typography */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border border-white/[0.08] rounded-3xl bg-[#08131F]/70 backdrop-blur-xl overflow-hidden divide-y lg:divide-y-0 lg:divide-x divide-white/[0.08]">
+          {CORE_OFFERS.map((offer, index) => {
+            // Extract numeric days (03, 07, 10)
+            const dayNumber = offer.sla.replace(/\D/g, '').padStart(2, '0');
+            
+            return (
+              <motion.div
+                key={offer.id}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.12 }}
+                className="p-7 sm:p-9 flex flex-col justify-between group hover:bg-white/[0.015] transition-colors duration-300"
+              >
+                <div>
+                  {/* Top Row: Index + Icon */}
+                  <div className="flex items-center justify-between gap-4 mb-8">
+                    <span className="text-xs font-mono font-bold text-[#64748B] tracking-widest uppercase">
+                      ESPECIALIDADE {offer.number}
+                    </span>
+                    <div className="w-9 h-9 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center group-hover:border-[#00D2F6]/40 transition-colors">
+                      {getIconForIndex(index)}
+                    </div>
+                  </div>
 
-              <div>
-                {/* Header: Number & SLA Badge */}
-                <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
-                  <span className="font-kanit font-black text-3xl sm:text-4xl text-slate-300 group-hover:text-[#0284C7] transition-colors select-none">
-                    {offer.number}
-                  </span>
-                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold shadow-sm ${
-                    index === 0
-                      ? 'bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35]'
-                      : 'bg-sky-50 border border-sky-200 text-[#0284C7]'
-                  }`}>
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{offer.sla}</span>
+                  {/* Monumental SLA Timeline Display */}
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-kanit font-black text-5xl sm:text-6xl text-[#F8FAFC] tracking-tight group-hover:text-[#00D2F6] transition-colors">
+                        {dayNumber}
+                      </span>
+                      <div className="flex flex-col text-left">
+                        <span className="font-mono font-bold text-xs text-[#00D2F6] uppercase tracking-wider leading-tight">
+                          DIAS ÚTEIS
+                        </span>
+                        <span className="text-[10px] font-mono text-[#64748B] uppercase tracking-wider leading-tight">
+                          ENTREGA GARANTIDA
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Title & Tagline */}
+                  <h3 className="font-kanit font-black text-xl sm:text-2xl text-white uppercase tracking-tight mb-2 group-hover:text-[#00D2F6] transition-colors">
+                    {offer.name}
+                  </h3>
+
+                  <p className="text-xs sm:text-[13px] text-[#94A3B8] font-light leading-relaxed mb-6">
+                    {offer.tagline}
+                  </p>
+
+                  {/* Deliverables Checklist */}
+                  <div className="space-y-2.5 mb-8 border-t border-white/[0.06] pt-5">
+                    {offer.features.map((feature, fIdx) => (
+                      <div key={fIdx} className="flex items-start gap-2.5 text-xs text-[#AEB7C4]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#00D2F6] shrink-0 mt-0.5" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Category & Title */}
-                <div className="mb-4">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0284C7]">
-                    {offer.category}
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-[#090D1A] mt-1 group-hover:text-[#0284C7] transition-colors font-kanit">
-                    {offer.name}
-                  </h3>
-                </div>
-
-                {/* Tagline */}
-                <p className="text-xs sm:text-sm text-[#475569] font-normal leading-relaxed mb-6">
-                  {offer.tagline}
-                </p>
-
-                {/* Feature Bullet List */}
-                <div className="space-y-2.5 mb-6">
-                  {offer.features.map((feature, fIdx) => (
-                    <div key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-700 font-normal">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Bottom Footer & Action */}
-              <div className="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
-                <div className="text-[11px] font-mono font-medium text-slate-500">
-                  {offer.slaHighlight}
-                </div>
-                <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 group-hover:border-[#0284C7] group-hover:bg-[#0284C7] group-hover:text-white flex items-center justify-center text-slate-600 transition-all shadow-sm">
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                {/* Bottom Trigger */}
+                <button
+                  type="button"
+                  onClick={() => handleServiceClick(offer.name, offer.sla)}
+                  className="w-full py-3 px-4 rounded-xl bg-white/[0.03] hover:bg-[#00D2F6] text-white hover:text-black border border-white/[0.08] hover:border-[#00D2F6] text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-between transition-all duration-300 cursor-pointer group/btn"
+                >
+                  <span>ALINHAR ESCOPO DESTE PILAR</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
+                </button>
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* Bottom Guarantee Banner */}
-        <div className="mt-12 p-6 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left shadow-sm">
+        {/* Assurance Banner */}
+        <div className="mt-8 p-5 sm:p-6 rounded-2xl bg-[#08131F]/60 border border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
-              <CheckCircle2 className="w-6 h-6" />
+            <div className="w-8 h-8 rounded-xl bg-emerald-400/10 border border-emerald-400/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <ShieldCheck className="w-4 h-4" />
             </div>
-            <div>
-              <div className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                Garantia de Entrega no Prazo ou Ajustes Prioritários Imediatos
-              </div>
-              <div className="text-xs text-slate-600 font-normal">
-                Transparência absoluta, cronograma claro e acompanhamento diário do progresso.
-              </div>
-            </div>
+            <span className="text-xs sm:text-sm text-[#AEB7C4] font-medium text-center sm:text-left">
+              Prazos calculados a partir da aprovação do escopo. Cronograma diário com acompanhamento em tempo real.
+            </span>
           </div>
-          <button
-            type="button"
-            onClick={() => handleServiceClick('Consultoria Inicial', 'Análise Express')}
-            className="px-6 py-2.5 rounded-full bg-white hover:bg-slate-100 border border-slate-300 text-slate-900 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0 shadow-sm"
-          >
-            TIRAR DÚVIDAS NO WHATSAPP
-          </button>
+          <span className="text-xs font-mono text-[#00D2F6] font-semibold whitespace-nowrap">
+            Zero intermediários • Alinhamento Direto
+          </span>
         </div>
+
       </div>
     </section>
   );

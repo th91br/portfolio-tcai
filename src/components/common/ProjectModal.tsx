@@ -32,7 +32,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-md"
+          className="fixed inset-0 bg-[#07111F]/85 backdrop-blur-md"
         />
 
         {/* Modal Window */}

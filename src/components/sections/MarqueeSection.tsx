@@ -6,7 +6,6 @@ import {
   REVIEWS_ROW2,
 } from '../../data/portfolioData';
 import { ReviewCardItem } from '../../types';
-import { Sparkles, Star } from 'lucide-react';
 
 interface ReviewCardProps {
   review: ReviewCardItem;
@@ -14,12 +13,12 @@ interface ReviewCardProps {
 
 const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
   return (
-    <div className="relative w-[300px] sm:w-[350px] md:w-[380px] h-[165px] flex-shrink-0 p-5 rounded-3xl bg-white border border-slate-200/90 hover:border-[#0284C7]/60 transition-all duration-300 group shadow-[0_8px_25px_rgba(15,23,42,0.04)] hover:shadow-xl flex flex-col justify-between select-none cursor-pointer overflow-hidden backdrop-blur-xl hover:-translate-y-1">
+    <div className="relative w-[300px] sm:w-[350px] md:w-[380px] h-[175px] flex-shrink-0 p-5 rounded-2xl bg-[#08131F]/75 border border-white/[0.06] hover:border-[#00D2F6]/40 transition-all duration-300 group shadow-lg flex flex-col justify-between select-none cursor-default overflow-hidden backdrop-blur-xl">
       {/* 1. Top Header Row */}
       <div className="flex items-center justify-between gap-2 relative z-10">
         <div className="flex items-center gap-3 min-w-0">
           {/* Logo Avatar */}
-          <div className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-xl overflow-hidden bg-slate-50 border border-slate-200 shadow-xs flex-shrink-0 flex items-center justify-center p-0.5">
+          <div className="w-8 h-8 min-w-[32px] min-h-[32px] rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.08] flex-shrink-0 flex items-center justify-center p-0.5">
             {review.logoImage ? (
               <img
                 src={review.logoImage}
@@ -28,7 +27,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
                 loading="lazy"
               />
             ) : (
-              <span className="font-mono font-black text-xs text-[#0284C7]">
+              <span className="font-mono font-black text-xs text-[#00D2F6]">
                 {review.logoText}
               </span>
             )}
@@ -36,46 +35,46 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
 
           {/* Nome do Projeto & Categoria */}
           <div className="flex flex-col min-w-0">
-            <h4 className="text-xs sm:text-sm font-bold text-[#090D1A] tracking-tight group-hover:text-[#0284C7] transition-colors truncate font-kanit">
+            <h4 className="text-xs sm:text-sm font-bold text-white tracking-tight group-hover:text-[#00D2F6] transition-colors truncate font-kanit">
               {review.projectName}
             </h4>
-            <span className="text-[9px] font-mono font-bold tracking-wider uppercase text-[#0284C7] flex items-center gap-1 mt-0.5 truncate">
-              <span className="w-1 h-1 rounded-full bg-[#0284C7] flex-shrink-0" />
+            <span className="text-[9px] font-mono font-bold tracking-wider uppercase text-[#00D2F6] flex items-center gap-1 mt-0.5 truncate">
+              <span className="w-1 h-1 rounded-full bg-[#00D2F6] flex-shrink-0" />
               {review.category}
             </span>
           </div>
         </div>
 
         {/* 5 Estrelas */}
-        <div className="flex items-center gap-1 flex-shrink-0 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-          <div className="flex items-center text-amber-500 text-[10px]">
+        <div className="flex items-center gap-1 flex-shrink-0 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+          <div className="flex items-center text-amber-400 text-[10px]">
             {'★'.repeat(review.rating)}
           </div>
-          <span className="text-[9px] font-mono font-bold text-amber-700">5.0</span>
+          <span className="text-[9px] font-mono font-bold text-amber-300">5.0</span>
         </div>
       </div>
 
       {/* 2. Middle: Depoimento */}
       <div className="my-auto py-1 relative z-10">
-        <p className="text-xs text-[#475569] font-normal leading-relaxed group-hover:text-slate-900 transition-colors line-clamp-2">
+        <p className="text-xs text-[#94A3B8] font-light leading-relaxed group-hover:text-[#F1F5F9] transition-colors line-clamp-2">
           "{review.review}"
         </p>
       </div>
 
       {/* 3. Bottom Row: Cliente & Métrica */}
-      <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 relative z-10">
+      <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.06] relative z-10">
         <div className="flex flex-col min-w-0">
-          <span className="text-xs font-bold text-slate-900 truncate">
+          <span className="text-xs font-bold text-white truncate">
             {review.clientName}
           </span>
-          <span className="text-[10px] text-slate-500 font-normal truncate max-w-[140px]">
+          <span className="text-[10px] text-[#64748B] font-normal truncate max-w-[140px]">
             {review.clientRole}
           </span>
         </div>
 
         {review.metricHighlight && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-emerald-50 border border-emerald-200 text-emerald-700 group-hover:border-[#0284C7]/40 transition-colors shadow-xs flex-shrink-0">
-            <span className="w-1 h-1 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex-shrink-0">
+            <span className="w-1 h-1 rounded-full bg-emerald-400" />
             {review.metricHighlight}
           </span>
         )}
@@ -99,32 +98,32 @@ export const MarqueeSection: React.FC = () => {
   return (
     <section
       id="testimonials"
-      className="relative w-full bg-white text-[#0F172A] py-24 sm:py-32 border-t border-slate-200/80 overflow-hidden select-none z-10"
+      className="relative w-full bg-[#07111F] text-[#F3F5F7] py-24 sm:py-32 border-t border-white/[0.06] overflow-hidden select-none z-10"
     >
       <div className="max-w-7xl mx-auto w-full relative z-10">
-        {/* Strategic Header */}
+        {/* Header */}
         <div className="max-w-3xl mx-auto px-4 mb-14 sm:mb-18 flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 border border-sky-200 shadow-sm mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-[#0284C7]" />
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#0284C7]">
-              {REVIEWS_HEADER.pill}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624] border border-[#00D2F6]/25 shadow-sm mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#00D2F6]">
+              07 / AVALIAÇÕES DE CLIENTES REAIS
             </span>
           </div>
 
-          <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-[#090D1A] mb-4 leading-tight">
-            QUEM CONFIA NA TCAI PARA ESCALAR
+          <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-[#F8FAFC] mb-3 leading-tight">
+            QUEM CONFIA NA TCAI PARA CONSTRUIR
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-[#475569] font-normal leading-relaxed">
+          <p className="text-sm sm:text-base text-[#94A3B8] font-light leading-relaxed max-w-[48ch]">
             {REVIEWS_HEADER.tagline}
           </p>
         </div>
 
         {/* Continuous Marquee Rows */}
         <div className="flex flex-col gap-4 sm:gap-6 w-full relative">
-          {/* Edge Fade Gradients */}
-          <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none" />
+          {/* Edge Fade Gradients in Dark Navy */}
+          <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-[#07111F] to-transparent z-20 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-28 bg-gradient-to-l from-[#07111F] to-transparent z-20 pointer-events-none" />
 
           {/* Row 1: Right to Left */}
           <div className="overflow-hidden w-full flex">

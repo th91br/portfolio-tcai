@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { Clock, ShieldCheck, Sparkles, Check, Activity, BarChart2 } from 'lucide-react';
+import { Clock, ShieldCheck, Sparkles, Check } from 'lucide-react';
 import { HeroEnergyRing } from './HeroEnergyRing';
-import { createQuickWhatsAppUrl } from '../../utils/contactUtils';
 
 interface HeroGlassCardProps {
   onContactClick?: () => void;
@@ -40,7 +39,7 @@ export const HeroGlassCard: React.FC<HeroGlassCardProps> = () => {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full max-w-[420px] lg:max-w-[460px] mx-auto flex items-center justify-center select-none"
+      className="relative w-full max-w-[440px] lg:max-w-[480px] mx-auto flex items-center justify-center select-none"
       style={{ perspective: '1200px' }}
     >
       {/* 1. Underlying TCA Energy Ring */}
@@ -85,36 +84,11 @@ export const HeroGlassCard: React.FC<HeroGlassCardProps> = () => {
 
         {/* Inner Media Canvas: Machined Inner Core */}
         <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-[#030611] border border-white/[0.06] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-          
-          {/* Holographic Cyber Grid & Telemetry Bars (Behind portrait) */}
-          <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
-            {/* Equalizer frequency bars */}
-            <div className="absolute top-12 left-6 flex items-end gap-1 h-16">
-              {[40, 65, 30, 85, 50, 95, 70, 45, 60].map((h, i) => (
-                <span
-                  key={i}
-                  className="w-1 bg-[#00D2F6]/60 rounded-t-sm"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
-
-            {/* Matrix Data telemetry points */}
-            <div className="absolute top-8 right-8 flex flex-col gap-1.5 text-[8px] font-mono text-[#00D2F6]/60">
-              <span>● LATENCY: 0.04ms</span>
-              <span>● GPU: 99.8%</span>
-              <span>● AI_CORE: ACTIVE</span>
-            </div>
-
-            {/* Cyan Waveform curve */}
-            <div className="absolute top-28 right-4 w-32 h-16 border-b-2 border-[#00D2F6]/50 rounded-full opacity-60" />
-          </div>
-
-          {/* Real Founder Executive Portrait */}
+          {/* Imagem do Hero: hero.2.tca */}
           <img
-            src="/assets/branding/thiago_executive.jpg"
+            src="/hero.2.tca.png"
             alt="Thiago Cassol Antunes - Full-Stack & Applied AI Engineer"
-            className="relative z-10 w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105"
+            className="relative z-10 w-full h-full object-cover object-[72%_center] sm:object-[75%_center] transition-transform duration-700 hover:scale-105"
             loading="eager"
           />
 

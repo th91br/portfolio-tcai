@@ -3,19 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --brand-cyan: #0284C7;
+  --brand-cyan: #00D2F6;
   --brand-light-blue: #0096F5;
   --brand-blue: #015EEF;
-  --brand-deep-blue: #0F172A;
+  --brand-deep-blue: #050914;
 
-  --background-primary: #FFFFFF;
-  --background-secondary: #F8FAFC;
-  --background-card: #FFFFFF;
+  --background-primary: #07111F;
+  --background-secondary: #08131F;
+  --background-surface: #0A1624;
+  --background-deep: #050B14;
 
-  --text-primary: #0F172A;
-  --text-secondary: #334155;
+  --text-primary: #F3F5F7;
+  --text-secondary: #AEB7C4;
   --text-muted: #64748B;
-  --border-subtle: #E2E8F0;
+  --border-subtle: rgba(255, 255, 255, 0.08);
 }
 
 *, *::before, *::after {
@@ -29,9 +30,9 @@ html {
 }
 
 html, body, #root {
-  background-color: #FFFFFF;
+  background-color: #07111F;
   font-family: 'Kanit', sans-serif;
-  color: #0F172A;
+  color: #F3F5F7;
   overflow-x: clip;
   min-height: 100%;
 }
@@ -57,28 +58,28 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* Custom Hero Heading */
-.hero-heading {
-  color: #0F172A;
-  letter-spacing: -0.02em;
-}
-
 /* Brand Gradient Text Utility */
 .text-brand-gradient {
-  background: linear-gradient(135deg, #0284C7 0%, #0096F5 35%, #015EEF 70%, #0F172A 100%);
+  background: linear-gradient(135deg, #00D2F6 0%, #0096F5 45%, #015EEF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-titanium-gradient {
+  background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 60%, #94A3B8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* Brand Button Gradient */
 .btn-brand-primary {
-  background: linear-gradient(135deg, #0284C7 0%, #0096F5 50%, #015EEF 100%);
-  box-shadow: 0px 4px 14px rgba(2, 132, 199, 0.25), inset 0px 1px 1px rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, #00D2F6 0%, #0096F5 50%, #015EEF 100%);
+  box-shadow: 0px 4px 20px rgba(0, 210, 246, 0.35), inset 0px 1px 1px rgba(255, 255, 255, 0.3);
   transition: all 0.25s ease-out;
 }
 
 .btn-brand-primary:hover {
-  box-shadow: 0px 6px 20px rgba(2, 132, 199, 0.4), inset 0px 1px 2px rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 6px 28px rgba(0, 210, 246, 0.5), inset 0px 1px 2px rgba(255, 255, 255, 0.5);
   filter: brightness(1.06);
 }
 
@@ -89,14 +90,15 @@ html.lenis, html.lenis body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F8FAFC;
+  background: #07111F;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #0A1624;
   border-radius: 9999px;
+  border: 2px solid #07111F;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #334155;
 }

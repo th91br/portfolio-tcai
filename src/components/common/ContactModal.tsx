@@ -102,7 +102,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/85 backdrop-blur-md"
+            className="fixed inset-0 bg-[#07111F]/90 backdrop-blur-md"
           />
 
           {/* Modal Card */}
@@ -111,7 +111,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative w-full max-w-xl bg-[#080D18] border border-[#151F38] rounded-3xl p-6 sm:p-8 shadow-2xl z-10 text-[#F3F5F7] max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-xl bg-[#08131F] border border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-2xl z-10 text-[#F3F5F7] max-h-[90vh] overflow-y-auto"
           >
             {/* Close button */}
             <button
@@ -165,7 +165,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                 </p>
 
                 {/* Direct Channel Badges */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5 p-3 rounded-2xl bg-[#050914] border border-[#151F38] text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5 p-3 rounded-2xl bg-[#050B14] border border-white/[0.06] text-xs">
                   <a
                     href={`https://wa.me/${CONTACT_CONFIG.whatsappNumber}`}
                     target="_blank"
@@ -198,7 +198,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                         placeholder="Ex: Carlos Silva / NextTech"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-[#050914] border border-[#151F38] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
+                        className="w-full bg-[#07111F] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#00D2F6] transition-colors"
                       />
                     </div>
                   </div>
@@ -217,7 +217,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                           placeholder="(54) 99999-9999"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="w-full bg-[#050914] border border-[#151F38] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
+                          className="w-full bg-[#07111F] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#00D2F6] transition-colors"
                         />
                       </div>
                     </div>
@@ -233,7 +233,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                           placeholder="carlos@empresa.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-[#050914] border border-[#151F38] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors"
+                          className="w-full bg-[#07111F] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#00D2F6] transition-colors"
                         />
                       </div>
                     </div>
@@ -247,10 +247,10 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                     <select
                       value={interest}
                       onChange={(e) => setInterest(e.target.value)}
-                      className="w-full bg-[#050914] border border-[#151F38] rounded-xl px-4 py-2.5 sm:py-3 text-base sm:text-sm text-white focus:outline-none focus:border-[#00D2F6] transition-colors cursor-pointer"
+                      className="w-full bg-[#07111F] border border-white/[0.08] rounded-xl px-4 py-2.5 sm:py-3 text-base sm:text-sm text-white focus:outline-none focus:border-[#00D2F6] transition-colors cursor-pointer"
                     >
                       {PROJECT_TYPES.map((type) => (
-                        <option key={type} value={type} className="bg-[#080D18] text-white">
+                        <option key={type} value={type} className="bg-[#07111F] text-white">
                           {type}
                         </option>
                       ))}
@@ -270,7 +270,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                         placeholder="Conte um pouco sobre o projeto, objetivo, prazos ou expectativas..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full bg-[#050914] border border-[#151F38] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00D2F6] transition-colors resize-none"
+                        className="w-full bg-[#07111F] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#00D2F6] transition-colors resize-none"
                       />
                     </div>
                   </div>

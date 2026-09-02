@@ -14,9 +14,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 24);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -32,44 +32,47 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
 
   return (
     <>
-      {/* Floating Island Header Container */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-6 pt-3 sm:pt-4 transition-all duration-300 pointer-events-none">
+      {/* Editorial Floating Navigation Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-8 pt-3 sm:pt-4 transition-all duration-300 pointer-events-none">
         <div
-          className={`max-w-[1300px] mx-auto pointer-events-auto rounded-full transition-all duration-500 ${
+          className={`max-w-7xl mx-auto pointer-events-auto rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             isScrolled
-              ? 'bg-[#050914]/90 backdrop-blur-2xl border border-white/12 shadow-[0_16px_40px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] py-2 px-3 sm:px-6'
-              : 'bg-[#050914]/75 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] py-2.5 px-3 sm:px-6'
-          } flex items-center justify-between gap-2 sm:gap-4`}
+              ? 'bg-[#07111F]/92 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] py-2 px-3.5 sm:px-6'
+              : 'bg-[#07111F]/40 backdrop-blur-md border border-white/[0.04] shadow-[0_8px_24px_rgba(0,0,0,0.4)] py-2.5 sm:py-3 px-3.5 sm:px-6'
+          } flex items-center justify-between gap-3 sm:gap-6`}
         >
-          {/* 1. Official Brand Logo Lockup */}
+          {/* 1. Brand Lockup: Logo + Thiago Cassol Antunes + Tecnologia & IA */}
           <a
             href="#hero"
-            className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer shrink-0"
-            aria-label="Thiago Cassol Antunes - Página Inicial"
+            className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6] rounded-lg"
+            aria-label="Thiago Cassol Antunes — Página Inicial"
           >
-            {/* Logo Oficial Transparente com Glow Dinâmico */}
-            <div className="h-9 sm:h-11 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+            {/* Logo Oficial com Dimensões Controladas */}
+            <div className="h-7 sm:h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
               <img
                 src="/logo_tca.png"
-                alt="Logo Oficial TCA - Thiago Cassol Antunes"
-                className="h-full w-auto max-h-8 sm:max-h-10 object-contain block drop-shadow-[0_2px_14px_rgba(0,210,246,0.35)]"
+                alt="Logo TCA"
+                className="h-full w-auto max-h-7 sm:max-h-8 object-contain block drop-shadow-[0_2px_10px_rgba(0,210,246,0.25)]"
                 loading="eager"
               />
             </div>
 
-            {/* Brand Typography */}
+            {/* Tipografia de Marca: Autoridade Discreta */}
             <div className="flex flex-col text-left">
-              <span className="font-kanit font-extrabold text-xs sm:text-sm tracking-wider text-white uppercase group-hover:text-[#00D2F6] transition-colors leading-tight">
+              <span className="font-kanit font-extrabold text-xs sm:text-[13px] tracking-wide text-[#F8FAFC] uppercase group-hover:text-[#00D2F6] transition-colors leading-tight">
                 THIAGO CASSOL ANTUNES
               </span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#00D2F6] tracking-widest uppercase font-bold leading-tight mt-0.5">
+              <span className="text-[9px] font-mono text-[#00D2F6] tracking-widest uppercase font-semibold leading-tight mt-0.5">
                 TECNOLOGIA & IA
               </span>
             </div>
           </a>
 
-          {/* 2. Desktop Centered Navigation Links with Interactive Hover Indicator */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] backdrop-blur-md">
+          {/* 2. Desktop Centered Navigation Links with Editorial Hover Indicator */}
+          <nav
+            className="hidden lg:flex items-center gap-1 xl:gap-1.5 px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.05]"
+            aria-label="Navegação principal"
+          >
             {navLinks.map((link) => {
               const isHovered = hoveredLink === link.label;
               return (
@@ -78,13 +81,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
                   href={link.href}
                   onMouseEnter={() => setHoveredLink(link.label)}
                   onMouseLeave={() => setHoveredLink(null)}
-                  className="relative px-3 py-1.5 text-[11px] xl:text-xs uppercase font-semibold tracking-wider text-[#AEB7C4] hover:text-white transition-colors duration-200 whitespace-nowrap"
+                  className="relative px-3 py-1 text-[11px] xl:text-[12px] uppercase font-medium tracking-wider text-[#94A3B8] hover:text-[#F8FAFC] transition-colors duration-200 whitespace-nowrap focus:outline-none focus-visible:text-[#00D2F6]"
                 >
                   {isHovered && (
                     <motion.div
                       layoutId="navHoverPill"
-                      className="absolute inset-0 rounded-full bg-white/[0.08] border border-white/10"
-                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                      className="absolute inset-0 rounded-full bg-white/[0.06] border border-white/[0.08]"
+                      transition={{ type: 'spring', stiffness: 380, damping: 28 }}
                     />
                   )}
                   <span className="relative z-10">{link.label}</span>
@@ -93,79 +96,84 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             })}
           </nav>
 
-          {/* 3. Right Action CTAs & Mobile Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Availability Pill on Desktop with Harmonized Brand Glow */}
-            <div className="hidden xl:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[10px] font-mono text-[#00D2F6] font-bold shadow-[0_0_15px_rgba(0,210,246,0.15)]">
-              <span className="w-2 h-2 rounded-full bg-[#00D2F6] animate-pulse" />
+          {/* 3. Right Action Area: Scarcity Badge + WhatsApp Action + Mobile Trigger */}
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            {/* Scarcity Pill: Discreta, Controlada, Elegante */}
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624] border border-[#00D2F6]/25 text-[10px] font-mono text-[#00D2F6] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
               <span>2 VAGAS ESTE MÊS</span>
             </div>
 
-            {/* Primary Action Button: Button-in-Button Luxury Pattern */}
+            {/* Primary Action Button: WhatsApp Direto */}
             <a
               href={createQuickWhatsAppUrl('Novo Projeto pelo Cabeçalho')}
               target="_blank"
               rel="noreferrer"
-              className="group relative hidden sm:inline-flex items-center gap-2.5 pl-4 pr-1.5 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider text-white transition-all duration-300 hover:scale-105 active:scale-[0.98] shadow-xl shadow-[#00D2F6]/25 shrink-0 cursor-pointer whitespace-nowrap bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/20"
+              className="group relative inline-flex items-center gap-2 pl-3.5 sm:pl-4 pr-1.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#00D2F6]/15 shrink-0 cursor-pointer whitespace-nowrap bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
             >
-              <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+              <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
                 FALAR NO WHATSAPP
               </span>
-              {/* Nested Button-in-Button Circular Icon Pod */}
-              <span className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-white/30 shadow-inner">
+              <span className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 shadow-inner">
                 <MessageCircle className="w-3.5 h-3.5 text-white" />
               </span>
             </a>
 
-            {/* Mobile Menu Toggle Button */}
+            {/* Mobile Hamburger Toggle */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-full bg-white/[0.05] border border-white/10 text-[#AEB7C4] hover:text-white hover:border-[#00D2F6]/50 transition-colors cursor-pointer"
-              aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+              className="lg:hidden p-2 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#94A3B8] hover:text-white hover:border-[#00D2F6]/40 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
+              aria-label={mobileMenuOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
+              aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Drawer Menu with Staggered Reveals */}
+      {/* Mobile Editorial Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-3 sm:inset-x-6 top-20 z-40 bg-[#050914]/95 border border-white/15 backdrop-blur-3xl rounded-[28px] p-6 lg:hidden flex flex-col gap-3 shadow-2xl"
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-x-4 top-18 z-40 bg-[#07111F]/98 border border-white/10 backdrop-blur-3xl rounded-3xl p-5 lg:hidden flex flex-col gap-2 shadow-[0_20px_50px_rgba(5,11,20,0.9)] pointer-events-auto"
           >
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-1">
+              <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest">
+                NAVEGAÇÃO TCA
+              </span>
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[10px] font-mono text-[#00D2F6] font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
+                <span>2 Vagas</span>
+              </div>
+            </div>
+
             {navLinks.map((link, idx) => (
               <motion.a
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.04 }}
-                className="text-sm uppercase font-bold text-[#F3F5F7] hover:text-[#00D2F6] transition-colors py-2 border-b border-white/[0.06] flex items-center justify-between"
+                transition={{ delay: idx * 0.03 }}
+                className="text-xs uppercase font-semibold text-[#F8FAFC] hover:text-[#00D2F6] transition-colors py-2.5 border-b border-white/[0.04] flex items-center justify-between"
               >
                 <span>{link.label}</span>
-                <ArrowUpRight className="w-4 h-4 text-slate-500" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#64748B]" />
               </motion.a>
             ))}
-
-            <div className="flex items-center justify-center gap-2 py-2 px-3 mt-2 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[11px] font-mono text-[#00D2F6] font-bold">
-              <span className="w-2 h-2 rounded-full bg-[#00D2F6] animate-pulse" />
-              <span>DISPONIBILIDADE: 2 VAGAS ESTE MÊS</span>
-            </div>
 
             <a
               href={createQuickWhatsAppUrl('Novo Projeto Mobile')}
               target="_blank"
               rel="noreferrer"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 rounded-full text-center font-bold text-xs uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/20 mt-1"
+              className="w-full py-3 rounded-full text-center font-bold text-xs uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/20 mt-3"
             >
               <MessageCircle className="w-4 h-4" />
               <span>FALAR COM THIAGO NO WHATSAPP</span>

@@ -12,6 +12,7 @@ import { AboutExecutive } from './components/sections/AboutExecutive';
 import { MarqueeSection } from './components/sections/MarqueeSection';
 import { ProjectSimulator } from './components/sections/ProjectSimulator';
 import { ContactSection } from './components/sections/ContactSection';
+import { Footer } from './components/layout/Footer';
 import { ProjectModal } from './components/common/ProjectModal';
 import { ProjectItem } from './types';
 import { openWhatsApp } from './utils/contactUtils';
@@ -29,7 +30,7 @@ export const App: React.FC = () => {
 
   return (
     <SmoothScrollProvider>
-      <div className="w-full min-h-screen bg-[#050914] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-x-hidden">
+      <div className="w-full min-h-screen bg-[#07111F] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-x-hidden">
         {/* 1. Global Subtle Ambient 3D Depth Layer */}
         <HeroScene />
 
@@ -72,7 +73,10 @@ export const App: React.FC = () => {
           <ContactSection onDirectContactClick={() => openWhatsApp('general')} />
         </main>
 
-        {/* 4. Interactive Project Details Modal */}
+        {/* 4. Institutional Editorial Footer */}
+        <Footer />
+
+        {/* 5. Interactive Project Details Modal */}
         <ProjectModal
           project={selectedProject}
           onClose={handleCloseProject}

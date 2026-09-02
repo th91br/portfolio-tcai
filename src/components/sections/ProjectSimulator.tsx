@@ -37,7 +37,7 @@ const ARCHETYPES: ProjectArchetype[] = [
     headline: 'Presença digital de alto padrão que converte visitantes em clientes',
     description:
       'Websites institucionais e Landing Pages com design exclusivo, carregamento ultrarrápido, copywriting persuasivo e foco em captação contínua de leads qualificados.',
-    stack: ['React / Vite', 'TypeScript', 'Tailwind CSS', 'Framer Motion & GSAP', 'SEO Técnico 100/100'],
+    stack: ['React / Vite', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'SEO Técnico 100/100'],
     deliverables: [
       'Design exclusivo de alto impacto sem templates prontos',
       'Estrutura persuasiva focada em conversão comercial',
@@ -100,7 +100,7 @@ const ARCHETYPES: ProjectArchetype[] = [
     headline: 'Transforme uma ideia de mercado em um produto digital escalável e lucrativo',
     description:
       'Desenvolvimento completo de plataformas SaaS com cobrança recorrente integrada, área de membros, faturamento automatizado e infraestrutura pronta para escala.',
-    stack: ['Next.js / Vite', 'Stripe / Asaas / Gateway', 'PostgreSQL / Supabase', 'Infraestrutura Cloud'],
+    stack: ['Next.js / Vite', 'Gateways de Pagamento', 'PostgreSQL / Supabase', 'Infraestrutura Cloud'],
     deliverables: [
       'Fluxo completo de checkout, assinaturas e webhooks',
       'Painel de controle multi-tenant para gestão de assinantes',
@@ -128,31 +128,31 @@ export const ProjectSimulator: React.FC = () => {
   return (
     <section
       id="simulator"
-      className="relative w-full bg-[#050914] text-[#F3F5F7] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-[#151F38] overflow-hidden z-10"
+      className="relative w-full bg-[#08131F] text-[#F3F5F7] py-24 sm:py-32 px-4 sm:px-6 md:px-10 border-t border-white/[0.06] overflow-hidden z-10"
     >
       <div className="max-w-6xl mx-auto w-full relative z-10">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#080D18] border border-[#151F38] shadow-inner mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span className="text-xs font-mono uppercase font-bold tracking-widest text-[#00D2F6]">
-              SIMULADOR DE ESCOPO & PRAZOS
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624] border border-[#00D2F6]/25 shadow-sm mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
+            <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#00D2F6]">
+              08 / TERMINAL DE ARQUITETURA INTERATIVO
             </span>
           </div>
 
-          <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-white mb-4">
-            ESCOLHA SEU DESAFIO. VEJA O RAIO-X DA SOLUÇÃO.
+          <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-[#F8FAFC] mb-3 leading-tight">
+            SIMULE SEU PROJETO & VEJA A ARQUITETURA
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-[#AEB7C4] font-light leading-relaxed">
-            Selecione o tipo de projeto para visualizar a arquitetura técnica recomendada, entregáveis e prazo de execução:
+          <p className="text-sm sm:text-base text-[#94A3B8] font-light leading-relaxed max-w-[50ch] mx-auto">
+            Selecione o tipo de solução para visualizar a stack recomendada, entregáveis e prazo de execução garantido:
           </p>
         </div>
 
         {/* Archetype Selector Tabs */}
         <div className="w-full mb-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
             {ARCHETYPES.map((archetype) => {
               const Icon = archetype.icon;
               const isSelected = archetype.id === selectedId;
@@ -162,32 +162,23 @@ export const ProjectSimulator: React.FC = () => {
                   type="button"
                   key={archetype.id}
                   onClick={() => setSelectedId(archetype.id)}
-                  className={`p-4 sm:p-5 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between h-[95px] sm:h-[105px] cursor-pointer relative overflow-hidden group ${
+                  className={`p-4 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between h-[95px] cursor-pointer relative overflow-hidden group ${
                     isSelected
-                      ? 'bg-[#080D18] border-[#00D2F6] shadow-xl shadow-[#00D2F6]/15 scale-[1.02]'
-                      : 'bg-[#080D18]/70 border-[#151F38] hover:border-[#00D2F6]/40 hover:bg-[#080D18]'
+                      ? 'bg-[#0A1624] border-[#00D2F6] shadow-lg shadow-[#00D2F6]/15 scale-[1.01]'
+                      : 'bg-[#0A1624]/60 border-white/[0.08] hover:border-[#00D2F6]/40 hover:bg-[#0A1624]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <Icon
-                        className={`w-5 h-5 transition-colors ${
-                          isSelected ? 'text-[#00D2F6]' : 'text-[#AEB7C4] group-hover:text-white'
-                        }`}
-                      />
-                      {archetype.id === 'authority-web' && (
-                        <span className="text-[8px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/30">
-                          🔥 TOP
-                        </span>
-                      )}
-                    </div>
+                    <Icon
+                      className={`w-4 h-4 transition-colors ${
+                        isSelected ? 'text-[#00D2F6]' : 'text-[#94A3B8] group-hover:text-white'
+                      }`}
+                    />
                     <span
-                      className={`text-[9px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded ${
+                      className={`text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded ${
                         isSelected
-                          ? archetype.id === 'authority-web'
-                            ? 'bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/30 font-bold'
-                            : 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 font-bold'
-                          : 'bg-[#050914] text-[#AEB7C4]'
+                          ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30'
+                          : 'bg-white/[0.03] text-[#94A3B8]'
                       }`}
                     >
                       {archetype.timeline}
@@ -195,8 +186,8 @@ export const ProjectSimulator: React.FC = () => {
                   </div>
 
                   <span
-                    className={`text-xs sm:text-sm font-bold tracking-tight block truncate font-kanit uppercase ${
-                      isSelected ? 'text-white' : 'text-[#AEB7C4] group-hover:text-white'
+                    className={`text-xs sm:text-[13px] font-bold tracking-tight block truncate font-kanit uppercase ${
+                      isSelected ? 'text-white' : 'text-[#94A3B8] group-hover:text-white'
                     }`}
                   >
                     {archetype.title}
@@ -214,8 +205,8 @@ export const ProjectSimulator: React.FC = () => {
             initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -10 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-5xl mx-auto rounded-3xl bg-[#080D18] border border-[#151F38] p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden"
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-5xl mx-auto rounded-3xl bg-[#07111F]/80 border border-white/[0.08] p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
               
@@ -223,7 +214,7 @@ export const ProjectSimulator: React.FC = () => {
               <div className="lg:col-span-7 space-y-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-[#00D2F6] font-mono text-[10px] sm:text-[11px] uppercase font-bold tracking-widest">
+                    <span className="text-[#00D2F6] font-mono text-[10px] uppercase font-bold tracking-widest">
                       // ESCOPO E ARQUITETURA RECOMENDADA
                     </span>
                     <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-[#00D2F6]/10 text-[#00D2F6] border border-[#00D2F6]/20 font-bold">
@@ -233,21 +224,21 @@ export const ProjectSimulator: React.FC = () => {
                   <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white mb-2 font-kanit uppercase">
                     {currentArchetype.headline}
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#AEB7C4] font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#94A3B8] font-light leading-relaxed">
                     {currentArchetype.description}
                   </p>
                 </div>
 
                 {/* Stack Pills */}
                 <div className="space-y-1.5 pt-1">
-                  <span className="text-[10px] font-mono text-[#AEB7C4]/70 block uppercase tracking-wider font-semibold">
+                  <span className="text-[10px] font-mono text-[#64748B] block uppercase tracking-wider font-semibold">
                     Stack Tecnológica Recomendada:
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {currentArchetype.stack.map((tech) => (
                       <span
                         key={tech}
-                        className="text-[10px] sm:text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#050914] border border-[#151F38] text-[#00D2F6]"
+                        className="text-[10px] font-mono px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.06] text-[#00D2F6]"
                       >
                         {tech}
                       </span>
@@ -257,13 +248,13 @@ export const ProjectSimulator: React.FC = () => {
 
                 {/* Deliverables List */}
                 <div className="space-y-2 pt-1">
-                  <span className="text-[10px] font-mono text-[#AEB7C4]/70 block uppercase tracking-wider font-semibold">
+                  <span className="text-[10px] font-mono text-[#64748B] block uppercase tracking-wider font-semibold">
                     O Que Será Entregue:
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {currentArchetype.deliverables.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs text-[#F3F5F7]">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <div key={idx} className="flex items-start gap-2 text-xs text-[#F8FAFC]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#00D2F6] shrink-0 mt-0.5" />
                         <span className="font-light text-[11px] sm:text-xs leading-snug">{item}</span>
                       </div>
                     ))}
@@ -272,15 +263,15 @@ export const ProjectSimulator: React.FC = () => {
               </div>
 
               {/* Right Column: Execution Metrics & Direct Action (5 cols) */}
-              <div className="lg:col-span-5 flex flex-col justify-between h-full bg-[#050914] rounded-2xl border border-[#151F38] p-5 space-y-4 shadow-inner">
+              <div className="lg:col-span-5 flex flex-col justify-between h-full bg-[#050B14] rounded-2xl border border-white/[0.06] p-5 space-y-4 shadow-inner">
                 
                 {/* Timeline Box */}
-                <div className="flex items-center justify-between pb-3 border-b border-[#151F38]">
+                <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[#00D2F6]" />
-                    <span className="text-xs font-mono text-[#AEB7C4] uppercase">Prazo de Entrega</span>
+                    <span className="text-xs font-mono text-[#94A3B8] uppercase">Prazo de Entrega</span>
                   </div>
-                  <span className="text-xs sm:text-sm font-bold text-white font-mono bg-[#080D18] px-3 py-1 rounded-lg border border-[#00D2F6]/30 text-[#00D2F6]">
+                  <span className="text-xs sm:text-sm font-bold text-white font-mono bg-[#0A1624] px-3 py-1 rounded-lg border border-[#00D2F6]/30 text-[#00D2F6]">
                     {currentArchetype.timeline}
                   </span>
                 </div>
@@ -288,7 +279,7 @@ export const ProjectSimulator: React.FC = () => {
                 {/* Business Impact Box */}
                 <div className="p-3.5 rounded-xl bg-[#00D2F6]/5 border border-[#00D2F6]/20">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <Zap className="w-4 h-4 text-[#00D2F6]" />
+                    <Zap className="w-3.5 h-3.5 text-[#00D2F6]" />
                     <span className="text-[10px] font-mono uppercase font-bold text-[#00D2F6] tracking-wider">
                       IMPACTO NO NEGÓCIO
                     </span>
@@ -302,10 +293,10 @@ export const ProjectSimulator: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleStartProject}
-                  className="w-full py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg hover:scale-102 active:scale-98 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF]"
+                  className="w-full py-3 rounded-full text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg hover:scale-102 active:scale-98 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/20"
                 >
                   <MessageCircle className="w-4 h-4 text-white" />
-                  <span>SOLICITAR ESTE PROJETO NO WHATSAPP</span>
+                  <span>SOLICITAR ESTE ESCOPO NO WHATSAPP</span>
                 </button>
 
               </div>

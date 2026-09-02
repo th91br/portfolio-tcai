@@ -1,17 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, Variants, useMotionValue, useSpring } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, Variants, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion';
 import {
-  Zap,
-  Bot,
-  Code2,
   MessageCircle,
   ArrowDown,
+  ShieldCheck,
   Sparkles,
 } from 'lucide-react';
 import { HERO_DATA } from '../../data/portfolioData';
 import { MagneticButton } from '../common/MagneticButton';
-import { HeroWaveCanvas } from '../hero/HeroWaveCanvas';
-import { HeroGlassCard } from '../hero/HeroGlassCard';
 import { createQuickWhatsAppUrl } from '../../utils/contactUtils';
 
 interface HeroExecutiveProps {
@@ -20,20 +16,29 @@ interface HeroExecutiveProps {
 
 export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) => {
   const heroRef = useRef<HTMLElement>(null);
-  const [activeCardIndex, setActiveCardIndex] = useState<number>(-1);
-  const [isHeroVisible, setIsHeroVisible] = useState<boolean>(true);
 
-  // Subtle Mouse Parallax Physics for Left Column (2-4px max)
+  // Cinematic Scroll-Driven Parallax
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const founderY = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const founderScale = useTransform(scrollYProgress, [0, 1], [1, 1.025]);
+  const watermarkY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.25]);
+
+  // Subtle Mouse Physics for Interactive Parallax on Desktop
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const springConfig = { damping: 25, stiffness: 200, mass: 0.1 };
-  const parallaxX = useSpring(mouseX, springConfig);
-  const parallaxY = useSpring(mouseY, springConfig);
+  const springConfig = { damping: 32, stiffness: 180, mass: 0.08 };
+  const smoothMouseX = useSpring(mouseX, springConfig);
+  const smoothMouseY = useSpring(mouseY, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!heroRef.current) return;
     const { left, top, width, height } = heroRef.current.getBoundingClientRect();
-    const x = ((e.clientX - left) / width - 0.5) * 6; // Max 3px
+    const x = ((e.clientX - left) / width - 0.5) * 6;
     const y = ((e.clientY - top) / height - 0.5) * 6;
     mouseX.set(x);
     mouseY.set(y);
@@ -44,71 +49,49 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
     mouseY.set(0);
   };
 
-  // IntersectionObserver to monitor Hero visibility and pause RAF when offscreen
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsHeroVisible(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
-    if (heroRef.current) {
-      observer.observe(heroRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);
-
-  // 8-Second Master Timeline Cycle for sequential service cards highlight
-  useEffect(() => {
-    if (!isHeroVisible) return;
-
-    const interval = setInterval(() => {
-      // 0-3s: none active
-      setActiveCardIndex(-1);
-
-      // 3s: Card 0 (Sites)
-      const t1 = setTimeout(() => setActiveCardIndex(0), 3000);
-      // 4.2s: Card 1 (Automações)
-      const t2 = setTimeout(() => setActiveCardIndex(1), 4200);
-      // 5.4s: Card 2 (Softwares)
-      const t3 = setTimeout(() => setActiveCardIndex(2), 5400);
-      // 6.8s: Return to baseline
-      const t4 = setTimeout(() => setActiveCardIndex(-1), 6800);
-
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-        clearTimeout(t3);
-        clearTimeout(t4);
-      };
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, [isHeroVisible]);
-
-  // Framer Motion Variants for Masked Headline Entrance
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
+        staggerChildren: 0.06,
+        delayChildren: 0.03,
       },
     },
   };
 
   const lineMaskVariants: Variants = {
-    hidden: { y: 65, opacity: 0 },
+    hidden: { y: 28, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.85,
+        duration: 0.6,
         ease: [0.22, 1, 0.36, 1] as const,
       },
     },
   };
+
+  const telemetryItems = [
+    {
+      num: '01',
+      title: 'SITES & LANDING PAGES',
+      sla: '3 DIAS ÚTEIS',
+      desc: 'Alta Conversão & SEO 100/100',
+    },
+    {
+      num: '02',
+      title: 'AUTOMAÇÕES & AGENTES IA',
+      sla: '7 DIAS ÚTEIS',
+      desc: 'Operação e Triagem 24/7',
+    },
+    {
+      num: '03',
+      title: 'SOFTWARES & SAAS',
+      sla: '10 DIAS ÚTEIS',
+      desc: 'Código 100% Proprietário',
+    },
+  ];
 
   return (
     <section
@@ -116,171 +99,311 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
       id="hero"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[94vh] lg:min-h-screen w-full bg-transparent text-[#F3F5F7] pt-32 sm:pt-40 pb-20 px-4 sm:px-6 md:px-10 flex items-center justify-center overflow-hidden z-10 select-none"
+      className="relative min-h-[94vh] lg:min-h-screen w-full bg-[#07111F] text-[#F3F5F7] pt-20 sm:pt-24 lg:pt-28 pb-10 lg:pb-8 px-4 sm:px-6 md:px-10 flex flex-col justify-end overflow-hidden z-10 select-none"
     >
-      {/* 1. Undulating 3D Wireframe Waves Background Canvas */}
-      <HeroWaveCanvas />
+      {/* ========================================================================= */}
+      {/* 1. LAYER 0: MONUMENTAL ARCHITECTURAL WATERMARK & VOLUMETRIC STUDIO LIGHT   */}
+      {/* ========================================================================= */}
 
-      {/* 2. Ambient Lighting Glow Orbs */}
-      <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-[#00D2F6]/10 blur-[170px] pointer-events-none rounded-full" />
-      <div className="absolute bottom-12 right-1/4 w-[550px] h-[450px] bg-[#015EEF]/12 blur-[180px] pointer-events-none rounded-full" />
+      {/* A. Massive Background Typography Spanning Hero */}
+      <motion.div
+        style={{ y: watermarkY }}
+        className="absolute top-[14%] sm:top-[12%] lg:top-[10%] inset-x-0 w-full flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden"
+        aria-hidden="true"
+      >
+        <span className="font-kanit font-black text-[17vw] lg:text-[14vw] leading-none tracking-tighter bg-gradient-to-b from-white/[0.05] via-white/[0.02] to-transparent bg-clip-text text-transparent uppercase whitespace-nowrap text-center">
+          TECNOLOGIA & IA
+        </span>
+      </motion.div>
 
-      {/* 3. Main Master Grid Container */}
-      <div className="max-w-7xl mx-auto w-full relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-        
-        {/* Left Column: Semantic Copywriting & High-Conversion CTAs (7 cols on lg) */}
-        <motion.div
-          style={{ x: parallaxX, y: parallaxY }}
-          className="lg:col-span-7 flex flex-col items-start text-left space-y-6"
+      {/* B. Studio Chiaroscuro Volumetric Lighting */}
+      <div
+        className="absolute top-[35%] lg:top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] sm:w-[650px] lg:w-[850px] h-[380px] sm:h-[480px] pointer-events-none rounded-full z-0"
+        style={{
+          background: 'radial-gradient(circle, rgba(0, 210, 246, 0.11) 0%, rgba(1, 94, 239, 0.04) 45%, transparent 70%)',
+          filter: 'blur(100px)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* C. Precision Optical Reticle (Desktop) */}
+      <div
+        className="hidden lg:flex absolute top-[44%] left-[54%] -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-white/[0.03] pointer-events-none z-0 items-center justify-center"
+        aria-hidden="true"
+      >
+        <div className="w-[82%] h-[82%] rounded-full border border-[#00D2F6]/[0.05] border-dashed" />
+        <div className="w-[60%] h-[60%] rounded-full border border-white/[0.02]" />
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 2. LAYER 1: THE PROTAGONIST & CYBER HORIZON — THIAGO CASSOL ANTUNES (DESKTOP Z-10) */}
+      {/* ========================================================================= */}
+      {/* Positioned expansively across center and right, extending behind the SLA telemetry */}
+      <motion.div
+        style={{
+          x: smoothMouseX,
+          y: founderY,
+          scale: founderScale,
+        }}
+        className="hidden lg:flex absolute bottom-0 right-0 xl:right-[1%] 2xl:right-[3%] z-10 pointer-events-none items-end justify-end h-[680px] xl:h-[760px] 2xl:h-[820px] w-auto max-w-[85vw]"
+      >
+        <div
+          className="relative h-full flex items-end justify-end"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 18%, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.5) 86%, rgba(0,0,0,0) 100%)',
+            WebkitMaskComposite: 'destination-in',
+            maskImage: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 18%, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.5) 86%, rgba(0,0,0,0) 100%)',
+            maskComposite: 'intersect',
+          }}
         >
-          {/* Status Pill: Availability with Double-Bezel Micro-Chassis */}
+          <img
+            src="/hero.2.tca.png"
+            alt="Thiago Cassol Antunes — Arquiteto de Software & Engenheiro de IA"
+            className="h-full w-auto object-contain object-bottom filter contrast-[1.04] brightness-[0.98] drop-shadow-[0_20px_50px_rgba(0,0,0,0.95)]"
+            loading="eager"
+          />
+        </div>
+      </motion.div>
+
+      {/* ========================================================================= */}
+      {/* 3. LAYER 2: ASYMMETRIC EDITORIAL STAGE (Z-20)                              */}
+      {/* ========================================================================= */}
+      <div className="max-w-7xl mx-auto w-full relative z-20 flex flex-col justify-end">
+        
+        {/* DESKTOP VIEWPORT LAYOUT (lg+) */}
+        <div className="hidden lg:grid grid-cols-12 gap-8 items-end w-full pb-6">
+          
+          {/* Left Flank: High-Impact Semantic Editorial Copy & CTAs (6 cols) */}
           <motion.div
-            animate={{
-              boxShadow: [
-                '0 0 10px rgba(0,210,246,0.15)',
-                '0 0 22px rgba(0,210,246,0.38)',
-                '0 0 10px rgba(0,210,246,0.15)',
-              ],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 shadow-lg shadow-[#00D2F6]/10 backdrop-blur-md"
+            style={{ opacity: contentOpacity }}
+            className="col-span-6 flex flex-col items-start text-left space-y-4"
           >
-            <span className="w-2.5 h-2.5 rounded-full bg-[#00D2F6] animate-pulse" />
-            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
-              {HERO_DATA.statusBadge}
-            </span>
-          </motion.div>
+            {/* Status Pill: Live Availability */}
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624]/90 border border-[#00D2F6]/25 shadow-sm shadow-[#00D2F6]/10 backdrop-blur-md"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
+              <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
+                {HERO_DATA.statusBadge}
+              </span>
+            </motion.div>
 
-          {/* Masked Animated Main Headline */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="w-full relative"
-          >
-            {/* Line 1 Mask: Cold Titanium Metal Treatment */}
-            <div className="overflow-hidden pb-1">
-              <motion.div
-                variants={lineMaskVariants}
-                className="font-kanit font-black uppercase tracking-tight leading-[1.08] text-left text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px] bg-gradient-to-r from-white via-[#E8EDF5] to-[#B0BCD0] bg-clip-text text-transparent"
-              >
-                {HERO_DATA.headlineP1}
-              </motion.div>
-            </div>
-
-            {/* Line 2 Mask: Pure Electric Cyan / Blue TCA */}
-            <div className="overflow-hidden pb-2">
-              <motion.div
-                variants={lineMaskVariants}
-                className="font-kanit font-black uppercase tracking-tight leading-[1.08] text-left text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px] bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent"
-              >
-                {HERO_DATA.headlineP2}
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Subtext with Relaxed Leading */}
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-[#AEB7C4] text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-[56ch]"
-          >
-            {HERO_DATA.subtext}
-          </motion.p>
-
-          {/* 3 SLA Service Cards with Double-Bezel Hardware Architecture and Sequential Timeline Pulse */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="w-full grid grid-cols-1 sm:grid-cols-3 gap-3 py-2"
-          >
-            {HERO_DATA.slaBadges.map((badge, idx) => {
-              const isHighlighted = activeCardIndex === idx;
-              return (
-                <div
-                  key={idx}
-                  className={`p-1.5 rounded-[22px] transition-all duration-500 shadow-xl cursor-pointer ${
-                    isHighlighted
-                      ? 'bg-gradient-to-b from-[#00D2F6]/50 via-[#0096F5]/25 to-transparent border border-[#00D2F6] shadow-[0_0_25px_rgba(0,210,246,0.3)] scale-[1.02]'
-                      : 'bg-white/[0.02] border border-white/[0.08] hover:border-white/20'
-                  }`}
+            {/* Headline with Monumental Editorial Typography */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="w-full relative"
+            >
+              <div className="overflow-hidden pb-1">
+                <motion.h1
+                  variants={lineMaskVariants}
+                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-white via-[#F8FAFC] to-[#94A3B8] bg-clip-text text-transparent"
                 >
-                  <div className="h-full w-full rounded-[18px] bg-[#060B18]/90 p-3.5 border border-white/[0.04] shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] flex flex-col justify-between">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      {/* Squircle Icon Pod */}
-                      <div className="w-7 h-7 rounded-lg bg-[#00D2F6]/10 border border-[#00D2F6]/20 flex items-center justify-center shrink-0">
-                        {badge.icon === 'zap' && <Zap className="w-3.5 h-3.5 text-[#00D2F6]" />}
-                        {badge.icon === 'bot' && <Bot className="w-3.5 h-3.5 text-[#0096F5]" />}
-                        {badge.icon === 'code' && <Code2 className="w-3.5 h-3.5 text-[#015EEF]" />}
-                      </div>
-                      <span className={`text-[11px] font-mono font-bold uppercase transition-colors ${isHighlighted ? 'text-[#00D2F6]' : 'text-white'}`}>
-                        {badge.time}
+                  {HERO_DATA.headlineP1}
+                </motion.h1>
+              </div>
+
+              <div className="overflow-hidden pb-1">
+                <motion.div
+                  variants={lineMaskVariants}
+                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent"
+                >
+                  {HERO_DATA.headlineP2}
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Strategic Subtext */}
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.18 }}
+              className="text-[#94A3B8] text-sm sm:text-base font-light leading-relaxed max-w-[44ch]"
+            >
+              {HERO_DATA.subtext}
+            </motion.p>
+
+            {/* CTAs: WhatsApp Primary & Cases Secondary */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.28 }}
+              className="flex items-center gap-3 pt-2"
+            >
+              <MagneticButton strength={0.2}>
+                <a
+                  href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group relative pl-5 pr-2 py-3 rounded-full text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-3 shadow-xl shadow-[#00D2F6]/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
+                >
+                  <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] font-kanit">
+                    INICIAR PROJETO NO WHATSAPP
+                  </span>
+                  <span className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 shadow-inner">
+                    <MessageCircle className="w-3.5 h-3.5 text-white" />
+                  </span>
+                </a>
+              </MagneticButton>
+
+              <a
+                href="#projects"
+                className="group px-5 py-3 rounded-full border border-white/10 hover:border-[#00D2F6]/40 bg-white/[0.03] hover:bg-white/[0.06] text-[#94A3B8] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 backdrop-blur-md transition-all duration-300 cursor-pointer shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
+              >
+                <span>VER CASES REAIS</span>
+                <ArrowDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-y-0.5 text-[#00D2F6]" />
+              </a>
+            </motion.div>
+          </motion.div>
+
+          {/* Spacer for center presence of Thiago (3 cols) */}
+          <div className="col-span-3 pointer-events-none" />
+
+          {/* Right Flank: Architectural Telemetry (3 cols) with artwork in background */}
+          <motion.div
+            style={{ opacity: contentOpacity }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.55, delay: 0.35 }}
+            className="col-span-3 flex flex-col items-end text-right space-y-3 z-20"
+          >
+            {/* Glass HUD panel ensuring pristine contrast over background artwork */}
+            <div className="w-full max-w-[300px] p-4 rounded-2xl bg-[#07111F]/50 border border-white/10 backdrop-blur-md shadow-2xl flex flex-col items-end space-y-3">
+              <div className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest font-bold">
+                <Sparkles className="w-3 h-3 text-[#00D2F6]" />
+                <span className="text-[#00D2F6]">SLA DE ENTREGA RECORD</span>
+              </div>
+
+              <div className="w-full space-y-2.5">
+                {telemetryItems.map((item) => (
+                  <div
+                    key={item.num}
+                    className="pb-2 border-b border-white/[0.08] last:border-0 flex flex-col items-end group"
+                  >
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-[10px] font-mono text-[#00D2F6] font-bold">
+                        {item.num}
+                      </span>
+                      <span className="text-xs font-bold text-white uppercase font-kanit tracking-tight group-hover:text-[#00D2F6] transition-colors">
+                        {item.title}
                       </span>
                     </div>
-                    <div className={`text-xs font-medium transition-colors ${isHighlighted ? 'text-white font-semibold' : 'text-[#AEB7C4]'}`}>
-                      {badge.type}
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-[#94A3B8] font-light">
+                        {item.desc}
+                      </span>
+                      <span className="text-[10px] font-mono font-bold text-[#00D2F6] px-1.5 py-0.2 rounded bg-[#00D2F6]/10 border border-[#00D2F6]/25">
+                        {item.sla}
+                      </span>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              <div className="pt-1 flex flex-col items-end text-right border-t border-white/[0.08] w-full">
+                <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#AEB7C4]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Código 100% Proprietário</span>
                 </div>
-              );
-            })}
+                <span className="text-[10px] font-mono text-[#64748B] mt-0.5">
+                  Caxias do Sul / RS • Atendimento Global
+                </span>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Action CTAs with Button-in-Button & Magnetic Attraction */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto"
-          >
-            {/* Masterpiece Button-in-Button WhatsApp Call-to-Action */}
-            <MagneticButton strength={0.35}>
-              <motion.a
-                href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
-                target="_blank"
-                rel="noreferrer"
-                animate={{
-                  boxShadow: [
-                    '0 4px 20px rgba(0, 210, 246, 0.35)',
-                    '0 4px 34px rgba(0, 210, 246, 0.65)',
-                    '0 4px 20px rgba(0, 210, 246, 0.35)',
-                  ],
-                }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="group relative w-full sm:w-auto pl-7 pr-2.5 py-3 rounded-full text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-3 shadow-2xl transition-all duration-300 cursor-pointer bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 active:scale-[0.98]"
-              >
-                <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  INICIAR PROJETO NO WHATSAPP
-                </span>
-                {/* Nested Button-in-Button Trailing Icon Pod */}
-                <span className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5 group-hover:bg-white/30 shadow-inner">
-                  <MessageCircle className="w-4 h-4 text-white" />
-                </span>
-              </motion.a>
-            </MagneticButton>
+        </div>
 
-            {/* Secondary Link to Cases with Glass Surface */}
+        {/* ========================================================================= */}
+        {/* MOBILE & TABLET VIEWPORT LAYOUT (< lg)                                    */}
+        {/* ========================================================================= */}
+        <div className="flex lg:hidden flex-col items-center text-center space-y-5 w-full pt-4">
+          
+          {/* Status Pill */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624]/90 border border-[#00D2F6]/25 shadow-sm shadow-[#00D2F6]/10 backdrop-blur-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
+            <span className="text-[10px] font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
+              {HERO_DATA.statusBadge}
+            </span>
+          </div>
+
+          {/* Headline */}
+          <div className="w-full">
+            <h1 className="font-kanit font-black uppercase tracking-tight leading-[1.08] text-3xl sm:text-4xl bg-gradient-to-r from-white via-[#F8FAFC] to-[#94A3B8] bg-clip-text text-transparent">
+              {HERO_DATA.headlineP1}
+            </h1>
+            <div className="font-kanit font-black uppercase tracking-tight leading-[1.08] text-3xl sm:text-4xl bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent mt-0.5">
+              {HERO_DATA.headlineP2}
+            </div>
+          </div>
+
+          {/* Thiago Mobile Centerstage Frame (Expansive hero stage) */}
+          <div className="relative w-full max-w-[560px] sm:max-w-[680px] aspect-[16/10] sm:aspect-[16/9] flex items-center justify-center my-2 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+            <div
+              className="relative h-full w-full flex items-center justify-center"
+              style={{
+                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 78%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0) 100%), linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%)',
+                WebkitMaskComposite: 'destination-in',
+                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 78%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0) 100%), linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%)',
+                maskComposite: 'intersect',
+              }}
+            >
+              <img
+                src="/hero.2.tca.png"
+                alt="Thiago Cassol Antunes"
+                className="w-full h-full object-cover object-[70%_center] filter contrast-[1.04] brightness-[0.98] drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)]"
+                loading="eager"
+              />
+            </div>
+          </div>
+
+          {/* Subtext */}
+          <p className="text-[#94A3B8] text-xs sm:text-sm font-light leading-relaxed max-w-[38ch]">
+            {HERO_DATA.subtext}
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-xs sm:max-w-md pt-1">
+            <a
+              href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full py-3 px-5 rounded-full text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl shadow-[#00D2F6]/20 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 cursor-pointer"
+            >
+              <span className="font-kanit">INICIAR PROJETO NO WHATSAPP</span>
+              <MessageCircle className="w-3.5 h-3.5 text-white" />
+            </a>
+
             <a
               href="#projects"
-              className="group w-full sm:w-auto px-7 py-4 rounded-full border border-white/10 hover:border-[#00D2F6]/50 bg-white/[0.02] hover:bg-white/[0.06] text-[#AEB7C4] hover:text-[#00D2F6] text-xs sm:text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2.5 backdrop-blur-md transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(0,210,246,0.2)]"
+              className="w-full py-2.5 px-5 rounded-full border border-white/10 bg-white/[0.03] text-[#94A3B8] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>VER CASES REAIS</span>
-              <ArrowDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-y-1" />
+              <ArrowDown className="w-3.5 h-3.5 text-[#00D2F6]" />
             </a>
-          </motion.div>
-        </motion.div>
+          </div>
 
-        {/* Right Column: Founder Executive Glass Monolith (5 cols on lg) */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="lg:col-span-5 relative flex items-center justify-center"
-        >
-          <HeroGlassCard onContactClick={onContactClick} />
-        </motion.div>
+          {/* Mobile Telemetry Strip */}
+          <div className="w-full max-w-sm pt-4 border-t border-white/[0.06] flex items-center justify-around text-center">
+            {telemetryItems.map((item) => (
+              <div key={item.num} className="flex flex-col items-center">
+                <span className="text-[9px] font-mono font-bold text-[#00D2F6]">
+                  {item.sla}
+                </span>
+                <span className="text-[10px] font-bold text-[#CBD5E1] uppercase font-kanit mt-0.5">
+                  {item.num} {item.title.split(' ')[0]}
+                </span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
       </div>
     </section>
   );
