@@ -31,7 +31,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   const y = useMotionValue(0);
 
   // Smooth physical spring physics
-  const springConfig = { damping: 15, stiffness: 160, mass: 0.1 };
+  const springConfig = { damping: 16, stiffness: 160, mass: 0.1 };
   const smoothX = useSpring(x, springConfig);
   const smoothY = useSpring(y, springConfig);
 
@@ -58,6 +58,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      whileTap={{ scale: 0.97 }}
       style={{
         x: smoothX,
         y: smoothY,

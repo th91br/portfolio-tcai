@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { SmoothScrollProvider } from './components/providers/SmoothScrollProvider';
 import { HeroScene } from './components/3d/HeroScene';
-import { ReadingProgressBar } from './components/common/ReadingProgressBar';
 import { Navbar } from './components/layout/Navbar';
 import { HeroExecutive } from './components/sections/HeroExecutive';
 import { MetricsBar } from './components/sections/MetricsBar';
@@ -30,19 +29,16 @@ export const App: React.FC = () => {
 
   return (
     <SmoothScrollProvider>
-      <div className="w-full min-h-screen bg-[#F8FAFC] text-[#0F172A] font-kanit antialiased selection:bg-[#0284C7]/20 selection:text-[#0284C7] relative overflow-x-hidden">
-        {/* 1. Global Reading Progress Bar (Fixed Top, 4px, Laranja Energético #FF6B35) */}
-        <ReadingProgressBar />
-
-        {/* 2. Global Subtle Ambient 3D Depth Layer */}
+      <div className="w-full min-h-screen bg-[#050914] text-[#F3F5F7] font-kanit antialiased selection:bg-[#00D2F6]/30 selection:text-white relative overflow-x-hidden">
+        {/* 1. Global Subtle Ambient 3D Depth Layer */}
         <HeroScene />
 
-        {/* 3. Fixed Executive Navigation Header */}
+        {/* 2. Fixed Executive Floating Island Navigation Header */}
         <Navbar onContactClick={() => openWhatsApp('general')} />
 
-        {/* 4. Main Content Stream */}
+        {/* 3. Main Content Stream */}
         <main className="w-full relative z-10">
-          {/* Hero Section: Supreme Authority + Masked Typography + Magnetic Button + 3/7/10 Days SLA */}
+          {/* Hero Section: Supreme Authority + Masked Typography + Button-in-Button CTA + 3/7/10 Days SLA */}
           <HeroExecutive onContactClick={() => openWhatsApp('general')} />
 
           {/* Hard Proof Metrics Bar */}
@@ -76,7 +72,7 @@ export const App: React.FC = () => {
           <ContactSection onDirectContactClick={() => openWhatsApp('general')} />
         </main>
 
-        {/* 5. Interactive Project Details Modal */}
+        {/* 4. Interactive Project Details Modal */}
         <ProjectModal
           project={selectedProject}
           onClose={handleCloseProject}

@@ -15,15 +15,15 @@ export const HeroGlassCard: React.FC<HeroGlassCardProps> = () => {
   // Smooth 3D Inertia Parallax Physics
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const springConfig = { damping: 22, stiffness: 160, mass: 0.1 };
+  const springConfig = { damping: 24, stiffness: 180, mass: 0.1 };
   const smoothParallaxX = useSpring(mouseX, springConfig);
   const smoothParallaxY = useSpring(mouseY, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const { left, top, width, height } = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - left) / width - 0.5) * 12; // Max 6px parallax
-    const y = ((e.clientY - top) / height - 0.5) * 12;
+    const x = ((e.clientX - left) / width - 0.5) * 10; // Max 5px parallax
+    const y = ((e.clientY - top) / height - 0.5) * 10;
     mouseX.set(x);
     mouseY.set(y);
   };
@@ -46,7 +46,7 @@ export const HeroGlassCard: React.FC<HeroGlassCardProps> = () => {
       {/* 1. Underlying TCA Energy Ring */}
       <HeroEnergyRing />
 
-      {/* 2. Floating 3D Angled Glass Card Container */}
+      {/* 2. Floating 3D Angled Glass Card Container with Double-Bezel Hardware Architecture */}
       <motion.div
         style={{
           x: smoothParallaxX,
@@ -58,14 +58,14 @@ export const HeroGlassCard: React.FC<HeroGlassCardProps> = () => {
           rotateY: isHovered ? -3 : [-7, -5, -7],
           rotateX: isHovered ? 2 : [4, 2, 4],
           rotateZ: isHovered ? 0 : [-1.5, 0.5, -1.5],
-          scale: isHovered ? 1.03 : [1, 1.015, 1],
+          scale: isHovered ? 1.025 : [1, 1.014, 1],
         }}
         transition={{
           duration: 7,
           repeat: Infinity,
           ease: [0.22, 1, 0.36, 1],
         }}
-        className="relative w-full aspect-[4/5] rounded-[34px] p-2.5 bg-[#060B18]/85 border border-[#00D2F6]/40 backdrop-blur-2xl shadow-[0_30px_70px_rgba(0,0,0,0.9),0_0_40px_rgba(0,210,246,0.22)] hover:border-[#00D2F6]/80 hover:shadow-[0_30px_80px_rgba(0,0,0,0.95),0_0_55px_rgba(0,210,246,0.35)] transition-all duration-500 z-10 overflow-hidden"
+        className="relative w-full aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 bg-white/[0.02] border border-white/12 backdrop-blur-2xl shadow-[0_30px_70px_rgba(0,0,0,0.9),0_0_40px_rgba(0,210,246,0.2)] hover:border-[#00D2F6]/60 hover:shadow-[0_30px_80px_rgba(0,0,0,0.95),0_0_55px_rgba(0,210,246,0.35)] transition-all duration-500 z-10 overflow-hidden"
       >
         {/* Diagonal Sweeping Glass Specular Sheen */}
         <motion.div
@@ -83,10 +83,10 @@ export const HeroGlassCard: React.FC<HeroGlassCardProps> = () => {
           aria-hidden="true"
         />
 
-        {/* Inner Media Canvas */}
-        <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-[#030611]">
+        {/* Inner Media Canvas: Machined Inner Core */}
+        <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-[#030611] border border-white/[0.06] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
           
-          {/* Holographic Cyber Grid & Charts (Behind portrait) */}
+          {/* Holographic Cyber Grid & Telemetry Bars (Behind portrait) */}
           <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
             {/* Equalizer frequency bars */}
             <div className="absolute top-12 left-6 flex items-end gap-1 h-16">
@@ -150,7 +150,7 @@ export const HeroGlassCard: React.FC<HeroGlassCardProps> = () => {
           </div>
         </div>
 
-        {/* Top Right Floating Pill Badge: SLA Guarantee */}
+        {/* Top Right Floating Double-Bezel Pill Badge: SLA Guarantee */}
         <motion.div
           animate={{
             boxShadow: [
