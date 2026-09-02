@@ -120,8 +120,18 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
       <div
         className="absolute top-[35%] lg:top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] sm:w-[650px] lg:w-[850px] h-[380px] sm:h-[480px] pointer-events-none rounded-full z-0"
         style={{
-          background: 'radial-gradient(circle, rgba(0, 210, 246, 0.11) 0%, rgba(1, 94, 239, 0.04) 45%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(0, 210, 246, 0.12) 0%, rgba(1, 94, 239, 0.05) 45%, transparent 70%)',
           filter: 'blur(100px)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Ambient Radial Backlight behind the protagonist's holographic orbit */}
+      <div
+        className="hidden lg:block absolute bottom-10 right-[8%] w-[680px] h-[580px] pointer-events-none rounded-full z-0"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(0, 210, 246, 0.09) 0%, rgba(1, 94, 239, 0.04) 50%, transparent 75%)',
+          filter: 'blur(90px)',
         }}
         aria-hidden="true"
       />
@@ -138,29 +148,34 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
       {/* ========================================================================= */}
       {/* 2. LAYER 1: THE PROTAGONIST & CYBER HORIZON — THIAGO CASSOL ANTUNES (DESKTOP Z-10) */}
       {/* ========================================================================= */}
-      {/* Positioned expansively across center and right, extending behind the SLA telemetry */}
+      {/* Positioned expansively in high fidelity: transparent PNG with pure hardware rendering */}
       <motion.div
         style={{
           x: smoothMouseX,
           y: founderY,
           scale: founderScale,
         }}
-        className="hidden lg:flex absolute bottom-0 right-0 xl:right-[1%] 2xl:right-[3%] z-10 pointer-events-none items-end justify-end h-[680px] xl:h-[760px] 2xl:h-[820px] w-auto max-w-[85vw]"
+        className="hidden lg:flex absolute bottom-0 right-[-4%] xl:right-[-1%] 2xl:right-[2%] z-10 pointer-events-none items-end justify-end h-[700px] xl:h-[780px] 2xl:h-[840px] w-auto max-w-[80vw] select-none"
       >
         <div
           className="relative h-full flex items-end justify-end"
           style={{
-            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 18%, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.5) 86%, rgba(0,0,0,0) 100%)',
-            WebkitMaskComposite: 'destination-in',
-            maskImage: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 18%, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.5) 86%, rgba(0,0,0,0) 100%)',
-            maskComposite: 'intersect',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 80%, rgba(0,0,0,0.5) 92%, rgba(0,0,0,0) 100%)',
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 80%, rgba(0,0,0,0.5) 92%, rgba(0,0,0,0) 100%)',
           }}
         >
           <img
             src="/hero.2.tca.png"
             alt="Thiago Cassol Antunes — Arquiteto de Software & Engenheiro de IA"
-            className="h-full w-auto object-contain object-bottom filter contrast-[1.04] brightness-[0.98] drop-shadow-[0_20px_50px_rgba(0,0,0,0.95)]"
+            className="h-full w-auto object-contain object-bottom select-none"
+            style={{
+              imageRendering: '-webkit-optimize-contrast',
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+            }}
             loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
       </motion.div>
@@ -183,9 +198,9 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624]/90 border border-[#00D2F6]/25 shadow-sm shadow-[#00D2F6]/10 backdrop-blur-md"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0A1624]/90 border border-[#00D2F6]/30 shadow-lg shadow-[#00D2F6]/10 backdrop-blur-md"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#00D2F6] animate-pulse" />
               <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
                 {HERO_DATA.statusBadge}
               </span>
@@ -201,7 +216,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
               <div className="overflow-hidden pb-1">
                 <motion.h1
                   variants={lineMaskVariants}
-                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-white via-[#F8FAFC] to-[#94A3B8] bg-clip-text text-transparent"
+                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-white via-[#F8FAFC] to-[#94A3B8] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]"
                 >
                   {HERO_DATA.headlineP1}
                 </motion.h1>
@@ -210,7 +225,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
               <div className="overflow-hidden pb-1">
                 <motion.div
                   variants={lineMaskVariants}
-                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent"
+                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent drop-shadow-[0_4px_20px_rgba(0,210,246,0.3)]"
                 >
                   {HERO_DATA.headlineP2}
                 </motion.div>
@@ -222,7 +237,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.18 }}
-              className="text-[#94A3B8] text-sm sm:text-base font-light leading-relaxed max-w-[44ch]"
+              className="text-[#94A3B8] text-sm sm:text-base font-light leading-relaxed max-w-[44ch] drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]"
             >
               {HERO_DATA.subtext}
             </motion.p>
@@ -239,7 +254,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
                   href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
                   target="_blank"
                   rel="noreferrer"
-                  className="group relative pl-5 pr-2 py-3 rounded-full text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-3 shadow-xl shadow-[#00D2F6]/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
+                  className="group relative pl-5 pr-2 py-3 rounded-full text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-3 shadow-2xl shadow-[#00D2F6]/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
                 >
                   <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] font-kanit">
                     INICIAR PROJETO NO WHATSAPP
@@ -252,7 +267,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
 
               <a
                 href="#projects"
-                className="group px-5 py-3 rounded-full border border-white/10 hover:border-[#00D2F6]/40 bg-white/[0.03] hover:bg-white/[0.06] text-[#94A3B8] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 backdrop-blur-md transition-all duration-300 cursor-pointer shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
+                className="group px-5 py-3 rounded-full border border-white/12 hover:border-[#00D2F6]/50 bg-[#07111F]/60 hover:bg-white/[0.06] text-[#CBD5E1] hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 backdrop-blur-md transition-all duration-300 cursor-pointer shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
               >
                 <span>VER CASES REAIS</span>
                 <ArrowDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-y-0.5 text-[#00D2F6]" />
@@ -269,51 +284,53 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.55, delay: 0.35 }}
-            className="col-span-3 flex flex-col items-end text-right space-y-3 z-20"
+            className="col-span-3 flex flex-col items-end text-right space-y-4 z-20"
           >
-            {/* Glass HUD panel ensuring pristine contrast over background artwork */}
-            <div className="w-full max-w-[300px] p-4 rounded-2xl bg-[#07111F]/50 border border-white/10 backdrop-blur-md shadow-2xl flex flex-col items-end space-y-3">
-              <div className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest font-bold">
-                <Sparkles className="w-3 h-3 text-[#00D2F6]" />
-                <span className="text-[#00D2F6]">SLA DE ENTREGA RECORD</span>
-              </div>
+            {/* Header Tag with glowing cyan accent */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624]/80 border border-[#00D2F6]/30 shadow-lg shadow-[#00D2F6]/10 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
+              <span className="text-[10px] font-mono text-[#00D2F6] uppercase tracking-widest font-bold">
+                SLA DE ENTREGA RECORD
+              </span>
+            </div>
 
-              <div className="w-full space-y-2.5">
-                {telemetryItems.map((item) => (
-                  <div
-                    key={item.num}
-                    className="pb-2 border-b border-white/[0.08] last:border-0 flex flex-col items-end group"
-                  >
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[10px] font-mono text-[#00D2F6] font-bold">
-                        {item.num}
-                      </span>
-                      <span className="text-xs font-bold text-white uppercase font-kanit tracking-tight group-hover:text-[#00D2F6] transition-colors">
-                        {item.title}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] text-[#94A3B8] font-light">
-                        {item.desc}
-                      </span>
-                      <span className="text-[10px] font-mono font-bold text-[#00D2F6] px-1.5 py-0.2 rounded bg-[#00D2F6]/10 border border-[#00D2F6]/25">
-                        {item.sla}
-                      </span>
-                    </div>
+            {/* SLA Telemetry Items floating cleanly over the holographic artwork */}
+            <div className="w-full space-y-3 max-w-[280px]">
+              {telemetryItems.map((item) => (
+                <div
+                  key={item.num}
+                  className="pb-2.5 border-b border-white/[0.12] flex flex-col items-end group backdrop-blur-[2px]"
+                >
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-[10px] font-mono text-[#00D2F6] font-bold">
+                      {item.num}
+                    </span>
+                    <span className="text-xs font-bold text-white uppercase font-kanit tracking-tight group-hover:text-[#00D2F6] transition-colors drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                      {item.title}
+                    </span>
                   </div>
-                ))}
-              </div>
 
-              <div className="pt-1 flex flex-col items-end text-right border-t border-white/[0.08] w-full">
-                <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#AEB7C4]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Código 100% Proprietário</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-[#CBD5E1] font-light drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                      {item.desc}
+                    </span>
+                    <span className="text-[10px] font-mono font-bold text-[#00D2F6] px-2 py-0.5 rounded-full bg-[#00D2F6]/15 border border-[#00D2F6]/40 backdrop-blur-md shadow-[0_0_12px_rgba(0,210,246,0.2)]">
+                      {item.sla}
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] font-mono text-[#64748B] mt-0.5">
-                  Caxias do Sul / RS • Atendimento Global
-                </span>
+              ))}
+            </div>
+
+            {/* Proprietary Code Guarantee */}
+            <div className="pt-1 flex flex-col items-end text-right">
+              <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#F1F5F9] drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span className="font-semibold">Código 100% Proprietário</span>
               </div>
+              <span className="text-[10px] font-mono text-[#94A3B8] mt-0.5">
+                Caxias do Sul / RS • Atendimento Global
+              </span>
             </div>
           </motion.div>
 
@@ -325,8 +342,8 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
         <div className="flex lg:hidden flex-col items-center text-center space-y-5 w-full pt-4">
           
           {/* Status Pill */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624]/90 border border-[#00D2F6]/25 shadow-sm shadow-[#00D2F6]/10 backdrop-blur-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0A1624]/90 border border-[#00D2F6]/30 shadow-sm shadow-[#00D2F6]/10 backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-[#00D2F6] animate-pulse" />
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
               {HERO_DATA.statusBadge}
             </span>
@@ -342,22 +359,27 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             </div>
           </div>
 
-          {/* Thiago Mobile Centerstage Frame (Expansive hero stage) */}
-          <div className="relative w-full max-w-[560px] sm:max-w-[680px] aspect-[16/10] sm:aspect-[16/9] flex items-center justify-center my-2 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+          {/* Thiago Mobile/Tablet Centerstage Frame (Grand Transparent Presence) */}
+          <div className="relative w-full max-w-[480px] sm:max-w-[620px] h-[340px] sm:h-[440px] flex items-end justify-center my-1">
             <div
-              className="relative h-full w-full flex items-center justify-center"
+              className="relative h-full w-full flex items-end justify-center"
               style={{
-                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 78%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0) 100%), linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%)',
-                WebkitMaskComposite: 'destination-in',
-                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 78%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0) 100%), linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%)',
-                maskComposite: 'intersect',
+                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 82%, rgba(0,0,0,0.4) 92%, rgba(0,0,0,0) 100%)',
+                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 82%, rgba(0,0,0,0.4) 92%, rgba(0,0,0,0) 100%)',
               }}
             >
               <img
                 src="/hero.2.tca.png"
-                alt="Thiago Cassol Antunes"
-                className="w-full h-full object-cover object-[70%_center] filter contrast-[1.04] brightness-[0.98] drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)]"
+                alt="Thiago Cassol Antunes — Arquiteto de Software & Engenheiro de IA"
+                className="h-full w-auto object-contain object-bottom select-none"
+                style={{
+                  imageRendering: '-webkit-optimize-contrast',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden',
+                }}
                 loading="eager"
+                fetchPriority="high"
+                decoding="async"
               />
             </div>
           </div>
@@ -373,7 +395,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
               href={createQuickWhatsAppUrl('Novo Projeto pelo Hero')}
               target="_blank"
               rel="noreferrer"
-              className="w-full py-3 px-5 rounded-full text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl shadow-[#00D2F6]/20 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 cursor-pointer"
+              className="w-full py-3.5 px-5 rounded-full text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl shadow-[#00D2F6]/25 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 cursor-pointer"
             >
               <span className="font-kanit">INICIAR PROJETO NO WHATSAPP</span>
               <MessageCircle className="w-3.5 h-3.5 text-white" />
@@ -389,7 +411,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
           </div>
 
           {/* Mobile Telemetry Strip */}
-          <div className="w-full max-w-sm pt-4 border-t border-white/[0.06] flex items-center justify-around text-center">
+          <div className="w-full max-w-sm pt-4 border-t border-white/[0.08] flex items-center justify-around text-center">
             {telemetryItems.map((item) => (
               <div key={item.num} className="flex flex-col items-center">
                 <span className="text-[9px] font-mono font-bold text-[#00D2F6]">

@@ -47,8 +47,14 @@ export const AboutExecutive: React.FC = () => {
                 <img
                   src="/quem.novo.png"
                   alt="Thiago Cassol Antunes — Arquiteto de Software & Engenheiro de IA"
-                  className="w-full h-full object-cover object-top filter contrast-[1.02] brightness-[1.0] transition-transform duration-700 group-hover:scale-102"
-                  loading="lazy"
+                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-102 select-none"
+                  style={{
+                    imageRendering: '-webkit-optimize-contrast',
+                    transform: 'translateZ(0)',
+                  }}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                 />
 
                 {/* Scrim Overlay with Identity Details */}
