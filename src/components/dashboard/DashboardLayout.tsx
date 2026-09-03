@@ -12,6 +12,7 @@ import {
   Clock,
   Briefcase,
   AlertTriangle,
+  KeyRound,
 } from 'lucide-react';
 import {
   Lead,
@@ -33,6 +34,7 @@ import { FollowUpsView } from './views/FollowUpsView';
 import { AnalyticsView } from './views/AnalyticsView';
 import { LeadDetailsDrawer } from './views/LeadDetailsDrawer';
 import { NotificationsCenter } from './notifications/NotificationsCenter';
+import { ChangePasswordModal } from './auth/ChangePasswordModal';
 
 interface DashboardLayoutProps {
   user: User;
@@ -75,6 +77,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
   const [loading, setLoading] = useState(true);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -167,6 +170,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
             onSelectLead={(id) => setSelectedLeadId(id)}
             refreshTrigger={refreshKey}
           />
+
+          <button
+            type="button"
+            onClick={() => setShowChangePasswordModal(true)}
+            className="px-3 py-1.5 rounded-full border border-white/10 hover:border-[#00D2F6]/40 bg-white/[0.03] hover:bg-[#00D2F6]/10 text-xs font-mono text-slate-300 hover:text-[#00D2F6] flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="Segurança & Alteração de Senha"
+          >
+            <KeyRound className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <span className="hidden sm:inline">Trocar Senha</span>
+          </button>
 
           <a
             href="/"
@@ -336,6 +349,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
         onClose={() => setSelectedLeadId(null)}
         onLeadUpdated={loadData}
         adminEmail={user.email || 'Thiago'}
+      />
+
+      {/* Modal Seguro de Alteração de Senha */}
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        userEmail={user.email || ''}
       />
     </div>
   );

@@ -791,3 +791,64 @@ export async function fetchCommercialMetrics(): Promise<CommercialMetrics> {
   };
 }
 
+// =====================================================================
+// AI LEAD INSIGHTS (TCA SALES COPILOT)
+// =====================================================================
+
+export async function fetchLeadInsights(leadId: string): Promise<any[]> {
+  try {
+    const { data, error } = await supabase
+      .from('ai_lead_insights')
+      .select('*')
+      .eq('lead_id', leadId)
+      .order('created_at', { ascending: false });
+
+    if (!error && data) return data;
+  } catch (err) {
+    console.warn('Tabela ai_lead_insights indisponível:', err);
+  }
+  return [];
+}
+
+export async function saveLeadInsight(params: {
+  leadId: string;
+  dealId?: string | null;
+  insightType?: string;
+  structuredOutput: any;
+  model?: string;
+  promptVersion?: string;
+  sourceSnapshotHash: string;
+}): Promise<any> {
+  try {
+    const { data, error } = await supabase
+      .from('ai_lead_insights')
+      .insert({
+        lead_id: params.leadId,
+        deal_id: params.dealId ?? null,
+        insight_type: params.insightType || 'full_analysis',
+        structured_output: params.structuredOutput,
+        model: params.model || 'TCA Sales Copilot v1',
+        prompt_version: params.promptVersion || 'sales_copilot_v1',
+        source_snapshot_hash: params.sourceSnapshotHash,
+      })
+      .select()
+      .single();
+
+    if (!error && data) return data;
+  } catch (err) {
+    console.warn('Não foi possível persistir insight no banco:', err);
+  }
+  return null;
+}
+
+export async function updateInsightFeedback(insightId: string, helpful: boolean): Promise<void> {
+  try {
+    await supabase
+      .from('ai_lead_insights')
+      .update({ helpful_feedback: helpful })
+      .eq('id', insightId);
+  } catch (err) {
+    console.warn('Falha ao registrar feedback de IA:', err);
+  }
+}
+

@@ -23,6 +23,7 @@ import {
   ExternalLink,
   ShieldCheck,
   Save,
+  Sparkles,
 } from 'lucide-react';
 import {
   Lead,
@@ -39,6 +40,7 @@ import {
   updateDealDetails,
 } from '../../../lib/supabase';
 import { generateDashboardWhatsAppContactUrl } from '../../../services/diagnostic/scoreCalculator';
+import { SalesCopilotSection } from '../copilot/SalesCopilotSection';
 
 interface LeadDetailsDrawerProps {
   leadId: string | null;
@@ -64,7 +66,7 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
   onLeadUpdated,
   adminEmail,
 }) => {
-  const [activeTab, setActiveTab] = useState<'comercial' | 'dossie' | 'notas'>('comercial');
+  const [activeTab, setActiveTab] = useState<'copilot' | 'comercial' | 'dossie' | 'notas'>('copilot');
   const [details, setDetails] = useState<{
     lead: Lead;
     answers: LeadAnswer[];
@@ -321,11 +323,24 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
               </div>
 
               {/* Abas de Navegação do Drawer */}
-              <div className="px-5 sm:px-6 pt-3 border-b border-white/10 flex items-center gap-4 bg-[#07111F]">
+              <div className="px-5 sm:px-6 pt-3 border-b border-white/10 flex items-center gap-4 bg-[#07111F] overflow-x-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('copilot')}
+                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
+                    activeTab === 'copilot'
+                      ? 'border-[#00D2F6] text-[#00D2F6]'
+                      : 'border-transparent text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
+                  <span>TCA Sales Copilot</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => setActiveTab('comercial')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
+                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
                     activeTab === 'comercial'
                       ? 'border-[#00D2F6] text-[#00D2F6]'
                       : 'border-transparent text-slate-400 hover:text-white'
@@ -338,7 +353,7 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveTab('dossie')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
+                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
                     activeTab === 'dossie'
                       ? 'border-[#00D2F6] text-[#00D2F6]'
                       : 'border-transparent text-slate-400 hover:text-white'
@@ -351,7 +366,7 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveTab('notas')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
+                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
                     activeTab === 'notas'
                       ? 'border-[#00D2F6] text-[#00D2F6]'
                       : 'border-transparent text-slate-400 hover:text-white'
@@ -364,6 +379,22 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
 
               {/* Corpo do Drawer */}
               <div className="p-5 sm:p-6 space-y-6 flex-1">
+                {/* ========================================================================= */}
+                {/* ABA: TCA SALES COPILOT                                                    */}
+                {/* ========================================================================= */}
+                {activeTab === 'copilot' && (
+                  <SalesCopilotSection
+                    lead={details.lead}
+                    answers={details.answers}
+                    deal={deal}
+                    score={details.score}
+                    notes={details.notes}
+                    history={details.history}
+                    onLeadUpdated={onLeadUpdated}
+                    adminEmail={adminEmail}
+                  />
+                )}
+
                 {/* ========================================================================= */}
                 {/* ABA: FICHA COMERCIAL                                                      */}
                 {/* ========================================================================= */}
