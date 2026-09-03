@@ -116,22 +116,32 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
         </span>
       </motion.div>
 
-      {/* B. Studio Chiaroscuro Volumetric Lighting */}
+      {/* B. Studio Chiaroscuro Volumetric Lighting — INTENSIFIED ROYAL BLUE NEBULA */}
       <div
-        className="absolute top-[35%] lg:top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] sm:w-[650px] lg:w-[850px] h-[380px] sm:h-[480px] pointer-events-none rounded-full z-0"
+        className="absolute top-[35%] lg:top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] sm:w-[820px] lg:w-[1100px] h-[480px] sm:h-[620px] pointer-events-none rounded-full z-0"
         style={{
-          background: 'radial-gradient(circle, rgba(0, 210, 246, 0.12) 0%, rgba(1, 94, 239, 0.05) 45%, transparent 70%)',
-          filter: 'blur(100px)',
+          background: 'radial-gradient(circle, rgba(0, 210, 246, 0.28) 0%, rgba(1, 94, 239, 0.18) 40%, rgba(0, 30, 80, 0.08) 65%, transparent 80%)',
+          filter: 'blur(90px)',
         }}
         aria-hidden="true"
       />
 
-      {/* Ambient Radial Backlight behind the protagonist's holographic orbit */}
+      {/* Deep Cobalt Nebula — fills the lower-left void with rich blue */}
       <div
-        className="hidden lg:block absolute bottom-10 right-[8%] w-[680px] h-[580px] pointer-events-none rounded-full z-0"
+        className="absolute bottom-0 left-0 w-[600px] sm:w-[800px] h-[500px] pointer-events-none rounded-full z-0"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(0, 210, 246, 0.09) 0%, rgba(1, 94, 239, 0.04) 50%, transparent 75%)',
-          filter: 'blur(90px)',
+          background: 'radial-gradient(ellipse at bottom left, rgba(1, 94, 239, 0.22) 0%, rgba(0, 50, 130, 0.12) 45%, transparent 75%)',
+          filter: 'blur(110px)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Ambient Radial Backlight behind the protagonist — INTENSIFIED to restore the blue halo */}
+      <div
+        className="hidden lg:block absolute bottom-0 right-[-5%] w-[780px] h-[700px] pointer-events-none rounded-full z-0"
+        style={{
+          background: 'radial-gradient(ellipse at 60% 80%, rgba(0, 210, 246, 0.20) 0%, rgba(1, 94, 239, 0.14) 35%, rgba(0, 30, 80, 0.06) 60%, transparent 80%)',
+          filter: 'blur(80px)',
         }}
         aria-hidden="true"
       />

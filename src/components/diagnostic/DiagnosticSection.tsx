@@ -325,10 +325,14 @@ export const DiagnosticSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="diagnostico"
-      className="relative w-full bg-[#07111F] text-[#F3F5F7] py-20 sm:py-28 px-4 sm:px-6 md:px-10 border-t border-white/[0.06] overflow-hidden z-20"
+      className="relative w-full bg-gradient-to-b from-[#07111F] via-[#060E1C] to-[#07111F] text-[#F3F5F7] py-20 sm:py-28 px-4 sm:px-6 md:px-10 border-t border-white/[0.06] overflow-hidden z-20"
     >
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[650px] h-[400px] bg-gradient-to-br from-[#00D2F6]/10 via-[#015EEF]/5 to-transparent blur-[160px] pointer-events-none rounded-full" />
+      {/* Background ambient lighting — AMPLIFIED royal blue nebula */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-br from-[#00D2F6]/18 via-[#015EEF]/10 to-transparent blur-[130px] pointer-events-none rounded-full" />
+      {/* Deep cobalt accent orb top-right */}
+      <div className="absolute -top-20 right-0 w-[500px] h-[400px] bg-gradient-to-bl from-[#015EEF]/15 via-[#00D2F6]/08 to-transparent blur-[120px] pointer-events-none rounded-full" />
+      {/* Deep cobalt accent orb bottom-left */}
+      <div className="absolute bottom-0 left-0 w-[450px] h-[350px] bg-gradient-to-tr from-[#015EEF]/12 via-transparent to-transparent blur-[100px] pointer-events-none rounded-full" />
 
       <div className={`w-full mx-auto relative z-10 transition-all duration-500 ${currentStep === 0 ? 'max-w-6xl' : 'max-w-4xl'}`}>
         {/* =====================================================================
@@ -339,11 +343,13 @@ export const DiagnosticSection: React.FC = () => {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full relative rounded-3xl bg-[#050D1A]/95 border border-[#00D2F6]/30 shadow-[0_0_90px_rgba(0,210,246,0.15)] p-6 sm:p-10 lg:p-12 overflow-hidden backdrop-blur-2xl"
+            className="w-full relative rounded-3xl bg-gradient-to-br from-[#071526]/98 via-[#060F1E]/95 to-[#050D1A]/98 border border-[#00D2F6]/30 shadow-[0_0_90px_rgba(0,210,246,0.18)] p-6 sm:p-10 lg:p-12 overflow-hidden backdrop-blur-2xl"
           >
-            {/* Ambient Background Corner Glows inside Capsule */}
-            <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#00D2F6]/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[#015EEF]/15 rounded-full blur-3xl pointer-events-none" />
+            {/* Ambient Background Corner Glows inside Capsule — AMPLIFIED COBALT */}
+            <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#00D2F6]/22 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[#015EEF]/22 rounded-full blur-3xl pointer-events-none" />
+            {/* Center aura inside capsule */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-[#015EEF]/08 rounded-full blur-[80px] pointer-events-none" />
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:28px_28px] pointer-events-none opacity-60" />
 
             {/* Top Scanning Line */}
