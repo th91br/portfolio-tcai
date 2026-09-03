@@ -30,6 +30,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
     { label: 'Contato', href: '#contact' },
   ];
 
+  const handleDiagnosticNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    setMobileMenuOpen(false);
+
+    const diagnosticSection = document.getElementById('diagnostico');
+    if (!diagnosticSection) return;
+
+    window.history.pushState(null, '', '#diagnostico');
+    diagnosticSection.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  };
+
   return (
     <>
       {/* Editorial Floating Navigation Header */}
@@ -70,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
 
           {/* 2. Desktop Centered Navigation Links with Editorial Hover Indicator */}
           <nav
-            className="hidden lg:flex items-center gap-1 xl:gap-1.5 px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.05]"
+            className="hidden xl:flex items-center gap-1 xl:gap-1.5 px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.05]"
             aria-label="Navegação principal"
           >
             {navLinks.map((link) => {
@@ -96,11 +110,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             })}
           </nav>
 
-          {/* 3. Right Action Area: Scarcity Badge + WhatsApp Action + Mobile Trigger */}
+          {/* 3. Right Action Area: Strategic Diagnostic + Scarcity Badge + Mobile Trigger */}
           <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <a
+              href="#diagnostico"
+              onClick={handleDiagnosticNavigation}
+              className="hidden xl:inline-flex items-center justify-center min-h-8 px-3 py-1 rounded-full bg-[#0A1624] border border-[#0096F5]/45 text-[10px] font-kanit font-bold tracking-[0.12em] text-[#F3F5F7] uppercase transition-all duration-200 hover:bg-[#0D2033] hover:border-[#00D2F6]/75 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#07111F]"
+            >
+              DIAGNÓSTICO
+            </a>
+
             {/* Scarcity Pill: Discreta, Controlada, Elegante */}
-            <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A1624] border border-[#00D2F6]/25 text-[10px] font-mono text-[#00D2F6] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
+            <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0A1624] border border-[#00D2F6]/25 text-[9px] font-mono text-[#00D2F6] font-semibold">
+              <span className="w-[5px] h-[5px] rounded-full bg-[#00D2F6] animate-pulse" />
               <span>2 VAGAS ESTE MÊS</span>
             </div>
 
@@ -108,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#94A3B8] hover:text-white hover:border-[#00D2F6]/40 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
+              className="xl:hidden p-2 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#94A3B8] hover:text-white hover:border-[#00D2F6]/40 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
               aria-label={mobileMenuOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
               aria-expanded={mobileMenuOpen}
             >
@@ -126,16 +148,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-4 top-18 z-40 bg-[#07111F]/98 border border-white/10 backdrop-blur-3xl rounded-3xl p-5 lg:hidden flex flex-col gap-2 shadow-[0_20px_50px_rgba(5,11,20,0.9)] pointer-events-auto"
+            className="fixed inset-x-4 top-18 z-40 bg-[#07111F]/98 border border-white/10 backdrop-blur-3xl rounded-3xl p-5 xl:hidden flex flex-col gap-2 shadow-[0_20px_50px_rgba(5,11,20,0.9)] pointer-events-auto"
           >
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-1">
               <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest">
                 NAVEGAÇÃO TCA
               </span>
-              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[10px] font-mono text-[#00D2F6] font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
-                <span>2 Vagas</span>
-              </div>
             </div>
 
             {navLinks.map((link, idx) => (
@@ -152,6 +170,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#64748B]" />
               </motion.a>
             ))}
+
+            <a
+              href="#diagnostico"
+              onClick={handleDiagnosticNavigation}
+              className="w-full min-h-11 mt-2 px-4 rounded-xl bg-[#0A1624] border border-[#0096F5]/50 text-[#F3F5F7] text-xs font-kanit font-bold uppercase tracking-[0.14em] flex items-center justify-center transition-all duration-200 hover:bg-[#0D2033] hover:border-[#00D2F6]/75 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#07111F]"
+            >
+              DIAGNÓSTICO
+            </a>
+
+            <div className="flex self-center items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[9px] font-mono text-[#00D2F6] font-semibold">
+              <span className="w-[5px] h-[5px] rounded-full bg-[#00D2F6]" />
+              <span>2 Vagas</span>
+            </div>
 
             <a
               href={createQuickWhatsAppUrl('Novo Projeto Mobile')}

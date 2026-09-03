@@ -326,7 +326,7 @@ export const DiagnosticSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="diagnostico"
-      className="relative w-full bg-gradient-to-b from-[#07111F] via-[#060E1C] to-[#07111F] text-[#F3F5F7] py-20 sm:py-28 px-4 sm:px-6 md:px-10 border-t border-white/[0.06] overflow-hidden z-20"
+      className="relative w-full scroll-mt-24 bg-gradient-to-b from-[#07111F] via-[#060E1C] to-[#07111F] text-[#F3F5F7] py-20 sm:py-28 px-4 sm:px-6 md:px-10 border-t border-white/[0.06] overflow-hidden z-20"
     >
       {/* Background ambient lighting — AMPLIFIED royal blue nebula */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-br from-[#00D2F6]/18 via-[#015EEF]/10 to-transparent blur-[130px] pointer-events-none rounded-full" />
