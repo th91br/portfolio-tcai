@@ -388,12 +388,82 @@ export const DiagnosticSection: React.FC = () => {
                     <span>DIAGNÓSTICO ESTRATÉGICO TCA</span>
                   </div>
 
-                  <h2 className="font-kanit font-black text-2xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-[#F8FAFC] leading-[1.08]">
-                    QUAL SOLUÇÃO DIGITAL <br className="hidden sm:inline" />
-                    <span className="bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent">
+                  <motion.h2
+                    className="relative font-kanit font-black text-2xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-[#FFFFFF] leading-[1.08] select-none"
+                  >
+                    {/* Ambient Radial Spotlight behind the text that pulses in sync */}
+                    <motion.div
+                      animate={{
+                        opacity: [0.25, 0.7, 0.25],
+                        scale: [0.96, 1.06, 0.96],
+                      }}
+                      transition={{
+                        duration: 3.6,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                      className="absolute -inset-4 sm:-inset-6 bg-gradient-to-r from-[#00D2F6]/25 via-[#0096F5]/15 to-[#015EEF]/15 blur-2xl rounded-full pointer-events-none -z-10"
+                      aria-hidden="true"
+                    />
+
+                    {/* 1. Luminous Titanium White Part: QUAL SOLUÇÃO DIGITAL */}
+                    <motion.span
+                      animate={{
+                        filter: [
+                          'drop-shadow(0 0 8px rgba(255,255,255,0.35)) drop-shadow(0 0 20px rgba(255,255,255,0.15))',
+                          'drop-shadow(0 0 24px rgba(255,255,255,0.95)) drop-shadow(0 0 50px rgba(255,255,255,0.55)) drop-shadow(0 0 75px rgba(0,210,246,0.3))',
+                          'drop-shadow(0 0 8px rgba(255,255,255,0.35)) drop-shadow(0 0 20px rgba(255,255,255,0.15))',
+                        ],
+                      }}
+                      transition={{
+                        duration: 3.6,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                      className="inline-block text-[#FFFFFF] drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
+                    >
+                      QUAL SOLUÇÃO DIGITAL
+                    </motion.span>{' '}
+                    <br className="hidden sm:inline" />
+
+                    {/* 2. High-Voltage Electric Cyan/Blue Part: FAZ MAIS SENTIDO */}
+                    <motion.span
+                      animate={{
+                        filter: [
+                          'drop-shadow(0 0 16px rgba(0,210,246,0.55)) drop-shadow(0 0 35px rgba(1,94,239,0.35))',
+                          'drop-shadow(0 0 38px rgba(0,210,246,1)) drop-shadow(0 0 70px rgba(0,150,245,0.85)) drop-shadow(0 0 110px rgba(0,210,246,0.6))',
+                          'drop-shadow(0 0 16px rgba(0,210,246,0.55)) drop-shadow(0 0 35px rgba(1,94,239,0.35))',
+                        ],
+                      }}
+                      transition={{
+                        duration: 3.6,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                      className="inline-block bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent font-black"
+                    >
                       FAZ MAIS SENTIDO
-                    </span> PARA O SEU NEGÓCIO?
-                  </h2>
+                    </motion.span>{' '}
+
+                    {/* 3. Luminous Titanium White Part: PARA O SEU NEGÓCIO? */}
+                    <motion.span
+                      animate={{
+                        filter: [
+                          'drop-shadow(0 0 8px rgba(255,255,255,0.35)) drop-shadow(0 0 20px rgba(255,255,255,0.15))',
+                          'drop-shadow(0 0 24px rgba(255,255,255,0.95)) drop-shadow(0 0 50px rgba(255,255,255,0.55)) drop-shadow(0 0 75px rgba(0,210,246,0.3))',
+                          'drop-shadow(0 0 8px rgba(255,255,255,0.35)) drop-shadow(0 0 20px rgba(255,255,255,0.15))',
+                        ],
+                      }}
+                      transition={{
+                        duration: 3.6,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                      className="inline-block text-[#FFFFFF] drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
+                    >
+                      PARA O SEU NEGÓCIO?
+                    </motion.span>
+                  </motion.h2>
 
                   <p className="text-[#94A3B8] text-sm sm:text-base font-light leading-relaxed max-w-[50ch]">
                     Não arrisque semanas e verbas na arquitetura errada. Em apenas 7 etapas rápidas, nosso algoritmo executivo mapeia a rota técnica ideal, prazos garantidos e viabilidade sem qualquer custo ou viés de agência.
