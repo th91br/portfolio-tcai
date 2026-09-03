@@ -174,7 +174,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
               backfaceVisibility: 'hidden',
             }}
             loading="eager"
-            fetchPriority="high"
+            {...({ fetchpriority: 'high' } as any)}
             decoding="async"
           />
         </div>
@@ -378,7 +378,7 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
                   backfaceVisibility: 'hidden',
                 }}
                 loading="eager"
-                fetchPriority="high"
+                {...({ fetchpriority: 'high' } as any)}
                 decoding="async"
               />
             </div>

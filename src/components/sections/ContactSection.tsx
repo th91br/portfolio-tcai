@@ -160,6 +160,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 </div>
                 <span className="text-xs text-[#94A3B8] group-hover:text-[#00D2F6]">{CONTACT_CONFIG.email}</span>
               </a>
+
+              <a
+                href="#diagnostico"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-[#00D2F6]/10 to-[#015EEF]/10 border border-[#00D2F6]/30 hover:border-[#00D2F6] transition-all text-xs font-mono text-white group shadow-sm"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="w-4 h-4 text-[#00D2F6]" />
+                  <span className="font-bold">Fazer Diagnóstico do Projeto</span>
+                </div>
+                <span className="text-[11px] text-[#00D2F6] font-bold group-hover:translate-x-0.5 transition-transform">
+                  Descobrir Solução →
+                </span>
+              </a>
             </div>
           </div>
 

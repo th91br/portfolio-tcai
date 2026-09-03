@@ -53,7 +53,7 @@ export const AboutExecutive: React.FC = () => {
                     transform: 'translateZ(0)',
                   }}
                   loading="eager"
-                  fetchPriority="high"
+                  {...({ fetchpriority: 'high' } as any)}
                   decoding="async"
                 />
 
