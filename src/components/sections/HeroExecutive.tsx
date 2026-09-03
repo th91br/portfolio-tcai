@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, Variants, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion';
+import React, { useLayoutEffect, useRef, useState } from 'react';
+import { motion, useMotionValue, useReducedMotion, useSpring, useScroll, useTransform } from 'framer-motion';
 import {
   MessageCircle,
   ArrowDown,
@@ -14,8 +14,175 @@ interface HeroExecutiveProps {
   onContactClick: () => void;
 }
 
+type ActiveHeadlineLine = 'primary' | 'secondary' | null;
+
+interface HeadlineTypewriterState {
+  primary: string;
+  secondary: string;
+  activeLine: ActiveHeadlineLine;
+}
+
+interface HeroTypewriterLineProps {
+  fullText: string;
+  displayedText: string;
+  isActive: boolean;
+  className: string;
+  gradientClassName: string;
+  caretClassName: string;
+}
+
+interface HeroTypewriterHeadlineProps {
+  primaryText: string;
+  secondaryText: string;
+  state: HeadlineTypewriterState;
+  className: string;
+  primaryClassName: string;
+  secondaryClassName: string;
+}
+
+const useHeroHeadlineTypewriter = (
+  primaryText: string,
+  secondaryText: string,
+): HeadlineTypewriterState => {
+  const shouldReduceMotion = useReducedMotion();
+  const [state, setState] = useState<HeadlineTypewriterState>({
+    primary: primaryText,
+    secondary: secondaryText,
+    activeLine: null,
+  });
+
+  useLayoutEffect(() => {
+    if (shouldReduceMotion) {
+      setState({ primary: primaryText, secondary: secondaryText, activeLine: null });
+      return;
+    }
+
+    const lines = [primaryText, secondaryText] as const;
+    let lineIndex = 0;
+    let characterIndex = 0;
+    let timeoutId: number | undefined;
+    let isMounted = true;
+
+    setState({ primary: '', secondary: '', activeLine: 'primary' });
+
+    const typeNextCharacter = () => {
+      if (!isMounted) return;
+
+      const targetLine = lines[lineIndex];
+      if (characterIndex < targetLine.length) {
+        characterIndex += 1;
+
+        setState((current) => ({
+          primary:
+            lineIndex === 0 ? targetLine.slice(0, characterIndex) : current.primary,
+          secondary:
+            lineIndex === 1 ? targetLine.slice(0, characterIndex) : current.secondary,
+          activeLine: lineIndex === 0 ? 'primary' : 'secondary',
+        }));
+
+        timeoutId = window.setTimeout(typeNextCharacter, 34);
+        return;
+      }
+
+      if (lineIndex === 0) {
+        lineIndex = 1;
+        characterIndex = 0;
+        timeoutId = window.setTimeout(typeNextCharacter, 140);
+        return;
+      }
+
+      setState({ primary: primaryText, secondary: secondaryText, activeLine: null });
+    };
+
+    timeoutId = window.setTimeout(typeNextCharacter, 120);
+
+    return () => {
+      isMounted = false;
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
+  }, [primaryText, secondaryText, shouldReduceMotion]);
+
+  return state;
+};
+
+const HeroTypewriterLine: React.FC<HeroTypewriterLineProps> = ({
+  fullText,
+  displayedText,
+  isActive,
+  className,
+  gradientClassName,
+  caretClassName,
+}) => (
+  <span className={`relative block ${className}`}>
+    <span aria-hidden="true" className="invisible">
+      {fullText}
+    </span>
+
+    <span className={`absolute inset-0 ${gradientClassName}`}>
+      {displayedText}
+      {isActive && displayedText && (
+        <motion.span
+          aria-hidden="true"
+          className={`inline-block h-[0.76em] w-[2px] align-[-0.08em] ml-1 ${caretClassName}`}
+          animate={{ opacity: [1, 0.22, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
+    </span>
+
+    {displayedText && (
+      <motion.span
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none select-none bg-clip-text text-transparent"
+        style={{
+          WebkitBackgroundClip: 'text',
+          backgroundImage:
+            'linear-gradient(108deg, transparent 28%, rgba(248,250,252,0.28) 43%, rgba(255,255,255,0.86) 50%, rgba(248,250,252,0.28) 57%, transparent 72%)',
+          backgroundSize: '240% 100%',
+        }}
+        animate={{ backgroundPosition: ['125% center', '-25% center'] }}
+        transition={{ duration: 3.8, repeat: Infinity, repeatDelay: 1.6, ease: 'easeInOut' }}
+      >
+        {displayedText}
+      </motion.span>
+    )}
+  </span>
+);
+
+const HeroTypewriterHeadline: React.FC<HeroTypewriterHeadlineProps> = ({
+  primaryText,
+  secondaryText,
+  state,
+  className,
+  primaryClassName,
+  secondaryClassName,
+}) => (
+  <h1 aria-label={`${primaryText} ${secondaryText}`} className={className}>
+    <HeroTypewriterLine
+      fullText={primaryText}
+      displayedText={state.primary}
+      isActive={state.activeLine === 'primary'}
+      className={primaryClassName}
+      gradientClassName="bg-gradient-to-r from-white via-[#F8FAFC] to-[#94A3B8] bg-clip-text text-transparent"
+      caretClassName="bg-[#F8FAFC]"
+    />
+    <HeroTypewriterLine
+      fullText={secondaryText}
+      displayedText={state.secondary}
+      isActive={state.activeLine === 'secondary'}
+      className={secondaryClassName}
+      gradientClassName="bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent"
+      caretClassName="bg-[#00D2F6]"
+    />
+  </h1>
+);
+
 export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) => {
   const heroRef = useRef<HTMLElement>(null);
+  const headlineTypewriter = useHeroHeadlineTypewriter(
+    HERO_DATA.headlineP1,
+    HERO_DATA.headlineP2,
+  );
 
   // Cinematic Scroll-Driven Parallax
   const { scrollYProgress } = useScroll({
@@ -47,29 +214,6 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
   const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
-  };
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.06,
-        delayChildren: 0.03,
-      },
-    },
-  };
-
-  const lineMaskVariants: Variants = {
-    hidden: { y: 28, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1] as const,
-      },
-    },
   };
 
   const telemetryItems = [
@@ -217,30 +361,14 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
             </motion.div>
 
             {/* Headline with Monumental Editorial Typography */}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="w-full relative"
-            >
-              <div className="overflow-hidden pb-1">
-                <motion.h1
-                  variants={lineMaskVariants}
-                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-white via-[#F8FAFC] to-[#94A3B8] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]"
-                >
-                  {HERO_DATA.headlineP1}
-                </motion.h1>
-              </div>
-
-              <div className="overflow-hidden pb-1">
-                <motion.div
-                  variants={lineMaskVariants}
-                  className="font-kanit font-black uppercase tracking-tight leading-[1.04] text-left text-4xl xl:text-[48px] 2xl:text-[54px] bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent drop-shadow-[0_4px_20px_rgba(0,210,246,0.3)]"
-                >
-                  {HERO_DATA.headlineP2}
-                </motion.div>
-              </div>
-            </motion.div>
+            <HeroTypewriterHeadline
+              primaryText={HERO_DATA.headlineP1}
+              secondaryText={HERO_DATA.headlineP2}
+              state={headlineTypewriter}
+              className="w-full relative text-left"
+              primaryClassName="font-kanit font-black uppercase tracking-tight leading-[1.04] text-4xl xl:text-[48px] 2xl:text-[54px] overflow-hidden pb-1 drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]"
+              secondaryClassName="font-kanit font-black uppercase tracking-tight leading-[1.04] text-4xl xl:text-[48px] 2xl:text-[54px] overflow-hidden pb-1 mt-0.5 drop-shadow-[0_4px_20px_rgba(0,210,246,0.3)]"
+            />
 
             {/* Strategic Subtext */}
             <motion.p
@@ -360,14 +488,14 @@ export const HeroExecutive: React.FC<HeroExecutiveProps> = ({ onContactClick }) 
           </div>
 
           {/* Headline */}
-          <div className="w-full">
-            <h1 className="font-kanit font-black uppercase tracking-tight leading-[1.08] text-3xl sm:text-4xl bg-gradient-to-r from-white via-[#F8FAFC] to-[#94A3B8] bg-clip-text text-transparent">
-              {HERO_DATA.headlineP1}
-            </h1>
-            <div className="font-kanit font-black uppercase tracking-tight leading-[1.08] text-3xl sm:text-4xl bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent mt-0.5">
-              {HERO_DATA.headlineP2}
-            </div>
-          </div>
+          <HeroTypewriterHeadline
+            primaryText={HERO_DATA.headlineP1}
+            secondaryText={HERO_DATA.headlineP2}
+            state={headlineTypewriter}
+            className="w-full text-center"
+            primaryClassName="font-kanit font-black uppercase tracking-tight leading-[1.08] text-3xl sm:text-4xl overflow-hidden pb-1"
+            secondaryClassName="font-kanit font-black uppercase tracking-tight leading-[1.08] text-3xl sm:text-4xl overflow-hidden pb-1 mt-0.5"
+          />
 
           {/* Thiago Mobile/Tablet Centerstage Frame (Grand Transparent Presence) */}
           <div className="relative w-full max-w-[480px] sm:max-w-[620px] h-[340px] sm:h-[440px] flex items-end justify-center my-1">
