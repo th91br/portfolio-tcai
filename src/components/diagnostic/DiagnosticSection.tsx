@@ -14,6 +14,12 @@ import {
   Layers,
   ChevronRight,
   Send,
+  Target,
+  Clock,
+  Lock,
+  Terminal,
+  Activity,
+  Cpu,
 } from 'lucide-react';
 import {
   STEP_1_NECESSIDADE,
@@ -324,59 +330,202 @@ export const DiagnosticSection: React.FC = () => {
       {/* Background ambient lighting */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[650px] h-[400px] bg-gradient-to-br from-[#00D2F6]/10 via-[#015EEF]/5 to-transparent blur-[160px] pointer-events-none rounded-full" />
 
-      <div className="max-w-4xl mx-auto w-full relative z-10">
+      <div className={`w-full mx-auto relative z-10 transition-all duration-500 ${currentStep === 0 ? 'max-w-6xl' : 'max-w-4xl'}`}>
         {/* =====================================================================
-            ESTADO 0: TELA INICIAL / HERO DO DIAGNÓSTICO
+            ESTADO 0: COCKPIT EXECUTIVO DO DIAGNÓSTICO (Alto Magnetismo & Conversão)
            ===================================================================== */}
         {currentStep === 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="text-center"
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full relative rounded-3xl bg-[#050D1A]/95 border border-[#00D2F6]/30 shadow-[0_0_90px_rgba(0,210,246,0.15)] p-6 sm:p-10 lg:p-12 overflow-hidden backdrop-blur-2xl"
           >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0A1624] border border-[#00D2F6]/30 shadow-lg shadow-[#00D2F6]/10 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-[#00D2F6] animate-pulse" />
-              <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
-                DIAGNÓSTICO ESTRATÉGICO TCA
-              </span>
+            {/* Ambient Background Corner Glows inside Capsule */}
+            <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#00D2F6]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[#015EEF]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:28px_28px] pointer-events-none opacity-60" />
+
+            {/* Top Scanning Line */}
+            <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#00D2F6] to-transparent pointer-events-none animate-pulse" />
+
+            {/* Cockpit Top Bar: Live Status & Telemetry */}
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-6 sm:pb-8 mb-6 sm:mb-8 border-b border-white/[0.08]">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#0A1624] border border-[#00D2F6]/40 shadow-md">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
+                <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-[#00D2F6] uppercase">
+                  SISTEMA DE ANÁLISE ATIVO // v2.4
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs font-mono text-[#94A3B8]">
+                <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                  <Zap className="w-3.5 h-3.5" /> 100% GRATUITO
+                </span>
+                <span className="text-white/20">•</span>
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-[#00D2F6]" /> ~90 SEGUNDOS
+                </span>
+                <span className="text-white/20 hidden sm:inline">•</span>
+                <span className="hidden sm:flex items-center gap-1.5 text-[#CBD5E1]">
+                  <Lock className="w-3.5 h-3.5 text-emerald-400" /> SIGILO LGPD
+                </span>
+              </div>
             </div>
 
-            <h2 className="font-kanit font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-[#F8FAFC] mb-4 max-w-2xl mx-auto leading-tight">
-              QUAL SOLUÇÃO DIGITAL FAZ MAIS SENTIDO PARA O SEU NEGÓCIO?
-            </h2>
+            {/* Main Cockpit Content Grid */}
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+              
+              {/* Left Column: High-Impact Persuasion & Directives (7 cols) */}
+              <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6">
+                
+                <div className="space-y-3">
+                  <div className="inline-flex items-center gap-2 text-[11px] font-mono text-[#00D2F6] font-bold tracking-wider uppercase">
+                    <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
+                    <span>DIAGNÓSTICO ESTRATÉGICO TCA</span>
+                  </div>
 
-            <p className="text-[#94A3B8] text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto mb-8">
-              Responda algumas perguntas rápidas e descubra qual caminho tecnológico faz mais sentido
-              para o seu projeto, com estimativa de prazo de entrega e prioridades de execução.
-            </p>
+                  <h2 className="font-kanit font-black text-2xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-[#F8FAFC] leading-[1.08]">
+                    QUAL SOLUÇÃO DIGITAL <br className="hidden sm:inline" />
+                    <span className="bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] bg-clip-text text-transparent">
+                      FAZ MAIS SENTIDO
+                    </span> PARA O SEU NEGÓCIO?
+                  </h2>
 
-            {/* Badges de Garantia da Experiência */}
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-10 text-xs font-mono text-[#94A3B8]">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
-                100% Gratuito
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
-                Tempo estimado: 2 minutos
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
-                Direcionamento sob medida
-              </span>
+                  <p className="text-[#94A3B8] text-sm sm:text-base font-light leading-relaxed max-w-[50ch]">
+                    Não arrisque semanas e verbas na arquitetura errada. Em apenas 7 etapas rápidas, nosso algoritmo executivo mapeia a rota técnica ideal, prazos garantidos e viabilidade sem qualquer custo ou viés de agência.
+                  </p>
+                </div>
+
+                {/* What you unlock: 4 Clear Value Deliverables */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full pt-1">
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.07] flex items-center gap-2.5">
+                    <Target className="w-4 h-4 text-[#00D2F6] shrink-0" />
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold text-white font-kanit uppercase">Score de Viabilidade</span>
+                      <span className="text-[10px] font-mono text-[#94A3B8]">Mapeamento 0 a 100</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.07] flex items-center gap-2.5">
+                    <Clock className="w-4 h-4 text-[#00D2F6] shrink-0" />
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold text-white font-kanit uppercase">Prazo Contratual</span>
+                      <span className="text-[10px] font-mono text-[#94A3B8]">Estimativa de 3 a 10 dias</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.07] flex items-center gap-2.5">
+                    <Cpu className="w-4 h-4 text-[#00D2F6] shrink-0" />
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold text-white font-kanit uppercase">Stack Recomendada</span>
+                      <span className="text-[10px] font-mono text-[#94A3B8]">Web, IA ou SaaS</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.07] flex items-center gap-2.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold text-white font-kanit uppercase">Código Proprietário</span>
+                      <span className="text-[10px] font-mono text-[#94A3B8]">100% de posse sua</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Big Magnetic CTA Button */}
+                <div className="pt-2 w-full sm:w-auto">
+                  <motion.button
+                    type="button"
+                    onClick={handleStart}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-4.5 rounded-full font-kanit font-extrabold text-sm sm:text-base uppercase tracking-wider text-white flex items-center justify-center gap-3 shadow-[0_0_40px_rgba(0,210,246,0.35)] hover:shadow-[0_0_60px_rgba(0,210,246,0.5)] bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/25 cursor-pointer transition-all duration-300"
+                  >
+                    <span>INICIAR DIAGNÓSTICO GRATUITO (90 SEG)</span>
+                    <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5 text-white" />
+                  </motion.button>
+                  <p className="text-[11px] font-mono text-[#64748B] mt-2.5 flex items-center gap-1.5">
+                    <Lock className="w-3 h-3 text-emerald-400" />
+                    <span>Dados 100% confidenciais • Sem compromisso contratual</span>
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Right Column: Live Interactive Telemetry Simulator (5 cols) */}
+              <div className="lg:col-span-5 relative w-full">
+                <div className="relative rounded-2xl bg-[#030712]/95 border border-white/12 p-5 sm:p-6 shadow-2xl overflow-hidden group">
+                  
+                  {/* Glass Shimmer on Top */}
+                  <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#00D2F6]/60 to-transparent" />
+
+                  {/* Simulator Header */}
+                  <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-white/[0.08]">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="w-4 h-4 text-[#00D2F6]" />
+                      <span className="text-[11px] font-mono font-bold text-white tracking-wider">
+                        TCA_ENGINE_SIMULATOR
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      ONLINE
+                    </div>
+                  </div>
+
+                  {/* Simulated Metrics Card */}
+                  <div className="space-y-3.5">
+                    {/* Gauge 1 */}
+                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-1.5">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="text-[#94A3B8]">Índice de Aderência Estimado</span>
+                        <span className="text-[#00D2F6] font-bold">96.4%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#00D2F6] to-[#015EEF] w-[96%]" />
+                      </div>
+                    </div>
+
+                    {/* Output Preview 1 */}
+                    <div className="p-3 rounded-xl bg-[#07111F]/80 border border-[#00D2F6]/20 flex items-center justify-between">
+                      <div className="flex flex-col text-left">
+                        <span className="text-[10px] font-mono text-[#94A3B8] uppercase">Solução Prévia</span>
+                        <span className="text-xs font-bold text-white font-kanit">Plataforma Web + IA 24/7</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded bg-[#00D2F6]/10 text-[10px] font-mono font-bold text-[#00D2F6]">
+                        ALTA PRIORIDADE
+                      </span>
+                    </div>
+
+                    {/* Output Preview 2 */}
+                    <div className="p-3 rounded-xl bg-[#07111F]/80 border border-white/[0.06] flex items-center justify-between">
+                      <div className="flex flex-col text-left">
+                        <span className="text-[10px] font-mono text-[#94A3B8] uppercase">SLA de Entrega</span>
+                        <span className="text-xs font-bold text-emerald-400 font-kanit">7 Dias Úteis (Recorde)</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[#64748B]">Contrato Blindado</span>
+                    </div>
+
+                    {/* Terminal Feed Simulation */}
+                    <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.04] text-[10px] font-mono text-[#64748B] space-y-1">
+                      <div className="flex items-center gap-1 text-[#00D2F6]">
+                        <span className="animate-pulse">&gt;</span>
+                        <span>Aguardando entrada dos parâmetros do projeto...</span>
+                      </div>
+                      <div className="text-slate-500">
+                        Clique ao lado para calibrar o escopo do seu negócio.
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+
             </div>
-
-            <motion.button
-              type="button"
-              onClick={handleStart}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group px-8 py-4 rounded-full font-kanit font-extrabold text-sm uppercase tracking-wider text-white flex items-center justify-center gap-3 mx-auto shadow-2xl shadow-[#00D2F6]/25 bg-gradient-to-r from-[#00D2F6] via-[#0096F5] to-[#015EEF] border border-white/20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D2F6]"
-            >
-              <span>COMEÇAR DIAGNÓSTICO</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </motion.button>
           </motion.div>
         )}
 
@@ -384,7 +533,7 @@ export const DiagnosticSection: React.FC = () => {
             ESTADOS 1 A 7: FLUXO MULTI-STEP DE PERGUNTAS
            ===================================================================== */}
         {currentStep >= 1 && currentStep <= 7 && (
-          <div className="w-full">
+          <div className="w-full rounded-3xl bg-[#050D1A]/95 border border-[#00D2F6]/30 shadow-[0_0_80px_rgba(0,210,246,0.12)] p-6 sm:p-10 backdrop-blur-xl relative overflow-hidden">
             {/* Header de Progresso */}
             <div className="mb-6 sm:mb-8">
               <div className="flex items-center justify-between gap-4 mb-3">
