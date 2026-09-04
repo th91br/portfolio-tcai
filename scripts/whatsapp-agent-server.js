@@ -396,6 +396,158 @@ function renderCockpitHtml() {
       gap: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    /* Oculta header duplicado quando dentro de iframe no dashboard */
+    body.is-embedded .app-header {
+      display: none !important;
+    }
+    body.is-embedded .view-content {
+      height: 100vh !important;
+    }
+
+    /* Botões responsivos móveis */
+    .btn-mobile-back {
+      display: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #00D2F6;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-toggle-dossier {
+      display: none;
+      background: rgba(0, 210, 246, 0.12);
+      border: 1px solid rgba(0, 210, 246, 0.3);
+      color: #00D2F6;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-close-dossier {
+      display: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94A3B8;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Responsividade para Tablets (até 1024px) */
+    @media (max-width: 1024px) {
+      .btn-toggle-dossier {
+        display: inline-flex;
+      }
+      .btn-close-dossier {
+        display: inline-flex;
+      }
+      .details-sidebar {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 320px;
+        z-index: 50;
+        background: #07111F;
+        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.85);
+        transform: translateX(100%);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .details-sidebar.open {
+        transform: translateX(0);
+      }
+      .chats-list {
+        width: 270px;
+      }
+    }
+
+    /* Responsividade para Smartphones (até 768px) */
+    @media (max-width: 768px) {
+      .btn-mobile-back {
+        display: inline-flex;
+      }
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 14px;
+        gap: 8px;
+      }
+      .chats-list {
+        width: 100%;
+        border-right: none;
+      }
+      .chat-pane {
+        width: 100%;
+      }
+      .details-sidebar {
+        width: 100%;
+      }
+
+      /* No mobile, alternamos entre lista de chats, conversa ativa e dossiê */
+      #view-whatsapp.mobile-mode-chats .chat-pane,
+      #view-whatsapp.mobile-mode-chats .details-sidebar {
+        display: none !important;
+      }
+      #view-whatsapp.mobile-mode-chats .chats-list {
+        display: flex !important;
+      }
+
+      #view-whatsapp.mobile-mode-chat .chats-list,
+      #view-whatsapp.mobile-mode-chat .details-sidebar {
+        display: none !important;
+      }
+      #view-whatsapp.mobile-mode-chat .chat-pane {
+        display: flex !important;
+      }
+
+      #view-whatsapp.mobile-mode-dossier .chats-list,
+      #view-whatsapp.mobile-mode-dossier .chat-pane {
+        display: none !important;
+      }
+      #view-whatsapp.mobile-mode-dossier .details-sidebar {
+        display: flex !important;
+        position: relative;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .bubble {
+        max-width: 88%;
+      }
+      .grid-cards {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 12px;
+      }
+      .kanban-board {
+        padding: 12px;
+        gap: 12px;
+      }
+      .kanban-col {
+        min-width: 82vw;
+      }
+      .chat-input {
+        font-size: 14px;
+        padding: 8px 14px;
+      }
+      .chat-input-bar {
+        padding: 8px 10px;
+        gap: 6px;
+      }
     }
   </style>
 </head>
@@ -445,18 +597,24 @@ function renderCockpitHtml() {
 
     <!-- Active Chat Pane -->
     <div class="chat-pane">
-      <div style="padding: 12px 20px; background: #07111F; border-bottom: 1px solid #16273C; display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span id="active-lead-avatar" style="font-size: 22px;">👨‍⚕️</span>
-          <div>
-            <h3 id="active-lead-name" style="font-size: 14px; font-weight: 700; color: white;">Dr. Marcos Silva</h3>
-            <p id="active-lead-company" style="font-size: 11px; color: #94A3B8; font-family: 'JetBrains Mono', monospace;">Clínica Odonto Prime • +55 54 99123-4567</p>
+      <div style="padding: 10px 16px; background: #07111F; border-bottom: 1px solid #16273C; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+          <button type="button" class="btn-mobile-back" onclick="mobileShowChats()" title="Voltar para lista de conversas">
+            ← Conversas
+          </button>
+          <span id="active-lead-avatar" style="font-size: 20px; flex-shrink: 0;">👨‍⚕️</span>
+          <div style="min-width: 0;">
+            <h3 id="active-lead-name" style="font-size: 13px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Dr. Marcos Silva</h3>
+            <p id="active-lead-company" style="font-size: 10px; color: #94A3B8; font-family: 'JetBrains Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Clínica Odonto Prime • +55 54 99123-4567</p>
           </div>
         </div>
-        <div style="display: flex; gap: 8px;">
-          <span style="font-size: 10px; font-family: 'JetBrains Mono', monospace; background: rgba(0,210,246,0.15); color: #00D2F6; border: 1px solid rgba(0,210,246,0.3); padding: 4px 8px; border-radius: 6px; font-weight: bold;">
-            🤖 IA PILOTO ATIVO
+        <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+          <span style="font-size: 9px; font-family: 'JetBrains Mono', monospace; background: rgba(0,210,246,0.15); color: #00D2F6; border: 1px solid rgba(0,210,246,0.3); padding: 3px 6px; border-radius: 6px; font-weight: bold; white-space: nowrap;">
+            🤖 IA ATIVA
           </span>
+          <button type="button" class="btn-toggle-dossier" onclick="toggleDossier()" title="Ver Dossiê do Lead">
+            📋 Dossiê
+          </button>
         </div>
       </div>
 
@@ -487,13 +645,16 @@ function renderCockpitHtml() {
     </div>
 
     <!-- Lead Details & AI Dossier Sidebar -->
-    <div class="details-sidebar">
-      <div style="border-bottom: 1px solid #16273C; padding-bottom: 14px;">
-        <span style="font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px;">
-          Dossiê do Lead & Triagem IA
-        </span>
-        <h4 id="dossier-name" style="font-size: 15px; font-weight: 800; color: white; margin-top: 4px;">Dr. Marcos Silva</h4>
-        <p id="dossier-phone" style="font-size: 11px; color: #00D2F6; font-family: 'JetBrains Mono', monospace;">+55 54 99123-4567</p>
+    <div id="details-sidebar" class="details-sidebar">
+      <div style="border-bottom: 1px solid #16273C; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <div>
+          <span style="font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px;">
+            Dossiê do Lead & Triagem IA
+          </span>
+          <h4 id="dossier-name" style="font-size: 15px; font-weight: 800; color: white; margin-top: 4px;">Dr. Marcos Silva</h4>
+          <p id="dossier-phone" style="font-size: 11px; color: #00D2F6; font-family: 'JetBrains Mono', monospace;">+55 54 99123-4567</p>
+        </div>
+        <button type="button" class="btn-close-dossier" onclick="toggleDossier()" title="Fechar Dossiê">✕</button>
       </div>
 
       <div class="card-box" style="padding: 12px;">
@@ -615,6 +776,9 @@ function renderCockpitHtml() {
 
       renderMessages(contact);
       renderChats();
+      if (window.innerWidth <= 768) {
+        mobileShowChat();
+      }
     }
 
     function renderMessages(contact) {
@@ -724,8 +888,60 @@ function renderCockpitHtml() {
       }
     }
 
+    // Controle de Navegação Responsiva no Mobile e Drawer de Dossiê no Tablet
+    let currentMobileView = 'chat'; // 'chats' | 'chat' | 'dossier'
+
+    function updateMobileClasses() {
+      const container = document.getElementById('view-whatsapp');
+      if (!container) return;
+      container.classList.remove('mobile-mode-chats', 'mobile-mode-chat', 'mobile-mode-dossier');
+      if (window.innerWidth <= 768) {
+        container.classList.add('mobile-mode-' + currentMobileView);
+      }
+    }
+
+    function mobileShowChats() {
+      currentMobileView = 'chats';
+      updateMobileClasses();
+    }
+
+    function mobileShowChat() {
+      currentMobileView = 'chat';
+      updateMobileClasses();
+      const sidebar = document.getElementById('details-sidebar');
+      if (sidebar) sidebar.classList.remove('open');
+    }
+
+    function mobileShowDossier() {
+      currentMobileView = 'dossier';
+      updateMobileClasses();
+    }
+
+    function toggleDossier() {
+      if (window.innerWidth <= 768) {
+        if (currentMobileView === 'dossier') {
+          mobileShowChat();
+        } else {
+          mobileShowDossier();
+        }
+      } else {
+        const sidebar = document.getElementById('details-sidebar');
+        if (sidebar) {
+          sidebar.classList.toggle('open');
+        }
+      }
+    }
+
+    window.addEventListener('resize', updateMobileClasses);
+
+    // Detecção de modo embutido em iframe para remover cabeçalhos duplicados
+    if (window.self !== window.top || window.location.search.includes('embedded=true')) {
+      document.body.classList.add('is-embedded');
+    }
+
     // Inicialização
     selectContact('lead-1');
+    updateMobileClasses();
     renderDiagnostics();
     renderMeetings();
   </script>

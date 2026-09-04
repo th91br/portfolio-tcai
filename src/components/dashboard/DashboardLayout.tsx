@@ -13,6 +13,10 @@ import {
   Briefcase,
   AlertTriangle,
   KeyRound,
+  Trash2,
+  Film,
+  CheckCircle2,
+  MessageSquare,
 } from 'lucide-react';
 import {
   Lead,
@@ -27,11 +31,18 @@ import {
   fetchCommercialMetrics,
   supabase,
 } from '../../lib/supabase';
+import {
+  generateDemoScenario,
+  clearDemoScenario,
+  hasDemoData,
+  countDemoData,
+} from '../../services/demo/demoDataService';
 import { OverviewView } from './views/OverviewView';
 import { LeadsListView } from './views/LeadsListView';
 import { PipelineKanbanView } from './views/PipelineKanbanView';
 import { FollowUpsView } from './views/FollowUpsView';
 import { AnalyticsView } from './views/AnalyticsView';
+import { WhatsAppAgentView } from './views/WhatsAppAgentView';
 import { LeadDetailsDrawer } from './views/LeadDetailsDrawer';
 import { NotificationsCenter } from './notifications/NotificationsCenter';
 import { ChangePasswordModal } from './auth/ChangePasswordModal';
@@ -41,7 +52,7 @@ interface DashboardLayoutProps {
   onLogout: () => void;
 }
 
-type TabKey = 'overview' | 'pipeline' | 'followups' | 'leads' | 'analytics';
+type TabKey = 'overview' | 'pipeline' | 'followups' | 'leads' | 'analytics' | 'whatsapp';
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
@@ -78,6 +89,64 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [isProcessingDemo, setIsProcessingDemo] = useState(false);
+  const [showDeleteDemoModal, setShowDeleteDemoModal] = useState(false);
+  const [demoFeedback, setDemoFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const isDemoActive = hasDemoData(leads);
+  const demoCount = countDemoData(leads);
+
+  const handleGenerateDemo = async () => {
+    setIsProcessingDemo(true);
+    setDemoFeedback(null);
+    try {
+      const result = await generateDemoScenario();
+      if (result.success) {
+        setDemoFeedback({
+          type: 'success',
+          message: `${result.leadsCreated} contatos e negócios fakes gerados com sucesso nas 8 etapas!`,
+        });
+        await loadData();
+      } else {
+        setDemoFeedback({
+          type: 'error',
+          message: result.error || 'Erro ao gerar dados demonstrativos.',
+        });
+      }
+    } catch (err: any) {
+      setDemoFeedback({
+        type: 'error',
+        message: err.message || 'Erro inesperado ao gerar dados.',
+      });
+    } finally {
+      setIsProcessingDemo(false);
+      setTimeout(() => setDemoFeedback(null), 5000);
+    }
+  };
+
+  const handleClearDemo = async () => {
+    setIsProcessingDemo(true);
+    setDemoFeedback(null);
+    try {
+      const result = await clearDemoScenario();
+      setShowDeleteDemoModal(false);
+      if (result.success) {
+        setDemoFeedback({
+          type: 'success',
+          message: 'Todos os contatos e dados demonstrativos foram excluídos com sucesso!',
+        });
+        await loadData();
+      }
+    } catch (err: any) {
+      setDemoFeedback({
+        type: 'error',
+        message: err.message || 'Erro ao excluir dados demo.',
+      });
+    } finally {
+      setIsProcessingDemo(false);
+      setTimeout(() => setDemoFeedback(null), 5000);
+    }
+  };
 
   const loadData = useCallback(async () => {
     try {
@@ -165,6 +234,41 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
 
         {/* Ações Rápidas & Notificações */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Botão de Gestão de Base de Demonstração */}
+          {isDemoActive ? (
+            <button
+              type="button"
+              onClick={() => setShowDeleteDemoModal(true)}
+              disabled={isProcessingDemo}
+              className="px-3 py-1.5 rounded-full border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-mono text-rose-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.1)]"
+              title="Excluir registros de demonstração"
+            >
+              {isProcessingDemo ? (
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-300" />
+              ) : (
+                <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+              )}
+              <span className="hidden sm:inline font-bold">Excluir Registros ({demoCount})</span>
+              <span className="sm:hidden font-bold">Excluir ({demoCount})</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleGenerateDemo}
+              disabled={isProcessingDemo}
+              className="px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-mono text-amber-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:border-amber-400"
+              title="Popular base com registros para apresentação comercial"
+            >
+              {isProcessingDemo ? (
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-400" />
+              ) : (
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              )}
+              <span className="hidden sm:inline font-bold">Gerar Demonstração</span>
+              <span className="sm:hidden font-bold">Demo</span>
+            </button>
+          )}
+
           {/* Central de Notificações Internas */}
           <NotificationsCenter
             onSelectLead={(id) => setSelectedLeadId(id)}
@@ -207,7 +311,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           <button
             type="button"
             onClick={() => setActiveTab('overview')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'overview'
                 ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
@@ -220,7 +324,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           <button
             type="button"
             onClick={() => setActiveTab('pipeline')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'pipeline'
                 ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
@@ -233,7 +337,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           <button
             type="button"
             onClick={() => setActiveTab('followups')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'followups'
                 ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
@@ -251,7 +355,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           <button
             type="button"
             onClick={() => setActiveTab('leads')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'leads'
                 ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
@@ -269,7 +373,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           <button
             type="button"
             onClick={() => setActiveTab('analytics')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'analytics'
                 ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
@@ -278,11 +382,29 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
             <BarChart3 className="w-3.5 h-3.5 text-[#00D2F6]" />
             <span>MÉTRICAS & FUNIL</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('whatsapp')}
+            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'whatsapp'
+                ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold shadow-[0_0_15px_rgba(0,210,246,0.2)]'
+                : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
+            }`}
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <span>WHATSAPP & AGENTE IA</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Central Ativa" />
+          </button>
         </div>
       </nav>
 
       {/* Conteúdo Principal */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-8">
+      <main
+        className={`flex-1 w-full mx-auto transition-all duration-300 ${
+          activeTab === 'pipeline' || activeTab === 'whatsapp' ? 'max-w-[1920px] px-3 sm:px-6 py-4' : 'max-w-7xl p-4 sm:p-8'
+        }`}
+      >
         {loading ? (
           <div className="h-96 flex flex-col items-center justify-center text-slate-400 gap-3">
             <RefreshCw className="w-8 h-8 animate-spin text-[#00D2F6]" />
@@ -339,6 +461,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
                 metrics={metrics}
               />
             )}
+
+            {activeTab === 'whatsapp' && (
+              <WhatsAppAgentView />
+            )}
           </>
         )}
       </main>
@@ -357,6 +483,77 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
         onClose={() => setShowChangePasswordModal(false)}
         userEmail={user.email || ''}
       />
+
+      {/* Toast de Feedback Demo */}
+      {demoFeedback && (
+        <div className="fixed bottom-6 right-6 z-50 animate-fadeIn">
+          <div
+            className={`px-4 py-3 rounded-2xl shadow-2xl border flex items-center gap-3 font-mono text-xs ${
+              demoFeedback.type === 'success'
+                ? 'bg-[#0A1D2B] border-emerald-500/40 text-emerald-300'
+                : 'bg-[#2B0A12] border-rose-500/40 text-rose-300'
+            }`}
+          >
+            {demoFeedback.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+            )}
+            <span>{demoFeedback.message}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação para Excluir Todos os Fakes */}
+      {showDeleteDemoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#091524] border border-rose-500/30 rounded-3xl p-6 sm:p-8 max-w-md w-full text-center space-y-5 shadow-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+              <Trash2 className="w-6 h-6" />
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-rose-400 font-bold block">
+                GERENCIAMENTO DE REGISTROS
+              </span>
+              <h3 className="text-xl font-bold text-white uppercase tracking-tight">
+                Excluir Registros da Base?
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Esta ação removerá os <strong className="text-white">{demoCount} registros</strong> criados para demonstração,
+                além das oportunidades associadas em cada etapa do pipeline, follow-ups e métricas de teste.
+              </p>
+              <p className="text-[11px] text-emerald-400/80 font-mono">
+                Seus leads e dados comerciais reais não serão afetados.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                disabled={isProcessingDemo}
+                onClick={() => setShowDeleteDemoModal(false)}
+                className="flex-1 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/10 text-xs font-mono text-slate-300 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={isProcessingDemo}
+                onClick={handleClearDemo}
+                className="flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+              >
+                {isProcessingDemo ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Trash2 className="w-4 h-4" />
+                )}
+                <span>{isProcessingDemo ? 'Excluindo...' : 'Sim, Excluir Registros'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

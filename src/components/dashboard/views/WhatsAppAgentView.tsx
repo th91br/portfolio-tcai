@@ -34,10 +34,10 @@ export const WhatsAppAgentView: React.FC = () => {
 
   const [detectedPort, setDetectedPort] = useState<number>(3080);
 
-  // Define URL base do agente (localhost:3080 como padrão, com fallback para 3000)
+  // Define URL base do agente (com ?embedded=true para remover cabeçalhos duplicados no iframe)
   const agentUrl = typeof window !== 'undefined'
-    ? `${window.location.protocol}//${window.location.hostname}:${detectedPort}`
-    : `http://localhost:${detectedPort}`;
+    ? `${window.location.protocol}//${window.location.hostname}:${detectedPort}?embedded=true`
+    : `http://localhost:${detectedPort}?embedded=true`;
 
   const checkAgentHealth = async () => {
     setIsChecking(true);
@@ -106,107 +106,109 @@ export const WhatsAppAgentView: React.FC = () => {
   };
 
   return (
-    <div className={`w-full flex flex-col space-y-3.5 transition-all ${isFullscreen ? 'fixed inset-0 z-50 p-4 bg-[#060D17] overflow-hidden' : ''}`}>
+    <div className={`w-full flex flex-col space-y-3 transition-all ${isFullscreen ? 'fixed inset-0 z-50 p-2 sm:p-4 bg-[#060D17] overflow-hidden' : ''}`}>
       {/* Top Banner de Telemetria e Integração do Agente */}
-      <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl p-4 sm:p-5 flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 shadow-xl relative overflow-hidden flex-shrink-0">
+      <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl p-3 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xl relative overflow-hidden flex-shrink-0">
         {/* Glow de fundo */}
         <div className="absolute top-0 left-0 w-64 h-full bg-[#00D2F6]/5 blur-3xl pointer-events-none" />
 
         {/* Lado Esquerdo: Título & Status Operacional */}
-        <div className="flex items-center gap-3.5 z-10">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-slate-950 font-black shadow-[0_0_20px_rgba(0,210,246,0.3)] flex-shrink-0">
-            <MessageSquare className="w-6 h-6 text-slate-950" />
+        <div className="flex items-center gap-3 z-10 w-full md:w-auto">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-slate-950 font-black shadow-[0_0_20px_rgba(0,210,246,0.3)] flex-shrink-0">
+            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-slate-950" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base sm:text-lg font-extrabold text-white tracking-wide uppercase">
-                Central WhatsApp & Agente IA Autônomo
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-sm sm:text-base md:text-lg font-extrabold text-white tracking-wide uppercase truncate">
+                Central WhatsApp & Agente IA
               </h2>
               {status.online ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono text-emerald-400 font-bold">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[9px] sm:text-[10px] font-mono text-emerald-400 font-bold whitespace-nowrap">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   ONLINE • {status.latencyMs ?? 5}ms
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-[10px] font-mono text-rose-400 font-bold">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-[9px] sm:text-[10px] font-mono text-rose-400 font-bold whitespace-nowrap">
                   <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                   CONECTANDO...
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 font-sans">
+            <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 font-sans truncate">
               Atendimento, triagem com SLA de 3/7/10 dias, CRM integrado e follow-ups em tempo real.
             </p>
           </div>
         </div>
 
         {/* Lado Direito: Métricas Rápidas & Ações */}
-        <div className="flex items-center gap-2 sm:gap-3 z-10">
+        <div className="flex items-center gap-2 sm:gap-3 z-10 w-full md:w-auto justify-between md:justify-end">
           {status.online && (
-            <div className="hidden md:flex items-center gap-3 bg-[#07111F] px-3.5 py-2 rounded-xl border border-white/[0.06] text-xs font-mono shadow-inner">
+            <div className="hidden lg:flex items-center gap-3 bg-[#07111F] px-3 py-1.5 rounded-xl border border-white/[0.06] text-xs font-mono shadow-inner">
               <div className="text-center">
-                <span className="text-[10px] text-slate-400 block uppercase">Leads Ativos</span>
+                <span className="text-[9px] text-slate-400 block uppercase">Leads</span>
                 <span className="font-bold text-[#00D2F6]">{status.totalLeads ?? 0}</span>
               </div>
-              <div className="w-[1px] h-6 bg-white/[0.08]" />
+              <div className="w-[1px] h-5 bg-white/[0.08]" />
               <div className="text-center">
-                <span className="text-[10px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
-                  <Flame className="w-3 h-3 text-amber-400 inline" /> Quentes
+                <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
+                  <Flame className="w-2.5 h-2.5 text-amber-400 inline" /> Quentes
                 </span>
                 <span className="font-bold text-amber-400">{status.hotLeads ?? 0}</span>
               </div>
-              <div className="w-[1px] h-6 bg-white/[0.08]" />
+              <div className="w-[1px] h-5 bg-white/[0.08]" />
               <div className="text-center">
-                <span className="text-[10px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
-                  <Calendar className="w-3 h-3 text-purple-400 inline" /> Meets
+                <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
+                  <Calendar className="w-2.5 h-2.5 text-purple-400 inline" /> Meets
                 </span>
                 <span className="font-bold text-purple-400">{status.meetingsBooked ?? 0}</span>
               </div>
             </div>
           )}
 
-          {/* Botão Atualizar */}
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={isChecking}
-            className="p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
-            title="Recarregar Agente"
-          >
-            <RefreshCw className={'w-4 h-4 ' + (isChecking ? 'animate-spin text-[#00D2F6]' : '')} />
-          </button>
+          <div className="flex items-center gap-1.5 sm:gap-2 ml-auto md:ml-0">
+            {/* Botão Atualizar */}
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={isChecking}
+              className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
+              title="Recarregar Agente"
+            >
+              <RefreshCw className={'w-3.5 h-3.5 sm:w-4 sm:h-4 ' + (isChecking ? 'animate-spin text-[#00D2F6]' : '')} />
+            </button>
 
-          {/* Botão Tela Cheia */}
-          <button
-            type="button"
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
-            title={isFullscreen ? 'Sair do Modo Expandido' : 'Expandir Cockpit em Tela Cheia'}
-          >
-            {isFullscreen ? <Minimize2 className="w-4 h-4 text-cyan-400" /> : <Maximize2 className="w-4 h-4 text-slate-300" />}
-          </button>
+            {/* Botão Tela Cheia */}
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
+              title={isFullscreen ? 'Sair do Modo Expandido' : 'Expandir Cockpit em Tela Cheia'}
+            >
+              {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />}
+            </button>
 
-          {/* Botão Abrir em Nova Aba */}
-          <a
-            href={agentUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2 rounded-xl border border-[#00D2F6]/30 bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-xs font-mono text-[#00D2F6] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.15)]"
-            title="Abrir Central em Nova Aba do Navegador"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Nova Aba</span>
-          </a>
+            {/* Botão Abrir em Nova Aba */}
+            <a
+              href={agentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-[#00D2F6]/30 bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-[11px] sm:text-xs font-mono text-[#00D2F6] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.15)] whitespace-nowrap"
+              title="Abrir Central em Nova Aba do Navegador"
+            >
+              <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span className="hidden sm:inline">Nova Aba</span>
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Sub-Navegação Rápida com PostMessage ao Iframe */}
-      <div className="bg-[#0A1624] border border-[#16273C] p-2 rounded-2xl flex items-center justify-between gap-2 shadow-lg flex-shrink-0">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+      <div className="bg-[#0A1624] border border-[#16273C] p-1.5 sm:p-2 rounded-2xl flex items-center justify-between gap-2 shadow-lg flex-shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-0.5 w-full sm:w-auto scrollbar-none">
           <button
             type="button"
             onClick={() => handleSwitchTab('whatsapp')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'whatsapp'
                 ? 'bg-[#00D2F6] text-slate-950 shadow-[0_0_15px_rgba(0,210,246,0.3)]'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
@@ -219,14 +221,14 @@ export const WhatsAppAgentView: React.FC = () => {
           <button
             type="button"
             onClick={() => handleSwitchTab('diagnostics')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'diagnostics'
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_15px_rgba(0,210,246,0.2)]'
                 : 'text-slate-400 hover:text-cyan-300 hover:bg-white/[0.05]'
             }`}
           >
             <Zap className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Hub de Diagnósticos</span>
+            <span>Diagnósticos</span>
             <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
               HOT
             </span>
@@ -235,38 +237,38 @@ export const WhatsAppAgentView: React.FC = () => {
           <button
             type="button"
             onClick={() => handleSwitchTab('kanban')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'kanban'
                 ? 'bg-[#00D2F6] text-slate-950 shadow-[0_0_15px_rgba(0,210,246,0.3)]'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
             }`}
           >
             <Radio className="w-3.5 h-3.5" />
-            <span>Pipeline Kanban</span>
+            <span>Kanban</span>
           </button>
 
           <button
             type="button"
             onClick={() => handleSwitchTab('calendar')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'calendar'
                 ? 'bg-[#00D2F6] text-slate-950 shadow-[0_0_15px_rgba(0,210,246,0.3)]'
                 : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
-            <span>Agenda & Meets</span>
+            <span>Agenda</span>
           </button>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-slate-400 pr-2">
+        <div className="hidden md:flex items-center gap-2 text-[11px] font-mono text-slate-400 pr-2 whitespace-nowrap">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
           <span>Sincronia Iframe Ativa</span>
         </div>
       </div>
 
       {/* Container Principal do Iframe Seamless */}
-      <div className={`w-full relative bg-[#07111F] rounded-2xl border border-[#00D2F6]/25 shadow-[0_0_35px_rgba(0,210,246,0.1)] overflow-hidden flex-1 min-h-[640px] ${isFullscreen ? 'h-full' : 'h-[calc(100vh-250px)]'}`}>
+      <div className={`w-full relative bg-[#07111F] rounded-2xl border border-[#00D2F6]/25 shadow-[0_0_35px_rgba(0,210,246,0.1)] overflow-hidden flex-1 ${isFullscreen ? 'h-full' : 'h-[calc(100vh-210px)] sm:h-[calc(100vh-240px)] min-h-[480px] sm:min-h-[580px] md:min-h-[640px]'}`}>
         {/* Loading Overlay */}
         {!iframeLoaded && (
           <div className="absolute inset-0 bg-[#07111F] flex flex-col items-center justify-center gap-3 z-20">
