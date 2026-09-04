@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "node scripts/launch-all.js",
+    "admin": "node scripts/launch-all.js",
+    "agent": "node scripts/whatsapp-agent-server.js",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
