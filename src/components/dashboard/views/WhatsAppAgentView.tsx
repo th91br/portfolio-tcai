@@ -41,16 +41,27 @@ export const WhatsAppAgentView: React.FC = () => {
 
   const checkAgentHealth = async () => {
     setIsChecking(true);
-    const candidatePorts = [3080, 3000];
+    // Testa portas locais comuns (3080, 3000, 3001, 8080, etc.)
+    const candidatePorts = [3080, 3000, 3001, 3002, 8080, 8000, 5000, 8765];
+    if (typeof window !== 'undefined' && window.location.port) {
+      const p = parseInt(window.location.port, 10);
+      if (!isNaN(p) && !candidatePorts.includes(p)) candidatePorts.push(p);
+    }
 
     for (const port of candidatePorts) {
       const targetUrl = typeof window !== 'undefined'
         ? `${window.location.protocol}//${window.location.hostname}:${port}`
         : `http://localhost:${port}`;
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 600);
       const start = performance.now();
       try {
-        const res = await fetch(`${targetUrl}/api/analytics/kpis`, { method: 'GET' });
+        const res = await fetch(`${targetUrl}/api/analytics/kpis`, {
+          method: 'GET',
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
         const latency = Math.round(performance.now() - start);
         if (res.ok) {
           const data = await res.json();
@@ -66,6 +77,7 @@ export const WhatsAppAgentView: React.FC = () => {
           return;
         }
       } catch {
+        clearTimeout(timeoutId);
         // tenta a próxima porta candidata
       }
     }
