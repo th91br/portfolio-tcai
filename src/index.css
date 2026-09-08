@@ -102,3 +102,24 @@ html.lenis, html.lenis body {
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
+
+/* Kanban Horizontal Scrollbar */
+.kanban-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.kanban-scroll::-webkit-scrollbar-track {
+  background: rgba(10, 22, 36, 0.6);
+  border-radius: 9999px;
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 246, 0.25);
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 210, 246, 0.2);
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 246, 0.5);
+}
+

@@ -17,6 +17,7 @@ import {
   Film,
   CheckCircle2,
   MessageSquare,
+  Cpu,
 } from 'lucide-react';
 import {
   Lead,
@@ -46,6 +47,7 @@ import { WhatsAppAgentView } from './views/WhatsAppAgentView';
 import { LeadDetailsDrawer } from './views/LeadDetailsDrawer';
 import { NotificationsCenter } from './notifications/NotificationsCenter';
 import { ChangePasswordModal } from './auth/ChangePasswordModal';
+import { AgentSettingsModal } from './settings/AgentSettingsModal';
 
 interface DashboardLayoutProps {
   user: User;
@@ -89,6 +91,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showAgentSettingsModal, setShowAgentSettingsModal] = useState(false);
   const [isProcessingDemo, setIsProcessingDemo] = useState(false);
   const [showDeleteDemoModal, setShowDeleteDemoModal] = useState(false);
   const [demoFeedback, setDemoFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -274,6 +277,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
             onSelectLead={(id) => setSelectedLeadId(id)}
             refreshTrigger={refreshKey}
           />
+
+          {/* Botão de Ajustes IA & WhatsApp */}
+          <button
+            type="button"
+            onClick={() => setShowAgentSettingsModal(true)}
+            className="px-3 py-1.5 rounded-full border border-[#00D2F6]/30 hover:border-[#00D2F6] bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-xs font-mono text-[#00D2F6] flex items-center gap-1.5 transition-colors cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.15)]"
+            title="Configurações do Agente IA, Gemini API e WhatsApp"
+          >
+            <Cpu className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <span className="hidden sm:inline font-bold">Ajustes IA</span>
+          </button>
 
           <button
             type="button"
@@ -463,7 +477,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
             )}
 
             {activeTab === 'whatsapp' && (
-              <WhatsAppAgentView />
+              <WhatsAppAgentView leads={leads} />
             )}
           </>
         )}
@@ -482,6 +496,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
         isOpen={showChangePasswordModal}
         onClose={() => setShowChangePasswordModal(false)}
         userEmail={user.email || ''}
+      />
+
+      {/* Modal Executivo de Ajustes do Agente IA, Empresa & WhatsApp */}
+      <AgentSettingsModal
+        isOpen={showAgentSettingsModal}
+        onClose={() => setShowAgentSettingsModal(false)}
       />
 
       {/* Toast de Feedback Demo */}

@@ -24,6 +24,8 @@ import {
   ShieldCheck,
   Save,
   Sparkles,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   Lead,
@@ -38,6 +40,7 @@ import {
   addLeadNote,
   fetchDealByLeadId,
   updateDealDetails,
+  deleteLeadById,
 } from '../../../lib/supabase';
 import { generateDashboardWhatsAppContactUrl } from '../../../services/diagnostic/scoreCalculator';
 import { SalesCopilotSection } from '../copilot/SalesCopilotSection';
@@ -92,6 +95,31 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
   const [nextActionAt, setNextActionAt] = useState('');
   const [savingCommercial, setSavingCommercial] = useState(false);
   const [commercialSavedSuccess, setCommercialSavedSuccess] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteLead = async () => {
+    if (!details) return;
+    setIsDeleting(true);
+    try {
+      await deleteLeadById(details.lead.id);
+      setShowDeleteConfirm(false);
+      onLeadUpdated();
+      onClose();
+    } catch (err) {
+      console.error('Falha ao excluir lead:', err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   // Carrega todos os detalhes do lead e do deal correspondente
   useEffect(() => {
@@ -285,14 +313,59 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                   </h2>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="p-2 rounded-full bg-white/[0.05] hover:bg-white/10 text-white transition-colors cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="p-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors cursor-pointer"
+                    title="Excluir Lead Permanentemente"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    title="Fechar Dossiê"
+                    aria-label="Fechar Dossiê"
+                    className="p-2 rounded-full bg-white/[0.05] hover:bg-white/10 text-white transition-colors cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
+
+              {/* Modal de Confirmação de Exclusão */}
+              {showDeleteConfirm && (
+                <div className="p-4 bg-rose-500/10 border-b border-rose-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn">
+                  <div className="flex items-center gap-2.5 text-rose-300 text-xs font-mono">
+                    <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                    <span>Tem certeza que deseja excluir permanentemente este lead e todo o histórico?</span>
+                  </div>
+                  <div className="flex items-center gap-2 self-end sm:self-auto">
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono text-white transition-colors cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={handleDeleteLead}
+                      className="px-3 py-1 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      {isDeleting ? (
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-3.5 h-3.5" />
+                      )}
+                      <span>{isDeleting ? 'Excluindo...' : 'Sim, Excluir'}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Status Selector + WhatsApp Trigger */}
               <div className="px-5 sm:px-6 py-3.5 bg-[#091524] border-b border-white/10 flex flex-wrap items-center justify-between gap-3">

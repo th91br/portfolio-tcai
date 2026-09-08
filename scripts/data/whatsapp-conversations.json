@@ -1,0 +1,476 @@
+{
+  "kpis": {
+    "totalLeads": 26,
+    "hotLeads": 9,
+    "meetingsBooked": 5,
+    "conversionRate": "29.2%",
+    "activeChats": 6,
+    "avgResponseTimeSec": 8
+  },
+  "contacts": [
+    {
+      "id": "lead-1788710934045",
+      "name": "Dr. Roberto Guimarães",
+      "company": "Centro Diagnóstico Guimarães",
+      "phone": "+55 54 99222-8899",
+      "projectType": "Triagem de Imagens & Agente WhatsApp",
+      "slaTimeline": "7 DIAS ÚTEIS",
+      "score": 85,
+      "status": "ai_qualified",
+      "statusLabel": "Qualificado por IA",
+      "avatar": "💼"
+    },
+    {
+      "id": "8799e52e-4383-4764-94a9-8f63a106d9b7",
+      "name": "Dra. Letícia Rossi",
+      "company": "Clínica Rossi Medicina Integrada",
+      "phone": "(54) 99188-7766",
+      "status": "meeting_booked",
+      "statusLabel": "Reunião Sugerida",
+      "avatar": "💼",
+      "unread": 1,
+      "score": 86,
+      "slaTimeline": "7 DIAS ÚTEIS",
+      "projectType": "SITE DE ALTA CONVERSÃO & POSICIONAMENTO",
+      "lastMessage": "📋 *DIAGNÓSTICO TÉCNICO & PROPOSTA - TCAI*\n📌 *Projeto:* Portal Médico 24/7 com Visão Multimodal\n👤 *Cliente:* Hospital Vita Mais (Diretoria)\n⚡ *SLA Garantido:* 10 dias úteis\n💰 *Investimento Estimado:* R$ 15.000 - R$ 22.000\n🛠️ *Stack Tecnológica:* WhatsApp Cloud API, Gemini 2.0 Multimodal, Node.js / TypeScript, FastAPI Microservices\n🎯 *Score de Viabilidade:* 92%\n\nConfirmamos a prontidão da nossa engenharia para implantação imediata.",
+      "lastMessageTime": "13:08",
+      "messages": [
+        {
+          "sender": "lead",
+          "text": "Olá! Acabei de enviar minha solicitação no site da TCAI para \"SITE DE ALTA CONVERSÃO & POSICIONAMENTO\".",
+          "time": "17:17"
+        },
+        {
+          "sender": "agent",
+          "text": "Olá, Dra. Letícia Rossi! Seja muito bem-vindo(a) à TCAI. Recebi sua demanda com score de qualificação 86%. Como posso te ajudar a acelerar esse projeto?",
+          "time": "17:17"
+        },
+        {
+          "sender": "agent",
+          "text": "📋 *DIAGNÓSTICO TÉCNICO & PROPOSTA - TCAI*\n📌 *Projeto:* Portal Médico 24/7 com Visão Multimodal\n👤 *Cliente:* Hospital Vita Mais (Diretoria)\n⚡ *SLA Garantido:* 10 dias úteis\n💰 *Investimento Estimado:* R$ 15.000 - R$ 22.000\n🛠️ *Stack Tecnológica:* WhatsApp Cloud API, Gemini 2.0 Multimodal, Node.js / TypeScript, FastAPI Microservices\n🎯 *Score de Viabilidade:* 92%\n\nConfirmamos a prontidão da nossa engenharia para implantação imediata.",
+          "time": "13:08"
+        }
+      ]
+    },
+    {
+      "id": "lead-test-1788633459522",
+      "name": "Empresário VIP Teste",
+      "company": "VIP Tecnologia S/A",
+      "phone": "+55 54 99199-8877",
+      "status": "meeting_booked",
+      "statusLabel": "Reunião Sugerida",
+      "avatar": "💼",
+      "unread": 1,
+      "score": 95,
+      "slaTimeline": "7 DIAS ÚTEIS",
+      "projectType": "Automação com Agente de IA",
+      "lastMessage": "Olá! Seu diagnóstico foi recebido com sucesso pela TCAI.",
+      "lastMessageTime": "15:37",
+      "messages": [
+        {
+          "sender": "lead",
+          "text": "Olá! Acabei de enviar minha solicitação no site da TCAI para \"Automação com Agente de IA\".",
+          "time": "15:37"
+        },
+        {
+          "sender": "agent",
+          "text": "Olá, Empresário VIP Teste! Seja muito bem-vindo(a) à TCAI. Recebi sua demanda com score de qualificação 95%. Como posso te ajudar a acelerar esse projeto?",
+          "time": "15:37"
+        },
+        {
+          "sender": "agent",
+          "text": "Olá! Seu diagnóstico foi recebido com sucesso pela TCAI.",
+          "time": "15:37"
+        }
+      ]
+    },
+    {
+      "id": "lead-1",
+      "name": "Dr. Marcos Silva",
+      "company": "Clínica Odonto Prime",
+      "phone": "+55 54 99123-4567",
+      "status": "meeting_booked",
+      "statusLabel": "Reunião Agendada",
+      "avatar": "👨‍⚕️",
+      "unread": 3,
+      "score": 96,
+      "slaTimeline": "7 DIAS ÚTEIS",
+      "projectType": "Automação com IA & Atendimento 24/7",
+      "lastMessage": "Entendido! A demanda para Automação com IA & Atendimento 24/7 é muito promissora. Gostaria de agendar uma breve demonstração técnica de 15 minutos ou prefere receber o resumo de escopo em PDF com SLA garantido?",
+      "lastMessageTime": "21:08",
+      "messages": [
+        {
+          "sender": "lead",
+          "text": "Olá! Vi o portfólio da TCAI e gostaria de saber se vocês automatizam triagem no WhatsApp.",
+          "time": "14:20"
+        },
+        {
+          "sender": "agent",
+          "text": "Olá, Dr. Marcos! Seja bem-vindo à TCAI. 👋 Sim, desenvolvemos agentes autônomos integrados diretamente à API oficial do WhatsApp, CRM e agenda médica.",
+          "time": "14:21"
+        },
+        {
+          "sender": "agent",
+          "text": "Nosso agente faz a triagem do paciente, responde dúvidas sobre procedimentos e agenda a consulta em menos de 10 segundos.",
+          "time": "14:21"
+        },
+        {
+          "sender": "lead",
+          "text": "Sensacional! Qual é o prazo de entrega?",
+          "time": "14:25"
+        },
+        {
+          "sender": "agent",
+          "text": "Nosso SLA garantido para o pacote de Automação & Agente IA é de 7 dias úteis com código 100% pronto e homologado.",
+          "time": "14:26"
+        },
+        {
+          "sender": "lead",
+          "text": "Perfeito, confirmo a reunião para amanhã às 14h.",
+          "time": "14:32"
+        },
+        {
+          "sender": "lead",
+          "text": "Gostaria de saber se a TCAI consegue criar um agente de IA para ler as fotos de exames dos meus pacientes.",
+          "time": "20:11",
+          "media": {
+            "type": "image",
+            "url": "/media/1788649863899-exame-amostra.png.png",
+            "mimeType": "image/png",
+            "caption": "Exemplo de exame médico"
+          }
+        },
+        {
+          "sender": "agent",
+          "text": "Recebi sua mídia com sucesso! 📷🎙️ Já registrei no dossiê de atendimento da TCAI Soluções Inteligentes & Agentes Cognitivos. Posso tirar suas dúvidas sobre nossos SLAs de 3, 7 ou 10 dias úteis, ou prefere agendar uma breve demonstração no Google Meet?",
+          "time": "20:11"
+        },
+        {
+          "sender": "agent",
+          "text": "",
+          "time": "21:08",
+          "media": {
+            "type": "image",
+            "url": "/media/1788653313616-ChatGPT_Image_4_de_set._de_2026__14_15_15.png.png",
+            "mimeType": "image/png",
+            "caption": ""
+          }
+        },
+        {
+          "sender": "lead",
+          "text": "Entendido! Já visualizei o material e vou repassar para a diretoria.",
+          "time": "21:08"
+        },
+        {
+          "sender": "agent",
+          "text": "Entendido! A demanda para Automação com IA & Atendimento 24/7 é muito promissora. Gostaria de agendar uma breve demonstração técnica de 15 minutos ou prefere receber o resumo de escopo em PDF com SLA garantido?",
+          "time": "21:08"
+        },
+        {
+          "sender": "agent",
+          "text": "como você pode me ajudar?",
+          "time": "21:08"
+        },
+        {
+          "sender": "lead",
+          "text": "Entendido! Já visualizei o material e vou repassar para a diretoria.",
+          "time": "21:08"
+        },
+        {
+          "sender": "agent",
+          "text": "Entendido! A demanda para Automação com IA & Atendimento 24/7 é muito promissora. Gostaria de agendar uma breve demonstração técnica de 15 minutos ou prefere receber o resumo de escopo em PDF com SLA garantido?",
+          "time": "21:08"
+        }
+      ]
+    },
+    {
+      "id": "lead-2",
+      "name": "Juliana Rocha",
+      "company": "Moda Sul E-commerce",
+      "phone": "+55 11 98765-4321",
+      "status": "proposal_sent",
+      "statusLabel": "Proposta Enviada",
+      "avatar": "👩‍💼",
+      "unread": 1,
+      "score": 92,
+      "slaTimeline": "3 DIAS ÚTEIS",
+      "projectType": "Landing Page & Site de Alta Conversão",
+      "lastMessage": "Gostei muito da proposta! Vou enviar para aprovação da diretoria.",
+      "lastMessageTime": "11:15",
+      "messages": [
+        {
+          "sender": "lead",
+          "text": "Bom dia! Precisamos refazer nossa landing page de coleções com urgência para a Black Friday.",
+          "time": "10:50"
+        },
+        {
+          "sender": "agent",
+          "text": "Bom dia, Juliana! Com a metodologia da TCAI entregamos páginas de alta conversão em 3 dias úteis com SEO e performance 100/100.",
+          "time": "10:52"
+        },
+        {
+          "sender": "lead",
+          "text": "Gostei muito da proposta! Vou enviar para aprovação da diretoria.",
+          "time": "11:15"
+        }
+      ]
+    },
+    {
+      "id": "lead-3",
+      "name": "Roberto Mendes",
+      "company": "Mendes Logística & Frotas",
+      "phone": "+55 41 99887-1122",
+      "status": "triage",
+      "statusLabel": "Triagem Inicial",
+      "avatar": "🚚",
+      "unread": 0,
+      "score": 88,
+      "slaTimeline": "10 DIAS ÚTEIS",
+      "projectType": "Sistema Sob Medida & Painel Web",
+      "lastMessage": "Precisamos controlar o status das entregas em tempo real.",
+      "lastMessageTime": "09:40",
+      "messages": [
+        {
+          "sender": "lead",
+          "text": "Olá Thiago! Vimos seu case do Prazo Guard. Vocês conseguem criar um painel sob medida para 50 motoristas?",
+          "time": "09:30"
+        },
+        {
+          "sender": "agent",
+          "text": "Olá Roberto! Sim, desenvolvemos sistemas sob medida com painel em tempo real, login seguro e relatórios automáticos em até 10 dias úteis.",
+          "time": "09:32"
+        },
+        {
+          "sender": "lead",
+          "text": "Precisamos controlar o status das entregas em tempo real.",
+          "time": "09:40"
+        }
+      ]
+    },
+    {
+      "id": "lead-4",
+      "name": "Dra. Camila Duarte",
+      "company": "Duarte & Associados Advocacia",
+      "phone": "+55 51 98222-3344",
+      "status": "ai_qualified",
+      "statusLabel": "Qualificado por IA",
+      "avatar": "⚖️",
+      "unread": 2,
+      "score": 75,
+      "slaTimeline": "7 DIAS ÚTEIS",
+      "projectType": "Agente Jurídico para Atendimento",
+      "lastMessage": "Gostaria de entender se o agente pode qualificar causas trabalhistas.",
+      "lastMessageTime": "Ontem",
+      "messages": [
+        {
+          "sender": "lead",
+          "text": "Boa tarde! Gostaria de entender se o agente pode qualificar causas trabalhistas.",
+          "time": "17:40"
+        },
+        {
+          "sender": "agent",
+          "text": "Boa tarde, Dra. Camila! Sim, o agente é configurado com as perguntas de qualificação do seu escritório e só repassa os casos válidos para o advogado.",
+          "time": "17:42"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "diag-1788710930097",
+      "title": "Portal Médico 24/7 com Visão Multimodal",
+      "client": "Hospital Vita Mais (Diretoria)",
+      "date": "Hoje, 13:08",
+      "sla": "10 dias úteis",
+      "score": "92%",
+      "status": "HOT",
+      "budget": "R$ 15.000 - R$ 22.000",
+      "stack": [
+        "WhatsApp Cloud API",
+        "Gemini 2.0 Multimodal",
+        "Node.js / TypeScript",
+        "FastAPI Microservices"
+      ]
+    },
+    {
+      "id": "diag-1788639477466",
+      "title": "SITE DE ALTA CONVERSÃO & POSICIONAMENTO",
+      "client": "Dra. Letícia Rossi (Clínica Rossi Medicina Integrada)",
+      "date": "Hoje, 17:17",
+      "sla": "7 dias úteis",
+      "score": "86%",
+      "status": "HOT",
+      "budget": "R$ 9.500",
+      "stack": [
+        "React / Vite",
+        "Supabase PostgreSQL",
+        "IA Cognitiva TCAI",
+        "WhatsApp Cloud API"
+      ]
+    },
+    {
+      "id": "diag-1788633459527",
+      "title": "Automação com Agente de IA",
+      "client": "Empresário VIP Teste (VIP Tecnologia S/A)",
+      "date": "Hoje, 15:37",
+      "sla": "7 dias úteis",
+      "score": "95%",
+      "status": "HOT",
+      "budget": "R$ 18.000",
+      "stack": [
+        "React / Vite",
+        "Supabase PostgreSQL",
+        "IA Cognitiva TCAI",
+        "WhatsApp Cloud API"
+      ]
+    },
+    {
+      "id": "diag-1",
+      "title": "Plataforma SaaS Multi-tenant",
+      "client": "AgroTech Brasil",
+      "date": "Hoje, 14:10",
+      "sla": "10 a 14 dias",
+      "score": "94%",
+      "status": "HOT",
+      "budget": "R$ 14.500 - R$ 22.000",
+      "stack": [
+        "Next.js / Vite",
+        "Supabase / PostgreSQL",
+        "Stripe / Asaas",
+        "Tailwind CSS"
+      ]
+    },
+    {
+      "id": "diag-2",
+      "title": "Automação & Atendimento IA 24/7",
+      "client": "Clínica Odonto Prime",
+      "date": "Hoje, 11:20",
+      "sla": "7 dias úteis",
+      "score": "96%",
+      "status": "HOT",
+      "budget": "R$ 6.800 - R$ 9.500",
+      "stack": [
+        "WhatsApp Cloud API",
+        "Python / Node.js",
+        "LLMs / Agente Cognitivo",
+        "Webhooks"
+      ]
+    },
+    {
+      "id": "diag-3",
+      "title": "Site Institucional de Alta Autoridade",
+      "client": "Grupo Imobiliário Alpha",
+      "date": "Ontem, 16:45",
+      "sla": "3 dias úteis",
+      "score": "89%",
+      "status": "QUALIFICADO",
+      "budget": "R$ 4.200 - R$ 6.000",
+      "stack": [
+        "React / Vite",
+        "TypeScript",
+        "Tailwind CSS",
+        "Framer Motion"
+      ]
+    },
+    {
+      "id": "diag-4",
+      "title": "Agente de Triagem Médica & Agendamento",
+      "client": "Hospital Vita Mais",
+      "date": "Ontem, 10:15",
+      "sla": "7 dias úteis",
+      "score": "98%",
+      "status": "HOT",
+      "budget": "R$ 9.800 - R$ 15.000",
+      "stack": [
+        "WhatsApp Cloud API",
+        "OpenAI GPT-4o",
+        "Google Calendar API",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "id": "diag-5",
+      "title": "Painel Logístico com IA Preditiva",
+      "client": "TransLog Sul Express",
+      "date": "02/09, 18:00",
+      "sla": "10 dias úteis",
+      "score": "91%",
+      "status": "QUALIFICADO",
+      "budget": "R$ 12.000 - R$ 18.000",
+      "stack": [
+        "React 18",
+        "Tailwind CSS",
+        "FastAPI Python",
+        "Docker"
+      ]
+    },
+    {
+      "id": "diag-6",
+      "title": "Funil Automatizado & Esteira de Follow-ups",
+      "client": "EducaOnline Cursos",
+      "date": "01/09, 15:30",
+      "sla": "5 dias úteis",
+      "score": "87%",
+      "status": "TRIAGEM",
+      "budget": "R$ 5.000 - R$ 7.500",
+      "stack": [
+        "N8N / Webhooks",
+        "WhatsApp API",
+        "CRM TCAI",
+        "Supabase"
+      ]
+    }
+  ],
+  "meetings": [
+    {
+      "id": "meet-1788710937470",
+      "client": "Dr. Roberto Guimarães (Centro Diagnóstico)",
+      "phone": "+55 54 99222-8899",
+      "time": "Sexta-feira, 11:00 - 11:30",
+      "type": "Google Meet",
+      "link": "meet.google.com/tcai-un86tl",
+      "topic": "Demonstração de Triagem IA & Arquitetura",
+      "status": "REALIZADO"
+    },
+    {
+      "id": "meet-1",
+      "client": "Dr. Marcos Silva (Clínica Odonto Prime)",
+      "time": "Amanhã, 14:00 - 14:30",
+      "type": "Google Meet",
+      "link": "meet.google.com/tcai-odonto",
+      "topic": "Alinhamento de Escopo: Agente WhatsApp & SLA 7 Dias"
+    },
+    {
+      "id": "meet-2",
+      "client": "Juliana Rocha (Moda Sul)",
+      "time": "Quinta-feira, 10:30 - 11:00",
+      "type": "Google Meet",
+      "link": "meet.google.com/tcai-modasul",
+      "topic": "Apresentação de Wireframe & Métricas de Conversão"
+    },
+    {
+      "id": "meet-3",
+      "client": "Roberto Mendes (Mendes Logística)",
+      "time": "Sexta-feira, 15:00 - 15:45",
+      "type": "Google Meet",
+      "link": "meet.google.com/tcai-mendes",
+      "topic": "Briefing Técnico: Arquitetura de Painel Web"
+    },
+    {
+      "id": "meet-4",
+      "client": "Dra. Camila Duarte (Duarte Advocacia)",
+      "time": "Sexta-feira, 16:30 - 17:00",
+      "type": "Google Meet",
+      "link": "meet.google.com/tcai-duarte",
+      "topic": "Demonstração: Qualificação Prévia de Clientes no WhatsApp"
+    },
+    {
+      "id": "meet-5",
+      "client": "Diretoria Hospital Vita Mais",
+      "time": "Segunda-feira, 09:00 - 09:45",
+      "type": "Google Meet",
+      "link": "meet.google.com/tcai-vitamais",
+      "topic": "Kickoff: Implantação de Agente IA na Recepção"
+    }
+  ]
+}

@@ -47,12 +47,30 @@ export const DashboardRouter: React.FC = () => {
     );
   }
 
-  if (!user) {
+  // Permite preview em ambiente local de desenvolvimento com flag preview
+  const isDevPreview =
+    Boolean(import.meta.env.DEV) &&
+    (window.location.search.includes('preview=true') || window.location.hash.includes('preview=true'));
+
+  const effectiveUser =
+    user ||
+    (isDevPreview
+      ? ({
+          id: 'dev_admin_thiago',
+          email: AUTHORIZED_ADMIN_EMAIL,
+          app_metadata: {},
+          user_metadata: {},
+          aud: 'authenticated',
+          created_at: new Date().toISOString(),
+        } as User)
+      : null);
+
+  if (!effectiveUser) {
     return <DashboardAuth onSuccess={() => {}} />;
   }
 
   // TRAVA DE SEGURANÇA: Validação estrita do e-mail do administrador
-  const isAuthorized = user.email?.toLowerCase() === AUTHORIZED_ADMIN_EMAIL.toLowerCase();
+  const isAuthorized = effectiveUser.email?.toLowerCase() === AUTHORIZED_ADMIN_EMAIL.toLowerCase();
 
   if (!isAuthorized) {
     return (
@@ -66,7 +84,7 @@ export const DashboardRouter: React.FC = () => {
           </span>
           <h2 className="text-xl font-bold text-white uppercase">Acesso Negado</h2>
           <p className="text-xs text-slate-400 leading-relaxed">
-            O usuário <strong className="text-white">{user.email}</strong> não possui permissão
+            O usuário <strong className="text-white">{effectiveUser.email}</strong> não possui permissão
             para acessar este painel. O acesso é exclusivo para o administrador oficial.
           </p>
           <button
@@ -82,7 +100,7 @@ export const DashboardRouter: React.FC = () => {
     );
   }
 
-  return <DashboardLayout user={user} onLogout={handleLogout} />;
+  return <DashboardLayout user={effectiveUser} onLogout={handleLogout} />;
 };
 
 export default DashboardRouter;

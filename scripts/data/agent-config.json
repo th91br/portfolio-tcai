@@ -1,0 +1,41 @@
+{
+  "company": {
+    "companyName": "TCAI - Thiago Cassol Antunes Inteligência Artificial",
+    "tradingName": "TCAI Soluções Inteligentes & Agentes Cognitivos",
+    "logoUrl": "/logo_tca.png",
+    "niche": "Agentes de IA Multimodais & Software Corporativo",
+    "description": "Desenvolvimento ágil de software corporativo, landing pages de alta conversão e agentes autônomos integrados ao WhatsApp com garantia contratual de entrega em até 3, 7 ou 10 dias úteis.",
+    "services": [
+      "Desenvolvimento de Sistemas Web & SaaS",
+      "Agentes de Inteligência Artificial para WhatsApp",
+      "Landing Pages de Alta Conversão em 3 Dias Úteis",
+      "Automação de Processos & Integrações de APIs",
+      "Consultoria em Arquitetura de Software & IA"
+    ],
+    "priceRange": "R$ 4.500 a R$ 30.000",
+    "contactEmail": "thiago91cassol@hotmail.com",
+    "contactPhone": "+55 54 98116-7720",
+    "businessHours": "Segunda a Sexta, 08:00 às 19:00",
+    "location": "Brasil / Atendimento Remoto Global"
+  },
+  "gemini": {
+    "apiKey": "",
+    "model": "gemini-2.0-flash",
+    "temperature": 0.4,
+    "maxOutputTokens": 1024,
+    "enableMultimodalVision": true,
+    "enableAudioTranscription": true,
+    "systemPrompt": "Você é o Agente de Inteligência Artificial Oficial da TCAI (Thiago Cassol Antunes - Soluções em IA & Software)..."
+  },
+  "whatsapp": {
+    "provider": "evolution",
+    "baseUrl": "http://localhost:8080",
+    "apiKey": "",
+    "instanceId": "tcai-agent-instance",
+    "phoneNumber": "+55 54 98116-7720",
+    "autoReplyEnabled": true,
+    "outboundDeliveryEnabled": false,
+    "sendAudioAsVoiceNote": true
+  },
+  "updatedAt": "2026-09-08T21:15:16.886Z"
+}

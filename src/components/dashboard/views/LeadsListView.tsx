@@ -9,8 +9,9 @@ import {
   Calendar,
   Sparkles,
   RefreshCw,
+  Trash2,
 } from 'lucide-react';
-import { Lead, LeadStatus, LeadScoreCategory } from '../../../lib/supabase';
+import { Lead, LeadStatus, LeadScoreCategory, deleteLeadById } from '../../../lib/supabase';
 
 interface LeadsListViewProps {
   leads: Lead[];
@@ -30,6 +31,23 @@ export const LeadsListView: React.FC<LeadsListViewProps> = ({
   const [solutionFilter, setSolutionFilter] = useState<string>('ALL');
   const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'score_desc' | 'score_asc'>('date_desc');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteLead = async (e: React.MouseEvent, leadId: string, leadName: string) => {
+    e.stopPropagation();
+    if (!window.confirm(`Tem certeza que deseja excluir o lead "${leadName}" e todos os seus dados?`)) {
+      return;
+    }
+    setDeletingId(leadId);
+    try {
+      await deleteLeadById(leadId);
+      onRefresh();
+    } catch (err) {
+      console.error('Falha ao excluir lead:', err);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   // Filtragem e ordenação computada
   const filteredLeads = useMemo(() => {
@@ -246,11 +264,31 @@ export const LeadsListView: React.FC<LeadsListViewProps> = ({
                       {new Date(lead.created_at).toLocaleDateString('pt-BR')}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-mono text-[#00D2F6] opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span>Ver Dossiê</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </span>
+                    <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => onSelectLead(lead.id)}
+                          className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-[#00D2F6]/10 text-slate-300 hover:text-[#00D2F6] text-[11px] font-mono flex items-center gap-1 transition-colors cursor-pointer"
+                          title="Abrir Dossiê"
+                        >
+                          <span>Dossiê</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={deletingId === lead.id}
+                          onClick={(e) => handleDeleteLead(e, lead.id, lead.name)}
+                          className="p-1 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-colors cursor-pointer"
+                          title="Excluir Lead"
+                        >
+                          {deletingId === lead.id ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-400" />
+                          ) : (
+                            <Trash2 className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

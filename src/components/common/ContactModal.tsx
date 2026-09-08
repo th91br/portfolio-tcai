@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, CheckCircle2, Sparkles, Mail, MessageSquare, User, Phone, MessageCircle, ArrowUpRight } from 'lucide-react';
 import { CONTACT_DATA } from '../../data/portfolioData';
 import { CONTACT_CONFIG, createWhatsAppLeadUrl, submitLeadByEmail } from '../../utils/contactUtils';
+import { Lead, Deal, FollowUp } from '../../lib/supabase';
+import { saveRealLeadSubmission, addStoredLeadNote } from '../../services/leads/realLeadsStorage';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -34,9 +36,95 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionType, setSubmissionType] = useState<'whatsapp' | 'email'>('whatsapp');
 
+  const registerContactModalLead = (nameStr: string, emailStr: string, phoneStr: string, interestStr: string, messageStr: string) => {
+    try {
+      const leadId = crypto.randomUUID();
+      const nowIso = new Date().toISOString();
+      const cleanPhone = (phoneStr || '').replace(/\D/g, '');
+      const normalizedPhone = cleanPhone ? (cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`) : '';
+      const validEmail = emailStr.trim() || (normalizedPhone ? `lead_${normalizedPhone}@contato.local` : `lead_${Date.now()}@contato.local`);
+
+      const newLead: Lead = {
+        id: leadId,
+        name: nameStr.trim() || 'Visitante Sem Nome',
+        email: validEmail.toLowerCase(),
+        whatsapp: normalizedPhone || '+5554981167720',
+        company: 'Contato Direto (Site)',
+        status: 'NOVO',
+        score: 75,
+        score_category: 'POTENCIAL',
+        recommended_solution: interestStr || 'Consultoria & Soluções Digitais',
+        solution_reason: messageStr ? `Mensagem do formulário: "${messageStr.slice(0, 80)}..."` : 'Iniciado via Modal de Contato',
+        consent_lgpd: true,
+        origin: 'Modal de Contato do Portfólio',
+        utm_source: null,
+        utm_medium: null,
+        utm_campaign: null,
+        utm_term: null,
+        utm_content: null,
+        device: 'Desktop/Mobile',
+        created_at: nowIso,
+        updated_at: nowIso,
+      };
+
+      const newDeal: Deal = {
+        id: crypto.randomUUID(),
+        lead_id: leadId,
+        title: `Oportunidade - ${newLead.name} (${interestStr || 'Contato'})`,
+        estimated_value: 3500,
+        proposed_value: null,
+        final_value: null,
+        probability: 45,
+        pipeline_stage: 'NOVO',
+        expected_close_date: null,
+        proposal_date: null,
+        closed_at: null,
+        lost_reason: null,
+        lost_observation: null,
+        next_action: 'Primeiro contato com lead do modal',
+        next_action_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        created_at: nowIso,
+        updated_at: nowIso,
+        lead: newLead,
+      };
+
+      const newFollowUp: FollowUp = {
+        id: crypto.randomUUID(),
+        deal_id: newDeal.id,
+        lead_id: leadId,
+        action: `Primeiro contato com ${newLead.name}`,
+        scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        status: 'PENDENTE',
+        notes: `Interesse: ${interestStr}. Mensagem: ${messageStr || 'Sem observações adicionais'}`,
+        completed_at: null,
+        completed_by: null,
+        created_at: nowIso,
+        lead: newLead,
+        deal: newDeal,
+      };
+
+      saveRealLeadSubmission(newLead, newDeal, newFollowUp);
+
+      if (messageStr) {
+        addStoredLeadNote({
+          id: crypto.randomUUID(),
+          lead_id: leadId,
+          author_email: 'contato@tcai.com.br',
+          content: `Mensagem do formulário de contato:\n"${messageStr}"`,
+          created_at: nowIso,
+        });
+      }
+    } catch (err) {
+      console.warn('Erro ao registrar lead do modal de contato:', err);
+    }
+  };
+
   const handleSendWhatsApp = (e: React.FormEvent) => {
     e.preventDefault();
     const contactInfo = [email, phone].filter(Boolean).join(' | ') || phone || email;
+
+    // Registra lead no CRM e no agente WhatsApp
+    registerContactModalLead(name, email, phone, interest, message);
 
     const url = createWhatsAppLeadUrl({
       name,
@@ -66,6 +154,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({
       alert('Por favor, preencha seu nome e pelo menos um contato (e-mail ou telefone).');
       return;
     }
+
+    // Registra lead no CRM e no agente WhatsApp
+    registerContactModalLead(name, email, phone, interest, message);
 
     setIsSubmitting(true);
     const contactInfo = [email, phone].filter(Boolean).join(' | ') || email || phone;

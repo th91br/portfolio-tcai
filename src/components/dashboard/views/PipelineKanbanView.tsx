@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   MessageCircle,
   Building,
@@ -13,6 +13,9 @@ import {
   XCircle,
   X,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
+  SlidersHorizontal,
 } from 'lucide-react';
 import {
   Deal,
@@ -76,8 +79,23 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
   const [lostReasonInput, setLostReasonInput] = useState('Preço');
   const [lostObsInput, setLostObsInput] = useState('');
 
-  // Mobile column active tab
+  // Mobile column active tab & scroll control
   const [mobileActiveStage, setMobileActiveStage] = useState<PipelineStage>('NOVO');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollByAmount = (direction: 'left' | 'right') => {
+    if (!scrollContainerRef.current) return;
+    const amount = direction === 'left' ? -320 : 320;
+    scrollContainerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  const scrollToStage = (stageId: PipelineStage) => {
+    setMobileActiveStage(stageId);
+    const colEl = document.getElementById(`kanban-col-${stageId}`);
+    if (colEl) {
+      colEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  };
 
   const handleStageChange = async (
     deal: Deal,
@@ -232,26 +250,66 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
         </div>
       </div>
 
-      {/* Seletor Rápido de Coluna no Mobile */}
-      <div className="sm:hidden flex items-center gap-2 overflow-x-auto pb-1">
-        {PIPELINE_COLUMNS.map((c) => (
+      {/* Barra de Navegação & Foco de Etapa do Pipeline */}
+      <div className="flex items-center justify-between gap-3 bg-[#0A1624]/80 border border-white/[0.08] rounded-2xl p-2 sm:p-2.5 shadow-sm">
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 max-w-full">
+          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mr-1 hidden lg:inline shrink-0">
+            Focar Etapa:
+          </span>
+          {PIPELINE_COLUMNS.map((c) => {
+            const count = deals.filter((d) => d.pipeline_stage === c.id).length;
+            const isActive = mobileActiveStage === c.id;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => scrollToStage(c.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-mono shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isActive
+                    ? 'bg-[#00D2F6] text-[#07111F] font-bold shadow-[0_0_15px_rgba(0,210,246,0.35)] scale-[1.02]'
+                    : 'bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]'
+                }`}
+                title={`Ir para ${c.title}`}
+              >
+                <span>{c.title}</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                    isActive ? 'bg-[#07111F]/20 text-[#07111F]' : 'bg-white/10 text-slate-400'
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Controles de Navegação Horizontal Suave */}
+        <div className="flex items-center gap-1 shrink-0 ml-auto pl-2 border-l border-white/[0.08]">
           <button
-            key={c.id}
             type="button"
-            onClick={() => setMobileActiveStage(c.id)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono shrink-0 transition-all ${
-              mobileActiveStage === c.id
-                ? 'bg-[#00D2F6] text-[#07111F] font-black shadow-md'
-                : 'bg-white/[0.04] text-slate-400 hover:text-white border border-white/10'
-            }`}
+            onClick={() => scrollByAmount('left')}
+            className="p-1.5 sm:p-2 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer hover:border-[#00D2F6]/40"
+            title="Rolar pipeline para esquerda"
           >
-            {c.title} ({deals.filter((d) => d.pipeline_stage === c.id).length})
+            <ChevronLeft className="w-4 h-4" />
           </button>
-        ))}
+          <button
+            type="button"
+            onClick={() => scrollByAmount('right')}
+            className="p-1.5 sm:p-2 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer hover:border-[#00D2F6]/40"
+            title="Rolar pipeline para direita"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      {/* Grid de Colunas Kanban */}
-      <div className="flex gap-3 overflow-x-auto pb-6 pt-1 min-h-[600px] snap-x">
+      {/* Grid de Colunas Kanban Enquadradas */}
+      <div
+        ref={scrollContainerRef}
+        className="flex gap-3 overflow-x-auto pb-6 pt-1 min-h-[620px] snap-x scroll-smooth kanban-scroll"
+      >
         {PIPELINE_COLUMNS.map((column, colIdx) => {
           const columnDeals = deals.filter((d) => d.pipeline_stage === column.id);
 
@@ -272,10 +330,11 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
           return (
             <div
               key={column.id}
+              id={`kanban-col-${column.id}`}
               onDragOver={(e) => handleDragOver(e, column.id)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, column.id)}
-              className={`w-[290px] sm:w-[310px] shrink-0 bg-[#091524] border rounded-2xl p-3.5 flex flex-col snap-start shadow-sm transition-all ${
+              className={`w-[270px] xl:w-[285px] shrink-0 bg-[#091524] border rounded-2xl p-3.5 flex flex-col snap-start shadow-sm transition-all ${
                 isOver
                   ? 'border-[#00D2F6] bg-[#00D2F6]/[0.04] ring-2 ring-[#00D2F6]/30'
                   : 'border-white/[0.08]'
