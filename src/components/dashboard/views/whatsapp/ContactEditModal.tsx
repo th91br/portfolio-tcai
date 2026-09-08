@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Building, Phone, Layers, Clock, Check } from 'lucide-react';
 import { ChatContact } from '../../../../services/agent/agentChatService';
+import { CnpjEnrichmentCard } from '../../crm/CnpjEnrichmentCard';
+import { CnpjCompanyData } from '../../../../services/crm/cnpjEnrichmentService';
 
 interface ContactEditModalProps {
   isOpen: boolean;
@@ -21,6 +23,7 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
+  const [cnpj, setCnpj] = useState('');
   const [phone, setPhone] = useState('');
   const [projectType, setProjectType] = useState('');
   const [slaTimeline, setSlaTimeline] = useState('7 DIAS ÚTEIS');
@@ -32,6 +35,7 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
     if (initialData) {
       setName(initialData.name || '');
       setCompany(initialData.company || '');
+      setCnpj(initialData.cnpj || '');
       setPhone(initialData.phone || '');
       setProjectType(initialData.projectType || 'Automação com IA & WhatsApp');
       setSlaTimeline(initialData.slaTimeline || '7 DIAS ÚTEIS');
@@ -41,6 +45,7 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
     } else {
       setName('');
       setCompany('');
+      setCnpj('');
       setPhone('');
       setProjectType('Automação com IA & WhatsApp');
       setSlaTimeline('7 DIAS ÚTEIS');
@@ -66,6 +71,7 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
       id: initialData?.id || 'lead-' + Date.now(),
       name: name.trim(),
       company: company.trim() || 'Empresa Privada',
+      cnpj: cnpj.trim() || undefined,
       phone: phone.trim() || '+55 54 99123-4567',
       projectType: projectType.trim() || 'Automação com IA',
       slaTimeline: slaTimeline.trim(),
@@ -180,6 +186,21 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Raio-X B2B por CNPJ */}
+            <CnpjEnrichmentCard
+              initialCnpj={cnpj}
+              compact
+              onDataEnriched={(enriched) => {
+                setCnpj(enriched.cnpjFormatado);
+                if (!company || company === 'Empresa Privada') {
+                  setCompany(enriched.nomeFantasia || enriched.razaoSocial);
+                }
+                if (!phone && enriched.telefone) {
+                  setPhone(enriched.telefone);
+                }
+              }}
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>

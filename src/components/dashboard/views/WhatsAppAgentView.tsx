@@ -35,6 +35,7 @@ import {
   Copy,
   Check,
   Filter,
+  FileText,
 } from 'lucide-react';
 import {
   ChatContact,
@@ -60,6 +61,11 @@ import { AgentSettingsModal } from '../settings/AgentSettingsModal';
 import { DiagnosticEditModal } from './whatsapp/DiagnosticEditModal';
 import { MeetingEditModal } from './whatsapp/MeetingEditModal';
 import { ContactEditModal } from './whatsapp/ContactEditModal';
+import { syncWhatsAppContactsToCrm } from '../../../services/crm/unifiedCrmService';
+import { ProposalModal } from '../proposals/ProposalModal';
+import { ProposalPrintView } from '../proposals/ProposalPrintView';
+import { CommercialProposal } from '../../../services/crm/proposalsService';
+import { LeadTimelineFeed } from '../crm/LeadTimelineFeed';
 import { Lead } from '../../../lib/supabase';
 
 type SubView = 'chat' | 'diagnostics' | 'kanban' | 'calendar';
@@ -153,6 +159,11 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<ChatContact | null>(null);
 
+  // Proposta & Timeline Modais
+  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
+  const [selectedProposalToPrint, setSelectedProposalToPrint] = useState<CommercialProposal | null>(null);
+  const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
+
   // Referências
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -177,6 +188,9 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
       setContacts(loadedContacts);
       setDiagnostics(loadedDiagnostics);
       setMeetings(loadedMeetings);
+
+      // Sincroniza contatos do WhatsApp com o CRM global 360°
+      syncWhatsAppContactsToCrm(loadedContacts);
 
       if (loadedContacts.length > 0 && !selectedContactId) {
         setSelectedContactId(loadedContacts[0].id);
@@ -318,10 +332,10 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
   };
 
   // Enviar Mensagem no Chat
-  const handleSendMessage = async (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent, customText?: string) => {
     if (e) e.preventDefault();
-    const textToSend = inputText.trim();
-    const mediaToSend = stagedMedia;
+    const textToSend = customText !== undefined ? customText.trim() : inputText.trim();
+    const mediaToSend = customText !== undefined ? null : stagedMedia;
 
     if (!textToSend && !mediaToSend) return;
     if (!activeContact) return;
@@ -357,8 +371,10 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
 
     setContacts(updatedContacts);
     saveContactsLocally(updatedContacts);
-    setInputText('');
-    setStagedMedia(null);
+    if (!customText) {
+      setInputText('');
+      setStagedMedia(null);
+    }
 
     sendChatMessage({
       contactId: activeContact.id,
@@ -537,6 +553,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
 
     setContacts(nextList);
     saveContactsLocally(nextList);
+    syncWhatsAppContactsToCrm(nextList);
     updateContactDetails(contactData);
   };
 
@@ -1224,6 +1241,24 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
 
                   <button
                     type="button"
+                    onClick={() => setIsProposalModalOpen(true)}
+                    className="w-full py-2 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>📄 Gerar Proposta Comercial</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsTimelineModalOpen(true)}
+                    className="w-full py-2 px-3 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>🕒 Timeline & Notas 360°</span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => setAiPaused(!aiPaused)}
                     className={'w-full py-2 px-3 rounded-xl border text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ' + (aiPaused ? 'bg-amber-500/20 border-amber-500/40 text-amber-300' : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 text-slate-300')}
                   >
@@ -1761,6 +1796,63 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
         onSave={handleSaveContact}
         initialData={editingContact}
       />
+
+      {/* Modal de Proposta Técnico-Comercial */}
+      {isProposalModalOpen && activeContact && (
+        <ProposalModal
+          initialContact={activeContact}
+          availableContacts={contacts}
+          onClose={() => setIsProposalModalOpen(false)}
+          onSaved={(saved) => {
+            setIsProposalModalOpen(false);
+            showToast(`Proposta ${saved.proposalNumber} gravada com sucesso!`);
+          }}
+          onSendWhatsApp={(text) => {
+            handleSendMessage(undefined, text);
+          }}
+          onOpenPrintView={(p) => setSelectedProposalToPrint(p)}
+        />
+      )}
+
+      {/* Visualização de Impressão / PDF */}
+      {selectedProposalToPrint && (
+        <ProposalPrintView
+          proposal={selectedProposalToPrint}
+          onClose={() => setSelectedProposalToPrint(null)}
+        />
+      )}
+
+      {/* Modal de Timeline & Notas 360° */}
+      {isTimelineModalOpen && activeContact && (
+        <div className="fixed inset-0 z-50 bg-[#07111F]/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 font-kanit">
+          <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#16273C] bg-[#07111F]/50">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{activeContact.avatar}</span>
+                <div>
+                  <h3 className="font-bold text-white text-sm">Linha do Tempo 360° — {activeContact.name}</h3>
+                  <p className="text-[10px] text-[#94A3B8]">
+                    {activeContact.company} • {activeContact.phone}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsTimelineModalOpen(false)}
+                className="p-1.5 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#16273C]"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto">
+              <LeadTimelineFeed
+                contactId={activeContact.id}
+                leadName={activeContact.name}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

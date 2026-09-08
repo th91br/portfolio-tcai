@@ -149,6 +149,11 @@ export interface Lead {
   utm_term: string | null;
   utm_content: string | null;
   device: string | null;
+  cnpj?: string | null;
+  phone?: string;
+  notes?: string;
+  project_type?: string;
+  source?: string;
   created_at: string;
   updated_at: string;
 }

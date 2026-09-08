@@ -12,6 +12,10 @@ import {
   Check,
   X,
   Filter,
+  Copy,
+  Sparkles,
+  Send,
+  Flame,
 } from 'lucide-react';
 import {
   FollowUp,
@@ -40,6 +44,45 @@ const COMMON_ACTIONS = [
   'Apresentar protótipo',
 ];
 
+const CADENCE_SCRIPTS = [
+  {
+    id: 'pos_proposta',
+    title: 'Pós-Proposta (24h)',
+    trigger: '24h após envio de proposta técnica',
+    badge: '🔥 ALTA CONVERSÃO',
+    badgeColor: 'bg-[#00D2F6]/20 text-[#00D2F6] border-[#00D2F6]/30',
+    text: (name: string) =>
+      `Fala ${name || 'tudo bem'}! Aqui é o Thiago. Passando pra saber se você conseguiu dar uma olhada na proposta técnica que te enviei. Ficou alguma dúvida sobre o escopo ou prazos?`,
+  },
+  {
+    id: 'confirma_meet',
+    title: 'Confirmação de Reunião',
+    trigger: '2h antes do Google Meet agendado',
+    badge: '📅 PONTUALIDADE',
+    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    text: (name: string) =>
+      `Opa ${name || 'tudo bem'}! Aqui é o Thiago. Confirmando nossa call de alinhamento daqui a pouco no Google Meet. Segue o link da nossa sala: meet.google.com/tcai-meet. Te vejo lá!`,
+  },
+  {
+    id: 'quebra_objecao',
+    title: 'Case de Sucesso & Urgência',
+    trigger: 'Lead indeciso ou avaliando concorrentes',
+    badge: '⚡ AUTORIDADE',
+    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    text: (name: string) =>
+      `Fala ${name || 'tudo bem'}! Lembrei do seu projeto porque acabamos de homologar uma solução com arquitetura similar entregue em prazo recorde de 7 dias úteis. Como estão os planos por aí pra iniciarmos?`,
+  },
+  {
+    id: 'reativacao',
+    title: 'Reativação (7d+ sem retorno)',
+    trigger: 'Lead esfriando há mais de 7 dias',
+    badge: '❄️ RESGATE',
+    badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+    text: (name: string) =>
+      `Opa ${name || 'tudo bem'}, como você tá? Sei que a rotina é corrida. Ainda faz sentido avançarmos com o desenvolvimento do seu projeto neste trimestre? Me avisa pra eu reservar a janela na minha agenda!`,
+  },
+];
+
 export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
   followUps,
   leads,
@@ -51,6 +94,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
   const [activeTab, setActiveTab] = useState<'hoje' | 'atrasados' | 'proximos' | 'sem_followup'>('hoje');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [completingId, setCompletingId] = useState<string | null>(null);
+  const [copiedScriptId, setCopiedScriptId] = useState<string | null>(null);
 
   // Form de novo follow-up
   const [selectedLeadId, setSelectedLeadId] = useState<string>(leads[0]?.id || '');
@@ -170,6 +214,56 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
           <Plus className="w-4 h-4" />
           <span>Novo Follow-up</span>
         </button>
+      </div>
+
+      {/* Seção: Régua de Cadência Automática & Scripts Rápidos */}
+      <div className="p-4 rounded-2xl bg-[#0A1624] border border-[#16273C] space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Flame className="w-4 h-4 text-[#00D2F6]" />
+            <h3 className="font-bold text-white text-sm">Régua de Cadência & Scripts de WhatsApp (1-Clique)</h3>
+          </div>
+          <span className="text-[10px] font-mono text-[#94A3B8]">
+            Templates humanizados prontos para envio direto como Thiago
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {CADENCE_SCRIPTS.map((script) => (
+            <div
+              key={script.id}
+              className="p-3 rounded-xl bg-[#07111F] border border-[#16273C] flex flex-col justify-between gap-2.5 hover:border-[#00D2F6]/30 transition-all"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white text-xs">{script.title}</span>
+                  <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${script.badgeColor}`}>
+                    {script.badge}
+                  </span>
+                </div>
+                <p className="text-[10px] text-[#94A3B8]">{script.trigger}</p>
+                <p className="text-[11px] text-slate-300 italic line-clamp-3 bg-[#0A1624] p-2 rounded-lg border border-[#16273C]/60 mt-1">
+                  "{script.text('Cliente')}"
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-1.5 pt-1 border-t border-[#16273C]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(script.text(''));
+                    setCopiedScriptId(script.id);
+                    setTimeout(() => setCopiedScriptId(null), 2000);
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/10 text-[10px] font-mono text-slate-300 flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  <Copy className="w-3 h-3 text-[#00D2F6]" />
+                  <span>{copiedScriptId === script.id ? 'Copiado!' : 'Copiar'}</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Abas de Categorização */}

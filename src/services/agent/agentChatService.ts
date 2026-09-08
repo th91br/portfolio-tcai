@@ -21,6 +21,7 @@ export interface ChatContact {
   score: number;
   slaTimeline: string;
   projectType: string;
+  cnpj?: string;
   lastMessage: string;
   lastMessageTime: string;
   messages: ChatMessage[];

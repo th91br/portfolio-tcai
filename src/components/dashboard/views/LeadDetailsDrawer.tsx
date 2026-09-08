@@ -44,6 +44,17 @@ import {
 } from '../../../lib/supabase';
 import { generateDashboardWhatsAppContactUrl } from '../../../services/diagnostic/scoreCalculator';
 import { SalesCopilotSection } from '../copilot/SalesCopilotSection';
+import { CnpjEnrichmentCard } from '../crm/CnpjEnrichmentCard';
+import { LeadTimelineFeed } from '../crm/LeadTimelineFeed';
+import { ProposalModal } from '../proposals/ProposalModal';
+import { ProposalPrintView } from '../proposals/ProposalPrintView';
+import {
+  CommercialProposal,
+  getProposals,
+  deleteProposal,
+  formatProposalWhatsAppMessage,
+} from '../../../services/crm/proposalsService';
+import { Printer } from 'lucide-react';
 
 interface LeadDetailsDrawerProps {
   leadId: string | null;
@@ -69,7 +80,9 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
   onLeadUpdated,
   adminEmail,
 }) => {
-  const [activeTab, setActiveTab] = useState<'copilot' | 'comercial' | 'dossie' | 'notas'>('copilot');
+  const [activeTab, setActiveTab] = useState<
+    'copilot' | 'comercial' | 'dossie' | 'timeline' | 'propostas' | 'notas'
+  >('copilot');
   const [details, setDetails] = useState<{
     lead: Lead;
     answers: LeadAnswer[];
@@ -83,6 +96,11 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
   const [newNoteContent, setNewNoteContent] = useState('');
   const [addingNote, setAddingNote] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  // Propostas State
+  const [proposals, setProposals] = useState<CommercialProposal[]>([]);
+  const [showProposalModal, setShowProposalModal] = useState(false);
+  const [selectedProposalToPrint, setSelectedProposalToPrint] = useState<CommercialProposal | null>(null);
 
   // Form Comercial State
   const [estimatedValue, setEstimatedValue] = useState('');
@@ -150,6 +168,9 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
             dealData.next_action_at ? dealData.next_action_at.split('T')[0] : ''
           );
         }
+
+        // Carrega propostas comerciais do lead
+        setProposals(getProposals(leadId));
       })
       .catch((err) => {
         console.error('Erro ao carregar dossiê:', err);
@@ -433,7 +454,33 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Dossiê Técnico ({details.answers.length})</span>
+                  <span>Dossiê ({details.answers.length})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('timeline')}
+                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
+                    activeTab === 'timeline'
+                      ? 'border-[#00D2F6] text-[#00D2F6]'
+                      : 'border-transparent text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Timeline 360°</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('propostas')}
+                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
+                    activeTab === 'propostas'
+                      ? 'border-[#00D2F6] text-[#00D2F6]'
+                      : 'border-transparent text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <DollarSign className="w-3.5 h-3.5" />
+                  <span>Propostas ({proposals.length})</span>
                 </button>
 
                 <button
@@ -446,7 +493,7 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                   }`}
                 >
                   <History className="w-3.5 h-3.5" />
-                  <span>Notas & Histórico ({details.notes.length})</span>
+                  <span>Notas ({details.notes.length})</span>
                 </button>
               </div>
 
@@ -700,6 +747,15 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                 {/* ========================================================================= */}
                 {activeTab === 'dossie' && (
                   <div className="space-y-6">
+                    {/* Raio-X B2B (Receita Federal) */}
+                    <CnpjEnrichmentCard
+                      initialCnpj={details.lead.cnpj || ''}
+                      compact
+                      onDataEnriched={(enriched) => {
+                        // Atualização em cache
+                      }}
+                    />
+
                     {/* Recomendação Direcionada */}
                     <div className="p-4 rounded-2xl bg-gradient-to-br from-[#00D2F6]/10 to-[#015EEF]/10 border border-[#00D2F6]/30">
                       <span className="text-[10px] font-mono uppercase tracking-widest text-[#00D2F6] font-bold">
@@ -822,8 +878,171 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                     </div>
                   </div>
                 )}
+
+                {/* ========================================================================= */}
+                {/* ABA: TIMELINE 360° (Histórico & Audit Trail Cronológico)                  */}
+                {/* ========================================================================= */}
+                {activeTab === 'timeline' && (
+                  <div className="space-y-4">
+                    <LeadTimelineFeed
+                      contactId={details.lead.id}
+                      leadName={details.lead.name}
+                    />
+                  </div>
+                )}
+
+                {/* ========================================================================= */}
+                {/* ABA: PROPOSTAS COMERCIAIS & CONTRATOS EXECUTIVOS                          */}
+                {/* ========================================================================= */}
+                {activeTab === 'propostas' && (
+                  <div className="space-y-4 font-kanit">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-bold text-white text-sm">Propostas Técnico-Comerciais</h4>
+                        <p className="text-xs text-slate-400">Geração de propostas com escopo formal, SLA e PDF</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowProposalModal(true)}
+                        className="px-3 py-1.5 rounded-xl bg-[#00D2F6] hover:bg-[#00D2F6]/90 text-[#07111F] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-[#00D2F6]/20 transition-all cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Nova Proposta</span>
+                      </button>
+                    </div>
+
+                    {proposals.length === 0 ? (
+                      <div className="text-center py-10 rounded-2xl bg-[#091524] border border-white/10 p-6 space-y-2">
+                        <FileText className="w-8 h-8 text-slate-500 mx-auto" />
+                        <p className="text-sm font-semibold text-white">Nenhuma proposta gerada ainda para este lead.</p>
+                        <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                          Gere uma proposta executiva em 1 clique com escopo formal, cronograma contratual e PDF pronto para assinatura.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setShowProposalModal(true)}
+                          className="mt-2 px-4 py-2 rounded-xl bg-[#00D2F6]/20 text-[#00D2F6] border border-[#00D2F6]/40 text-xs font-bold inline-flex items-center gap-2 hover:bg-[#00D2F6]/30 transition-all cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Criar Primeira Proposta</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {proposals.map((prop) => (
+                          <div
+                            key={prop.id}
+                            className="p-4 rounded-xl bg-[#091524] border border-white/10 hover:border-[#00D2F6]/30 transition-all space-y-3"
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <span className="text-[10px] font-mono text-[#00D2F6] font-bold block">
+                                  {prop.proposalNumber} • SLA {prop.slaDays} DIAS ÚTEIS
+                                </span>
+                                <h5 className="font-bold text-white text-sm">{prop.title}</h5>
+                                <p className="text-xs text-slate-400">{prop.company}</p>
+                              </div>
+                              <span className="text-sm font-mono font-bold text-emerald-400">
+                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                                  prop.investmentTotal
+                                )}
+                              </span>
+                            </div>
+
+                            {/* Botões de Ação na Proposta */}
+                            <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                              <span className="text-[10px] text-slate-500 font-mono">
+                                Emitida em {new Date(prop.createdAt).toLocaleDateString('pt-BR')}
+                              </span>
+
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedProposalToPrint(prop)}
+                                  className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                                >
+                                  <Printer className="w-3 h-3 text-[#00D2F6]" />
+                                  <span>PDF / Imprimir</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const msg = formatProposalWhatsAppMessage(prop);
+                                    const cleanPhone = (details.lead.whatsapp || details.lead.phone || '').replace(
+                                      /\D/g,
+                                      ''
+                                    );
+                                    window.open(
+                                      `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`,
+                                      '_blank'
+                                    );
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                                >
+                                  <Send className="w-3 h-3" />
+                                  <span>WhatsApp</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (confirm('Deseja excluir esta proposta?')) {
+                                      deleteProposal(prop.id);
+                                      setProposals(getProposals(leadId));
+                                    }
+                                  }}
+                                  className="p-1 rounded-lg text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </>
+          )}
+
+          {/* Modal de Criação / Edição de Proposta */}
+          {showProposalModal && details && (
+            <ProposalModal
+              initialContact={{
+                id: details.lead.id,
+                name: details.lead.name,
+                company: details.lead.company || '',
+                phone: details.lead.whatsapp || details.lead.phone || '',
+                status: 'proposal_sent',
+                statusLabel: 'Proposta Enviada',
+                avatar: '💼',
+                unread: 0,
+                score: details.lead.score || 85,
+                slaTimeline: '7 DIAS ÚTEIS',
+                projectType: details.lead.recommended_solution || 'Software Sob Medida',
+                lastMessage: '',
+                lastMessageTime: '',
+                messages: [],
+              }}
+              availableContacts={[]}
+              onClose={() => setShowProposalModal(false)}
+              onSaved={() => {
+                setProposals(getProposals(leadId));
+                setShowProposalModal(false);
+              }}
+              onOpenPrintView={(p) => setSelectedProposalToPrint(p)}
+            />
+          )}
+
+          {/* Visualização de Impressão / PDF Oficial */}
+          {selectedProposalToPrint && (
+            <ProposalPrintView
+              proposal={selectedProposalToPrint}
+              onClose={() => setSelectedProposalToPrint(null)}
+            />
           )}
         </motion.div>
       </div>
