@@ -202,7 +202,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
               }`}
             >
               <Cpu className="w-4 h-4" />
-              <span>2. Motor Gemini IA</span>
+              <span>2. Motor de IA</span>
               {config.gemini.apiKey && (
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
               )}
@@ -448,7 +448,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
               </div>
             )}
 
-            {/* TAB 2: MOTOR GEMINI IA */}
+            {/* TAB 2: MOTOR DE IA */}
             {activeTab === 'gemini' && (
               <div className="space-y-6">
                 <div>
