@@ -123,3 +123,12 @@ html.lenis, html.lenis body {
   background: rgba(0, 210, 246, 0.5);
 }
 
+/* Utilitário para ocultar barras de rolagem mantendo funcionalidade de scroll */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

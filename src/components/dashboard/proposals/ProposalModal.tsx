@@ -192,8 +192,16 @@ export const ProposalModal: React.FC<ProposalModalProps> = ({
   const upfrontAmount = (investmentTotal * upfrontPercent) / 100;
   const deliveryAmount = (investmentTotal * deliveryPercent) / 100;
 
+  const effectiveContacts = React.useMemo(() => {
+    const list = [...availableContacts];
+    if (initialContact && !list.some((c) => c.id === initialContact.id)) {
+      list.unshift(initialContact);
+    }
+    return list;
+  }, [availableContacts, initialContact]);
+
   return (
-    <div className="fixed inset-0 z-50 bg-[#07111F]/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-kanit">
+    <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-kanit">
       <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Cabeçalho */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#16273C] bg-[#07111F]/50">
@@ -235,11 +243,15 @@ export const ProposalModal: React.FC<ProposalModalProps> = ({
                   onChange={(e) => handleSelectContact(e.target.value)}
                   className="w-full bg-[#07111F] border border-[#16273C] focus:border-[#00D2F6] rounded-lg p-2 text-xs text-[#F3F5F7] outline-none"
                 >
-                  {availableContacts.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name} ({c.company})
-                    </option>
-                  ))}
+                  {effectiveContacts.length === 0 ? (
+                    <option value={contactId}>{clientName || 'Cliente Direto'}</option>
+                  ) : (
+                    effectiveContacts.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} ({c.company || 'TCAI'})
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 

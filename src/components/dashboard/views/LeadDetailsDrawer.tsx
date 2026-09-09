@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -26,6 +26,7 @@ import {
   Sparkles,
   Trash2,
   AlertTriangle,
+  Printer,
 } from 'lucide-react';
 import {
   Lead,
@@ -54,7 +55,7 @@ import {
   deleteProposal,
   formatProposalWhatsAppMessage,
 } from '../../../services/crm/proposalsService';
-import { Printer } from 'lucide-react';
+import { ChatContact } from '../../../services/agent/agentChatService';
 
 interface LeadDetailsDrawerProps {
   leadId: string | null;
@@ -131,6 +132,8 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
     }
   };
 
+  const bodyScrollRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -138,6 +141,33 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
+
+  // Sempre reseta o scroll do corpo ao topo ao alternar entre abas
+  useEffect(() => {
+    if (bodyScrollRef.current) {
+      bodyScrollRef.current.scrollTop = 0;
+    }
+  }, [activeTab]);
+
+  const currentLeadContact = useMemo<ChatContact | null>(() => {
+    if (!details?.lead) return null;
+    return {
+      id: details.lead.id,
+      name: details.lead.name,
+      company: details.lead.company || '',
+      phone: details.lead.whatsapp || details.lead.phone || '',
+      status: 'proposal_sent',
+      statusLabel: 'Proposta Enviada',
+      avatar: '💼',
+      unread: 0,
+      score: details.lead.score || 85,
+      slaTimeline: '7 DIAS ÚTEIS',
+      projectType: details.lead.recommended_solution || 'Software Sob Medida',
+      lastMessage: '',
+      lastMessageTime: '',
+      messages: [],
+    };
+  }, [details?.lead]);
 
   // Carrega todos os detalhes do lead e do deal correspondente
   useEffect(() => {
@@ -299,7 +329,7 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-          className="relative w-full max-w-2xl h-full bg-[#07111F] border-l border-white/10 shadow-2xl z-10 flex flex-col overflow-y-auto"
+          className="relative w-full max-w-2xl h-full bg-[#07111F] border-l border-white/10 shadow-2xl z-10 flex flex-col overflow-hidden"
         >
           {loading || !details ? (
             <div className="flex-1 flex items-center justify-center p-8 text-center text-[#94A3B8]">
@@ -308,197 +338,203 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
             </div>
           ) : (
             <>
-              {/* Header do Drawer */}
-              <div className="sticky top-0 bg-[#0A1624]/95 backdrop-blur-md border-b border-white/10 p-5 sm:p-6 flex items-center justify-between gap-4 z-20">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
-                        details.lead.score_category === 'ALTA PRIORIDADE'
-                          ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-                          : details.lead.score_category === 'POTENCIAL'
-                          ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30'
-                          : 'bg-slate-500/15 text-slate-300 border border-slate-500/30'
-                      }`}
-                    >
-                      {details.lead.score_category} • {details.lead.score} PTS
-                    </span>
+              {/* Header Pinned / Fixo do Drawer (Nunca rola, nunca encolhe, abas sempre 100% visíveis) */}
+              <div className="shrink-0 bg-[#07111F] border-b border-white/10 z-20 flex flex-col">
+                {/* 1. Barra de Identificação do Lead & Ações */}
+                <div className="bg-[#0A1624] border-b border-white/10 p-4 sm:p-5 flex items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
+                          details.lead.score_category === 'ALTA PRIORIDADE'
+                            ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                            : details.lead.score_category === 'POTENCIAL'
+                            ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30'
+                            : 'bg-slate-500/15 text-slate-300 border border-slate-500/30'
+                        }`}
+                      >
+                        {details.lead.score_category} • {details.lead.score} PTS
+                      </span>
 
-                    <span className="text-[10px] font-mono text-[#94A3B8]">
-                      {new Date(details.lead.created_at).toLocaleString('pt-BR')}
-                    </span>
+                      <span className="text-[10px] font-mono text-[#94A3B8]">
+                        {new Date(details.lead.created_at).toLocaleString('pt-BR')}
+                      </span>
+                    </div>
+
+                    <h2 className="font-black text-xl sm:text-2xl text-white uppercase tracking-tight">
+                      {details.lead.name}
+                    </h2>
                   </div>
 
-                  <h2 className="font-black text-xl sm:text-2xl text-white uppercase tracking-tight">
-                    {details.lead.name}
-                  </h2>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="p-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors cursor-pointer"
-                    title="Excluir Lead Permanentemente"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    title="Fechar Dossiê"
-                    aria-label="Fechar Dossiê"
-                    className="p-2 rounded-full bg-white/[0.05] hover:bg-white/10 text-white transition-colors cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Modal de Confirmação de Exclusão */}
-              {showDeleteConfirm && (
-                <div className="p-4 bg-rose-500/10 border-b border-rose-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn">
-                  <div className="flex items-center gap-2.5 text-rose-300 text-xs font-mono">
-                    <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                    <span>Tem certeza que deseja excluir permanentemente este lead e todo o histórico?</span>
-                  </div>
-                  <div className="flex items-center gap-2 self-end sm:self-auto">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      disabled={isDeleting}
-                      onClick={() => setShowDeleteConfirm(false)}
-                      className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono text-white transition-colors cursor-pointer"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="p-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors cursor-pointer"
+                      title="Excluir Lead Permanentemente"
                     >
-                      Cancelar
+                      <Trash2 className="w-4 h-4" />
                     </button>
                     <button
                       type="button"
-                      disabled={isDeleting}
-                      onClick={handleDeleteLead}
-                      className="px-3 py-1 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      onClick={onClose}
+                      title="Fechar Dossiê"
+                      aria-label="Fechar Dossiê"
+                      className="p-2 rounded-full bg-white/[0.05] hover:bg-white/10 text-white transition-colors cursor-pointer"
                     >
-                      {isDeleting ? (
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-3.5 h-3.5" />
-                      )}
-                      <span>{isDeleting ? 'Excluindo...' : 'Sim, Excluir'}</span>
+                      <X className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
-              )}
 
-              {/* Status Selector + WhatsApp Trigger */}
-              <div className="px-5 sm:px-6 py-3.5 bg-[#091524] border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-slate-400 uppercase">Estágio:</span>
-                  <select
-                    value={details.lead.status}
-                    disabled={updatingStatus}
-                    onChange={(e) => handleStatusChange(e.target.value as LeadStatus)}
-                    className="px-3 py-1.5 rounded-xl bg-white/[0.05] border border-white/10 text-white text-xs font-mono font-bold focus:outline-none focus:border-[#00D2F6] cursor-pointer"
+                {/* Modal de Confirmação de Exclusão */}
+                {showDeleteConfirm && (
+                  <div className="p-4 bg-rose-500/10 border-b border-rose-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn">
+                    <div className="flex items-center gap-2.5 text-rose-300 text-xs font-mono">
+                      <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                      <span>Tem certeza que deseja excluir permanentemente este lead e todo o histórico?</span>
+                    </div>
+                    <div className="flex items-center gap-2 self-end sm:self-auto">
+                      <button
+                        type="button"
+                        disabled={isDeleting}
+                        onClick={() => setShowDeleteConfirm(false)}
+                        className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono text-white transition-colors cursor-pointer"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isDeleting}
+                        onClick={handleDeleteLead}
+                        className="px-3 py-1 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        {isDeleting ? (
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
+                        <span>{isDeleting ? 'Excluindo...' : 'Sim, Excluir'}</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Status Selector + WhatsApp Trigger */}
+                <div className="px-4 sm:px-6 py-2.5 bg-[#091524] border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-slate-400 uppercase">Estágio:</span>
+                    <select
+                      value={details.lead.status}
+                      disabled={updatingStatus}
+                      onChange={(e) => handleStatusChange(e.target.value as LeadStatus)}
+                      className="px-3 py-1.5 rounded-xl bg-white/[0.05] border border-white/10 text-white text-xs font-mono font-bold focus:outline-none focus:border-[#00D2F6] cursor-pointer"
+                    >
+                      {ALL_STATUSES.map((st) => (
+                        <option key={st} value={st} className="bg-[#091524]">
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleOpenWhatsApp}
+                    className="px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer"
                   >
-                    {ALL_STATUSES.map((st) => (
-                      <option key={st} value={st} className="bg-[#091524]">
-                        {st}
-                      </option>
-                    ))}
-                  </select>
+                    <MessageCircle className="w-4 h-4" />
+                    <span>ABRIR WHATSAPP</span>
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleOpenWhatsApp}
-                  className="px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>ABRIR WHATSAPP</span>
-                </button>
+                {/* Abas de Navegação do Drawer — Pinned, Nunca Encolhe, Texto e Ícones 100% Preservados */}
+                <div className="px-4 sm:px-6 pt-2 pb-0 flex items-center gap-2 sm:gap-4 bg-[#07111F] overflow-x-auto scrollbar-none shrink-0 min-h-[44px]">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('copilot')}
+                    className={`pb-2.5 pt-1 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer whitespace-nowrap ${
+                      activeTab === 'copilot'
+                        ? 'border-[#00D2F6] text-[#00D2F6]'
+                        : 'border-transparent text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
+                    <span>TCA Sales Copilot</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('comercial')}
+                    className={`pb-2.5 pt-1 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer whitespace-nowrap ${
+                      activeTab === 'comercial'
+                        ? 'border-[#00D2F6] text-[#00D2F6]'
+                        : 'border-transparent text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>Ficha Comercial</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('dossie')}
+                    className={`pb-2.5 pt-1 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer whitespace-nowrap ${
+                      activeTab === 'dossie'
+                        ? 'border-[#00D2F6] text-[#00D2F6]'
+                        : 'border-transparent text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Dossiê ({details.answers.length})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('timeline')}
+                    className={`pb-2.5 pt-1 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer whitespace-nowrap ${
+                      activeTab === 'timeline'
+                        ? 'border-[#00D2F6] text-[#00D2F6]'
+                        : 'border-transparent text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>Timeline 360°</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('propostas')}
+                    className={`pb-2.5 pt-1 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer whitespace-nowrap ${
+                      activeTab === 'propostas'
+                        ? 'border-[#00D2F6] text-[#00D2F6]'
+                        : 'border-transparent text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <DollarSign className="w-3.5 h-3.5" />
+                    <span>Propostas ({proposals.length})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('notas')}
+                    className={`pb-2.5 pt-1 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer whitespace-nowrap ${
+                      activeTab === 'notas'
+                        ? 'border-[#00D2F6] text-[#00D2F6]'
+                        : 'border-transparent text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <History className="w-3.5 h-3.5" />
+                    <span>Notas ({details.notes.length})</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Abas de Navegação do Drawer */}
-              <div className="px-5 sm:px-6 pt-3 border-b border-white/10 flex items-center gap-4 bg-[#07111F] overflow-x-auto">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('copilot')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
-                    activeTab === 'copilot'
-                      ? 'border-[#00D2F6] text-[#00D2F6]'
-                      : 'border-transparent text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#00D2F6]" />
-                  <span>TCA Sales Copilot</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('comercial')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
-                    activeTab === 'comercial'
-                      ? 'border-[#00D2F6] text-[#00D2F6]'
-                      : 'border-transparent text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Briefcase className="w-3.5 h-3.5" />
-                  <span>Ficha Comercial</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('dossie')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
-                    activeTab === 'dossie'
-                      ? 'border-[#00D2F6] text-[#00D2F6]'
-                      : 'border-transparent text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>Dossiê ({details.answers.length})</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('timeline')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
-                    activeTab === 'timeline'
-                      ? 'border-[#00D2F6] text-[#00D2F6]'
-                      : 'border-transparent text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>Timeline 360°</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('propostas')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
-                    activeTab === 'propostas'
-                      ? 'border-[#00D2F6] text-[#00D2F6]'
-                      : 'border-transparent text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <DollarSign className="w-3.5 h-3.5" />
-                  <span>Propostas ({proposals.length})</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('notas')}
-                  className={`pb-2.5 text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 border-b-2 shrink-0 cursor-pointer ${
-                    activeTab === 'notas'
-                      ? 'border-[#00D2F6] text-[#00D2F6]'
-                      : 'border-transparent text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <History className="w-3.5 h-3.5" />
-                  <span>Notas ({details.notes.length})</span>
-                </button>
-              </div>
-
-              {/* Corpo do Drawer */}
-              <div className="p-5 sm:p-6 space-y-6 flex-1">
+              {/* Corpo Scrollável do Drawer (Único container com overflow-y-auto) */}
+              <div
+                ref={bodyScrollRef}
+                className="p-5 sm:p-6 space-y-6 flex-1 overflow-y-auto min-h-0 bg-[#07111F]"
+              >
                 {/* ========================================================================= */}
                 {/* ABA: TCA SALES COPILOT                                                    */}
                 {/* ========================================================================= */}
@@ -1007,44 +1043,29 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
               </div>
             </>
           )}
-
-          {/* Modal de Criação / Edição de Proposta */}
-          {showProposalModal && details && (
-            <ProposalModal
-              initialContact={{
-                id: details.lead.id,
-                name: details.lead.name,
-                company: details.lead.company || '',
-                phone: details.lead.whatsapp || details.lead.phone || '',
-                status: 'proposal_sent',
-                statusLabel: 'Proposta Enviada',
-                avatar: '💼',
-                unread: 0,
-                score: details.lead.score || 85,
-                slaTimeline: '7 DIAS ÚTEIS',
-                projectType: details.lead.recommended_solution || 'Software Sob Medida',
-                lastMessage: '',
-                lastMessageTime: '',
-                messages: [],
-              }}
-              availableContacts={[]}
-              onClose={() => setShowProposalModal(false)}
-              onSaved={() => {
-                setProposals(getProposals(leadId));
-                setShowProposalModal(false);
-              }}
-              onOpenPrintView={(p) => setSelectedProposalToPrint(p)}
-            />
-          )}
-
-          {/* Visualização de Impressão / PDF Oficial */}
-          {selectedProposalToPrint && (
-            <ProposalPrintView
-              proposal={selectedProposalToPrint}
-              onClose={() => setSelectedProposalToPrint(null)}
-            />
-          )}
         </motion.div>
+
+        {/* Modal de Criação / Edição de Proposta (Renderizado fora do motion.div para tela cheia perfeita) */}
+        {showProposalModal && details && (
+          <ProposalModal
+            initialContact={currentLeadContact}
+            availableContacts={currentLeadContact ? [currentLeadContact] : []}
+            onClose={() => setShowProposalModal(false)}
+            onSaved={() => {
+              setProposals(getProposals(leadId));
+              setShowProposalModal(false);
+            }}
+            onOpenPrintView={(p) => setSelectedProposalToPrint(p)}
+          />
+        )}
+
+        {/* Visualização de Impressão / PDF Oficial (Renderizado fora do motion.div) */}
+        {selectedProposalToPrint && (
+          <ProposalPrintView
+            proposal={selectedProposalToPrint}
+            onClose={() => setSelectedProposalToPrint(null)}
+          />
+        )}
       </div>
     </AnimatePresence>
   );
