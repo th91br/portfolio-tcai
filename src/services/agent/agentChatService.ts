@@ -336,17 +336,64 @@ export async function fetchAgentKPIs(): Promise<WhatsAppKPIs> {
   };
 }
 
-// Carregar Contatos (com fallback em cache local)
+// Normalizar Contato garantindo que messages seja sempre array e campos críticos existam
+export function normalizeChatContact(c: any): ChatContact {
+  if (!c || typeof c !== 'object') {
+    return {
+      id: `lead-${Date.now()}`,
+      name: 'Novo Lead',
+      company: 'Empresa',
+      phone: '',
+      status: 'triage',
+      statusLabel: 'Triagem Inicial',
+      avatar: '💼',
+      unread: 0,
+      score: 80,
+      slaTimeline: '7 DIAS ÚTEIS',
+      projectType: 'Automação com IA',
+      lastMessage: 'Contato iniciado',
+      lastMessageTime: 'Hoje',
+      messages: [],
+    };
+  }
+
+  const messages: ChatMessage[] = Array.isArray(c.messages) ? c.messages : [];
+  const lastMsg =
+    c.lastMessage ||
+    (messages.length > 0 ? messages[messages.length - 1]?.text : '') ||
+    'Contato iniciado';
+
+  return {
+    id: String(c.id || `lead-${Date.now()}`),
+    name: String(c.name || 'Lead sem Nome'),
+    company: String(c.company || 'Empresa'),
+    phone: String(c.phone || ''),
+    status: c.status || 'triage',
+    statusLabel: c.statusLabel || 'Triagem Inicial',
+    avatar: c.avatar || '💼',
+    unread: typeof c.unread === 'number' ? c.unread : 0,
+    score: typeof c.score === 'number' ? c.score : 80,
+    slaTimeline: c.slaTimeline || '7 DIAS ÚTEIS',
+    projectType: c.projectType || 'Automação com IA',
+    cnpj: c.cnpj,
+    lastMessage: lastMsg,
+    lastMessageTime: c.lastMessageTime || 'Hoje',
+    messages,
+  };
+}
+
+// Carregar Contatos (com fallback em cache local e auto-normalização blindada)
 export async function fetchContacts(): Promise<ChatContact[]> {
   try {
     const res = await fetch('/api/contacts', { method: 'GET' });
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
+        const normalized = data.map(normalizeChatContact);
         if (typeof window !== 'undefined') {
-          localStorage.setItem(LOCAL_CONTACTS_KEY, JSON.stringify(data));
+          localStorage.setItem(LOCAL_CONTACTS_KEY, JSON.stringify(normalized));
         }
-        return data;
+        return normalized;
       }
     }
   } catch {}
@@ -356,18 +403,27 @@ export async function fetchContacts(): Promise<ChatContact[]> {
       const cached = localStorage.getItem(LOCAL_CONTACTS_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const normalized = parsed.map(normalizeChatContact);
+          localStorage.setItem(LOCAL_CONTACTS_KEY, JSON.stringify(normalized));
+          return normalized;
+        }
       }
     } catch {}
   }
 
-  return INITIAL_CONTACTS;
+  const defaults = INITIAL_CONTACTS.map(normalizeChatContact);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(LOCAL_CONTACTS_KEY, JSON.stringify(defaults));
+  }
+  return defaults;
 }
 
 // Salvar / Sincronizar Contatos
 export function saveContactsLocally(contacts: ChatContact[]) {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(LOCAL_CONTACTS_KEY, JSON.stringify(contacts));
+    const normalized = (contacts || []).map(normalizeChatContact);
+    localStorage.setItem(LOCAL_CONTACTS_KEY, JSON.stringify(normalized));
   }
 }
 
@@ -402,6 +458,14 @@ export async function updateContactDetails(contact: Partial<ChatContact> & { id:
   return null;
 }
 
+// Normalizar Diagnóstico garantindo que stack seja array
+export function normalizeDiagnosticItem(d: any): DiagnosticItem {
+  return {
+    ...d,
+    stack: Array.isArray(d?.stack) ? d.stack : ['Full-Stack', 'IA Multimodal'],
+  };
+}
+
 // Carregar Diagnósticos
 export async function fetchDiagnostics(): Promise<DiagnosticItem[]> {
   try {
@@ -409,10 +473,11 @@ export async function fetchDiagnostics(): Promise<DiagnosticItem[]> {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
+        const normalized = data.map(normalizeDiagnosticItem);
         if (typeof window !== 'undefined') {
-          localStorage.setItem(LOCAL_DIAGNOSTICS_KEY, JSON.stringify(data));
+          localStorage.setItem(LOCAL_DIAGNOSTICS_KEY, JSON.stringify(normalized));
         }
-        return data;
+        return normalized;
       }
     }
   } catch {}
@@ -422,12 +487,14 @@ export async function fetchDiagnostics(): Promise<DiagnosticItem[]> {
       const cached = localStorage.getItem(LOCAL_DIAGNOSTICS_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(normalizeDiagnosticItem);
+        }
       }
     } catch {}
   }
 
-  return INITIAL_DIAGNOSTICS;
+  return INITIAL_DIAGNOSTICS.map(normalizeDiagnosticItem);
 }
 
 // Salvar Lista Completa de Diagnósticos

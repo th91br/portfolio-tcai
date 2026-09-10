@@ -363,7 +363,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
       if (c.id === activeContact.id) {
         return {
           ...c,
-          messages: [...c.messages, clientMessage],
+          messages: [...(c.messages || []), clientMessage],
           lastMessage: textToSend || (mediaToSend?.type === 'audio' ? '🎙️ Mensagem de voz' : '📷 Foto enviada'),
           lastMessageTime: timeStr,
         };
@@ -373,11 +373,12 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
 
     setContacts(updatedContacts);
     saveContactsLocally(updatedContacts);
-    if (!customText) {
-      setInputText('');
-      setStagedMedia(null);
-    }
 
+    // Limpar campo e mídias
+    setInputText('');
+    setStagedMedia(null);
+
+    // Enviar ao backend de sincronização
     sendChatMessage({
       contactId: activeContact.id,
       text: textToSend,
@@ -385,14 +386,15 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
       media: mediaToSend || undefined,
     });
 
+    // Se a IA estiver ativa e não pausada, gerar resposta autônoma
     if (!aiPaused) {
       setIsAiResponding(true);
-      setTimeout(async () => {
+      try {
         const aiReply = await generateAiReply(activeContact, textToSend);
-        const replyTime = String(new Date().getHours()).padStart(2, '0') + ':' + String(new Date().getMinutes()).padStart(2, '0');
+        const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         const leadReplyMsg: ChatMessage = {
-          sender: 'lead',
+          sender: 'agent',
           text: aiReply,
           time: replyTime,
         };
@@ -402,7 +404,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
             if (c.id === activeContact.id) {
               return {
                 ...c,
-                messages: [...c.messages, leadReplyMsg],
+                messages: [...(c.messages || []), leadReplyMsg],
                 lastMessage: aiReply,
                 lastMessageTime: replyTime,
               };
@@ -413,14 +415,16 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
           return nextContacts;
         });
 
-        setIsAiResponding(false);
-
         sendChatMessage({
           contactId: activeContact.id,
           text: aiReply,
-          sender: 'lead',
+          sender: 'agent',
         });
-      }, 1400);
+      } catch (err) {
+        console.error('Erro ao gerar resposta da IA:', err);
+      } finally {
+        setIsAiResponding(false);
+      }
     }
   };
 
@@ -477,7 +481,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
       if (c.id === matchingContact.id) {
         return {
           ...c,
-          messages: [...c.messages, msg],
+          messages: [...(c.messages || []), msg],
           lastMessage: 'Diagnóstico enviado: ' + diag.title,
           lastMessageTime: timeStr,
         };
@@ -620,7 +624,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
       if (c.id === matchingContact.id) {
         return {
           ...c,
-          messages: [...c.messages, msg],
+          messages: [...(c.messages || []), msg],
           lastMessage: 'Lembrete de reunião: ' + m.time,
           lastMessageTime: timeStr,
         };
@@ -933,7 +937,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
 
               {/* Mensagens do Chat */}
               <div className="flex-1 p-4 overflow-y-auto space-y-3">
-                {activeContact?.messages.map((msg, idx) => {
+                {(activeContact?.messages || []).map((msg, idx) => {
                   const isAgent = msg.sender === 'agent';
                   return (
                     <div
@@ -942,7 +946,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                     >
                       {!isAgent && (
                         <div className="w-6 h-6 rounded-lg bg-[#0A1624] border border-white/10 flex items-center justify-center text-xs flex-shrink-0">
-                          {activeContact.avatar}
+                          {activeContact?.avatar || '💼'}
                         </div>
                       )}
 
@@ -1377,7 +1381,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                         )}
 
                         <div className="flex flex-wrap gap-1.5 pt-1">
-                          {diag.stack.map((item, idx) => (
+                          {(diag.stack || []).map((item, idx) => (
                             <span
                               key={idx}
                               className="px-2 py-0.5 rounded bg-white/[0.04] text-slate-300 text-[10px] font-mono border border-white/[0.06]"
@@ -1791,7 +1795,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
         }}
         onSave={handleSaveDiagnostic}
         initialData={editingDiagnostic}
-        clientSuggestions={contacts.map((c) => c.name + ' (' + c.company + ')')}
+        clientSuggestions={(contacts || []).map((c) => (c.name || 'Lead') + ' (' + (c.company || '') + ')')}
       />
 
       <MeetingEditModal
@@ -1802,7 +1806,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
         }}
         onSave={handleSaveMeeting}
         initialData={editingMeeting}
-        clientSuggestions={contacts.map((c) => ({ name: c.name, company: c.company, phone: c.phone }))}
+        clientSuggestions={(contacts || []).map((c) => ({ name: c.name || 'Lead', company: c.company || '', phone: c.phone || '' }))}
       />
 
       <ContactEditModal

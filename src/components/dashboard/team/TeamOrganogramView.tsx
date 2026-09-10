@@ -60,8 +60,8 @@ export const TeamOrganogramView: React.FC = () => {
       ? agents
       : agents.filter((a) => a.department === selectedDepartment);
 
-  const totalTasks = agents.reduce((acc, a) => acc + a.metrics.tasksCompleted, 0);
-  const activeCount = agents.filter((a) => a.status === 'active').length;
+  const totalTasks = (agents || []).reduce((acc, a) => acc + (a.metrics?.tasksCompleted || 0), 0);
+  const activeCount = (agents || []).filter((a) => a.status === 'active').length;
 
   return (
     <div className="space-y-6 font-kanit">
@@ -275,8 +275,8 @@ export const TeamOrganogramView: React.FC = () => {
             {/* Rodapé do Card com Métricas e Ações */}
             <div className="pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
               <div className="flex items-center gap-3 text-slate-400">
-                <span>Tarefas: <strong className="text-white">{agent.metrics.tasksCompleted}</strong></span>
-                <span>Latência: <strong className="text-[#00D2F6]">{agent.metrics.avgLatencyMs}ms</strong></span>
+                <span>Tarefas: <strong className="text-white">{agent.metrics?.tasksCompleted || 0}</strong></span>
+                <span>Latência: <strong className="text-[#00D2F6]">{agent.metrics?.avgLatencyMs || 120}ms</strong></span>
               </div>
 
               <div className="flex items-center gap-2">

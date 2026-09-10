@@ -29,7 +29,7 @@
   },
   "whatsapp": {
     "provider": "evolution",
-    "baseUrl": "http://localhost:8080",
+    "baseUrl": "http://localhost:5173/",
     "apiKey": "",
     "instanceId": "tcai-agent-instance",
     "phoneNumber": "+55 54 98116-7720",
@@ -37,5 +37,5 @@
     "outboundDeliveryEnabled": false,
     "sendAudioAsVoiceNote": true
   },
-  "updatedAt": "2026-09-08T21:36:14.263Z"
+  "updatedAt": "2026-09-10T18:29:31.822Z"
 }

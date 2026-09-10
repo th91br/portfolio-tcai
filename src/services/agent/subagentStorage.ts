@@ -107,7 +107,11 @@ export function getSubagents(): SubagentRole[] {
       localStorage.setItem(SUBAGENTS_STORAGE_KEY, JSON.stringify(DEFAULT_CORE_SUBAGENTS));
       return DEFAULT_CORE_SUBAGENTS;
     }
-    return parsed;
+    return parsed.map((a) => ({
+      ...a,
+      capabilities: Array.isArray(a.capabilities) ? a.capabilities : [],
+      metrics: a.metrics || { tasksCompleted: 0, alertsTriggered: 0, avgLatencyMs: 500 },
+    }));
   } catch (err) {
     console.error('Erro ao ler subagentes:', err);
     return DEFAULT_CORE_SUBAGENTS;
