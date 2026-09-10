@@ -36,6 +36,7 @@ import {
   Check,
   Filter,
   FileText,
+  Users,
 } from 'lucide-react';
 import {
   ChatContact,
@@ -67,8 +68,9 @@ import { ProposalPrintView } from '../proposals/ProposalPrintView';
 import { CommercialProposal } from '../../../services/crm/proposalsService';
 import { LeadTimelineFeed } from '../crm/LeadTimelineFeed';
 import { Lead } from '../../../lib/supabase';
+import { TeamOrganogramView } from '../team/TeamOrganogramView';
 
-type SubView = 'chat' | 'diagnostics' | 'kanban' | 'calendar';
+type SubView = 'chat' | 'diagnostics' | 'kanban' | 'calendar' | 'team';
 
 interface WhatsAppAgentViewProps {
   leads?: Lead[];
@@ -800,6 +802,15 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
         >
           <Calendar className="w-3.5 h-3.5 text-purple-400" />
           <span>Agenda Google Meet ({meetings.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSubView('team')}
+          className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'team' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
+        >
+          <Users className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Equipe & Organograma IA</span>
         </button>
       </div>
 
@@ -1728,6 +1739,13 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* SUB-VISÃO: EQUIPE & ORGANOGRAMA DE IA */}
+        {activeSubView === 'team' && (
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+            <TeamOrganogramView />
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 import { ChatMessageMedia, AgentConfigStore } from './agentConfigTypes';
 import { loadAgentConfig } from './agentConfigStorage';
+import { inspectIncomingMessage } from '../security/cyberSentinelService';
 
 export interface ChatMessage {
   id?: string;
@@ -535,8 +536,16 @@ export async function sendChatMessage(params: {
   return { success: true, message: fallbackMsg };
 }
 
-// Resposta Automática Inteligente da IA
+// Resposta Automática Inteligente da IA (Com Blindagem do Sentinela de Cyber Segurança)
 export async function generateAiReply(contact: ChatContact, incomingMessageText?: string): Promise<string> {
+  const textToCheck = incomingMessageText || contact.lastMessage;
+
+  // 1. Sentinela de Cyber Segurança: Filtro Anti-Jailbreak e Injeção de Prompt
+  const inspection = inspectIncomingMessage(textToCheck, contact.name);
+  if (inspection.isThreat && inspection.safeResponse) {
+    return inspection.safeResponse;
+  }
+
   const config = await loadAgentConfig();
   const apiKey = (config.gemini?.apiKey || '').trim();
   const model = config.gemini?.model || 'gemini-2.0-flash';
