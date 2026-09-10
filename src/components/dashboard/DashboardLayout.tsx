@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   MessageSquare,
   Cpu,
+  Radio,
 } from 'lucide-react';
 import {
   Lead,
@@ -48,6 +49,8 @@ import { LeadDetailsDrawer } from './views/LeadDetailsDrawer';
 import { NotificationsCenter } from './notifications/NotificationsCenter';
 import { ChangePasswordModal } from './auth/ChangePasswordModal';
 import { AgentSettingsModal } from './settings/AgentSettingsModal';
+import { WebhookHubModal } from './integrations/WebhookHubModal';
+import { SalesTeamModal } from './team/SalesTeamModal';
 
 interface DashboardLayoutProps {
   user: User;
@@ -92,6 +95,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
   const [refreshKey, setRefreshKey] = useState(0);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showAgentSettingsModal, setShowAgentSettingsModal] = useState(false);
+  const [showWebhookHubModal, setShowWebhookHubModal] = useState(false);
+  const [showSalesTeamModal, setShowSalesTeamModal] = useState(false);
   const [isProcessingDemo, setIsProcessingDemo] = useState(false);
   const [showDeleteDemoModal, setShowDeleteDemoModal] = useState(false);
   const [demoFeedback, setDemoFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -277,6 +282,30 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
             onSelectLead={(id) => setSelectedLeadId(id)}
             refreshTrigger={refreshKey}
           />
+
+          {/* Botão de Webhook Inbound & Ads */}
+          <button
+            type="button"
+            onClick={() => setShowWebhookHubModal(true)}
+            className="px-3 py-1.5 rounded-full border border-purple-500/30 hover:border-purple-400 bg-purple-500/10 hover:bg-purple-500/20 text-xs font-mono text-purple-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.15)]"
+            title="Entrada Universal de Leads via Webhook (Meta Ads, Google Ads, Elementor)"
+          >
+            <Radio className="w-3.5 h-3.5 text-purple-400" />
+            <span className="hidden sm:inline font-bold">Webhooks & Ads</span>
+            <span className="sm:hidden font-bold">Webhooks</span>
+          </button>
+
+          {/* Botão de Time Comercial & Round Robin */}
+          <button
+            type="button"
+            onClick={() => setShowSalesTeamModal(true)}
+            className="px-3 py-1.5 rounded-full border border-cyan-500/30 hover:border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 text-xs font-mono text-cyan-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+            title="Time Comercial & Regras de Distribuição Round Robin"
+          >
+            <Users className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden sm:inline font-bold">Time & Vendedores</span>
+            <span className="sm:hidden font-bold">Time</span>
+          </button>
 
           {/* Botão de Ajustes IA & WhatsApp */}
           <button
@@ -502,6 +531,26 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
       <AgentSettingsModal
         isOpen={showAgentSettingsModal}
         onClose={() => setShowAgentSettingsModal(false)}
+      />
+
+      {/* Modal Hub de Webhooks & Inbound Ads */}
+      <WebhookHubModal
+        isOpen={showWebhookHubModal}
+        onClose={() => setShowWebhookHubModal(false)}
+        onLeadCreated={() => {
+          loadData();
+          setRefreshKey((k) => k + 1);
+        }}
+      />
+
+      {/* Modal de Time Comercial & Round Robin */}
+      <SalesTeamModal
+        isOpen={showSalesTeamModal}
+        onClose={() => setShowSalesTeamModal(false)}
+        onTeamUpdated={() => {
+          loadData();
+          setRefreshKey((k) => k + 1);
+        }}
       />
 
       {/* Toast de Feedback Demo */}

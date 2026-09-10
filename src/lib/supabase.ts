@@ -58,6 +58,9 @@ export interface Deal {
   lost_observation: string | null;
   next_action: string | null;
   next_action_at: string | null;
+  pipeline_id?: string;
+  assigned_rep_id?: string;
+  assigned_rep_name?: string;
   created_at: string;
   updated_at: string;
   lead?: Lead;
@@ -154,6 +157,9 @@ export interface Lead {
   notes?: string;
   project_type?: string;
   source?: string;
+  pipeline_id?: string;
+  assigned_rep_id?: string;
+  assigned_rep_name?: string;
   created_at: string;
   updated_at: string;
 }

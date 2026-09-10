@@ -24,6 +24,13 @@ import {
   updateDealStage,
 } from '../../../lib/supabase';
 import { generateDashboardWhatsAppContactUrl } from '../../../services/diagnostic/scoreCalculator';
+import {
+  PipelineDefinition,
+  getPipelines,
+  getActivePipeline,
+  setActivePipelineId,
+} from '../../../services/crm/customPipelinesService';
+import { PipelineManagerModal } from '../pipelines/PipelineManagerModal';
 
 interface PipelineKanbanViewProps {
   deals: Deal[];
@@ -68,6 +75,28 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
   onRefresh,
   adminEmail,
 }) => {
+  // Estado de Funis Dinâmicos & Customização
+  const [pipelinesList, setPipelinesList] = useState<PipelineDefinition[]>(getPipelines());
+  const [currentPipeline, setCurrentPipeline] = useState<PipelineDefinition>(getActivePipeline());
+  const [showPipelineManagerModal, setShowPipelineManagerModal] = useState(false);
+
+  const handleSwitchPipeline = (pipelineId: string) => {
+    setActivePipelineId(pipelineId);
+    const found = pipelinesList.find((p) => p.id === pipelineId) || pipelinesList[0];
+    setCurrentPipeline(found);
+    if (found.stages.length > 0) {
+      setMobileActiveStage(found.stages[0].id as PipelineStage);
+    }
+  };
+
+  const handlePipelinesUpdated = () => {
+    const updatedList = getPipelines();
+    const active = getActivePipeline();
+    setPipelinesList(updatedList);
+    setCurrentPipeline(active);
+    onRefresh();
+  };
+
   const [movingDealId, setMovingDealId] = useState<string | null>(null);
   const [draggedDealId, setDraggedDealId] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<PipelineStage | null>(null);
@@ -102,8 +131,12 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
     targetStage: PipelineStage,
     extra?: { finalValue?: number; lostReason?: string; lostObservation?: string }
   ) => {
-    // Se for mover para FECHADO e não tiver valor definido, abre modal
-    if (targetStage === 'FECHADO' && !extra?.finalValue) {
+    const targetStageDef = currentPipeline.stages.find((s) => s.id === targetStage);
+    const isWon = targetStageDef?.isWon || targetStage === 'FECHADO';
+    const isLost = targetStageDef?.isLost || targetStage === 'PERDIDO';
+
+    // Se for mover para estágio de Ganho e não tiver valor definido, abre modal
+    if (isWon && !extra?.finalValue) {
       setPendingDeal({ deal, targetStage });
       setFinalValueInput(
         deal.final_value?.toString() ||
@@ -115,8 +148,8 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
       return;
     }
 
-    // Se for mover para PERDIDO e não tiver motivo, abre modal
-    if (targetStage === 'PERDIDO' && !extra?.lostReason) {
+    // Se for mover para estágio de Perda e não tiver motivo, abre modal
+    if (isLost && !extra?.lostReason) {
       setPendingDeal({ deal, targetStage });
       setLostReasonInput('Preço');
       setLostObsInput('');
@@ -133,6 +166,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
         finalValue: extra?.finalValue,
         lostReason: extra?.lostReason,
         lostObservation: extra?.lostObservation,
+        probability: targetStageDef?.defaultProb,
         changedBy: adminEmail,
       });
       onRefresh();
@@ -149,13 +183,13 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
     e.preventDefault();
     if (!pendingDeal) return;
     const cleanNum = parseFloat(finalValueInput.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-    await handleStageChange(pendingDeal.deal, 'FECHADO', { finalValue: cleanNum });
+    await handleStageChange(pendingDeal.deal, pendingDeal.targetStage, { finalValue: cleanNum });
   };
 
   const confirmLostDeal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pendingDeal) return;
-    await handleStageChange(pendingDeal.deal, 'PERDIDO', {
+    await handleStageChange(pendingDeal.deal, pendingDeal.targetStage, {
       lostReason: lostReasonInput,
       lostObservation: lostObsInput,
     });
@@ -200,52 +234,110 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  // Identifica etapas terminais (ganho ou perda)
+  const isTerminalStage = (stageId: string) => {
+    const s = currentPipeline.stages.find((x) => x.id === stageId);
+    if (s?.isWon || s?.isLost) return true;
+    return stageId === 'FECHADO' || stageId === 'PERDIDO';
+  };
+
+  const visibleDeals = deals.filter((d) => {
+    if (!d.pipeline_id) return true;
+    return d.pipeline_id === currentPipeline.id || currentPipeline.isDefault;
+  });
+
   // Totais de Pipeline Geral
-  const totalPipelineBruto = deals
-    .filter((d) => d.pipeline_stage !== 'FECHADO' && d.pipeline_stage !== 'PERDIDO')
+  const totalPipelineBruto = visibleDeals
+    .filter((d) => !isTerminalStage(d.pipeline_stage))
     .reduce((acc, d) => acc + (d.proposed_value || d.estimated_value || 0), 0);
 
-  const totalPipelinePonderado = deals
-    .filter((d) => d.pipeline_stage !== 'FECHADO' && d.pipeline_stage !== 'PERDIDO')
+  const totalPipelinePonderado = visibleDeals
+    .filter((d) => !isTerminalStage(d.pipeline_stage))
     .reduce(
       (acc, d) => acc + ((d.proposed_value || d.estimated_value || 0) * (d.probability || 0)) / 100,
       0
     );
 
+  const pipelineColumns = currentPipeline.stages.map((st) => ({
+    id: st.id as PipelineStage,
+    title: st.name,
+    badgeColor: st.badgeColor,
+    defaultProb: st.defaultProb,
+    isWon: st.isWon,
+    isLost: st.isLost,
+  }));
+
   return (
     <div className="space-y-4 font-kanit">
-      {/* Header do Pipeline */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Header do Pipeline com Seletor de Funil e Ações */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h2 className="font-black text-2xl text-white uppercase tracking-tight">
-            PIPELINE COMERCIAL (8 ETAPAS)
-          </h2>
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="text-2xl">{currentPipeline.icon}</span>
+            <h2 className="font-black text-2xl text-white uppercase tracking-tight">
+              {currentPipeline.name}
+            </h2>
+            <span className="px-2 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[10px] font-mono text-[#00D2F6] font-bold">
+              {pipelineColumns.length} ETAPAS
+            </span>
+          </div>
           <p className="text-xs text-[#94A3B8] font-mono">
-            Gerencie o ciclo de vendas completo: arraste os cards ou use os botões de ação
+            {currentPipeline.description}
           </p>
         </div>
 
-        {/* Resumo de Pipeline Aberto */}
-        <div className="flex items-center gap-3 bg-[#0A1624] border border-white/10 rounded-2xl px-4 py-2">
-          <div>
-            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-              Pipeline Bruto
-            </span>
-            <span className="text-sm font-mono font-bold text-white">
-              {totalPipelineBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </span>
+        {/* Seletor Dropdown de Funil + Botão Gerenciar + Métricas */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Seletor de Funil */}
+          <div className="flex items-center gap-2 bg-[#0A1624] border border-white/10 rounded-2xl px-3 py-2 shadow-sm">
+            <span className="text-[10px] font-mono text-slate-400 uppercase">Funil:</span>
+            <select
+              value={currentPipeline.id}
+              onChange={(e) => handleSwitchPipeline(e.target.value)}
+              className="bg-transparent text-white font-mono font-bold text-xs focus:outline-none cursor-pointer"
+            >
+              {pipelinesList.map((p) => (
+                <option key={p.id} value={p.id} className="bg-[#091524] text-white">
+                  {p.icon} {p.name}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="h-7 w-px bg-white/10" />
-          <div>
-            <span className="text-[10px] font-mono text-[#00D2F6] uppercase tracking-wider block">
-              Ponderado
-            </span>
-            <span className="text-sm font-mono font-bold text-[#00D2F6]">
-              {totalPipelinePonderado.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}
-            </span>
+
+          {/* Botão Gerenciar Funis */}
+          <button
+            type="button"
+            onClick={() => setShowPipelineManagerModal(true)}
+            className="px-3 py-2 rounded-2xl bg-white/[0.04] hover:bg-[#00D2F6]/15 hover:border-[#00D2F6]/40 border border-white/10 text-xs font-mono text-slate-300 hover:text-[#00D2F6] flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            title="Criar novos funis de nicho ou customizar etapas"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <span className="hidden sm:inline font-bold">Gerenciar Funis</span>
+            <span className="sm:hidden font-bold">Funis</span>
+          </button>
+
+          {/* Resumo de Pipeline Aberto */}
+          <div className="flex items-center gap-3 bg-[#0A1624] border border-white/10 rounded-2xl px-4 py-2">
+            <div>
+              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                Pipeline Bruto
+              </span>
+              <span className="text-sm font-mono font-bold text-white">
+                {totalPipelineBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              </span>
+            </div>
+            <div className="h-7 w-px bg-white/10" />
+            <div>
+              <span className="text-[10px] font-mono text-[#00D2F6] uppercase tracking-wider block">
+                Ponderado
+              </span>
+              <span className="text-sm font-mono font-bold text-[#00D2F6]">
+                {totalPipelinePonderado.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -256,8 +348,8 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
           <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mr-1 hidden lg:inline shrink-0">
             Focar Etapa:
           </span>
-          {PIPELINE_COLUMNS.map((c) => {
-            const count = deals.filter((d) => d.pipeline_stage === c.id).length;
+          {pipelineColumns.map((c) => {
+            const count = visibleDeals.filter((d) => d.pipeline_stage === c.id).length;
             const isActive = mobileActiveStage === c.id;
             return (
               <button
@@ -310,8 +402,12 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
         ref={scrollContainerRef}
         className="flex gap-3 overflow-x-auto pb-6 pt-1 min-h-[620px] snap-x scroll-smooth kanban-scroll"
       >
-        {PIPELINE_COLUMNS.map((column, colIdx) => {
-          const columnDeals = deals.filter((d) => d.pipeline_stage === column.id);
+        {pipelineColumns.map((column, colIdx) => {
+          const columnDeals = visibleDeals.filter((d) => {
+            if (d.pipeline_stage === column.id) return true;
+            if (!d.pipeline_stage && colIdx === 0) return true;
+            return false;
+          });
 
           const colValue = columnDeals.reduce(
             (acc, d) => acc + (d.final_value || d.proposed_value || d.estimated_value || 0),
@@ -470,6 +566,16 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                           </div>
                         )}
 
+                        {/* Atendente / Vendedor Responsável se houver */}
+                        {(deal.assigned_rep_name || (lead as any)?.assigned_rep_name) && (
+                          <div className="mt-2 text-[10px] font-mono text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20 flex items-center gap-1.5 truncate w-fit">
+                            <span>👤</span>
+                            <span className="truncate">
+                              {deal.assigned_rep_name || (lead as any)?.assigned_rep_name}
+                            </span>
+                          </div>
+                        )}
+
                         {/* Ações Rápidas do Card: WhatsApp & Botões de Estágio */}
                         <div className="mt-3 flex items-center justify-between pt-2 border-t border-white/[0.06]">
                           {lead && (
@@ -491,23 +597,23 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleStageChange(deal, PIPELINE_COLUMNS[colIdx - 1].id);
+                                  handleStageChange(deal, pipelineColumns[colIdx - 1].id);
                                 }}
                                 className="p-1 rounded bg-white/[0.04] hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
-                                title={`Voltar para ${PIPELINE_COLUMNS[colIdx - 1].title}`}
+                                title={`Voltar para ${pipelineColumns[colIdx - 1].title}`}
                               >
                                 <ArrowLeft className="w-3 h-3" />
                               </button>
                             )}
-                            {colIdx < PIPELINE_COLUMNS.length - 1 && (
+                            {colIdx < pipelineColumns.length - 1 && (
                               <button
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleStageChange(deal, PIPELINE_COLUMNS[colIdx + 1].id);
+                                  handleStageChange(deal, pipelineColumns[colIdx + 1].id);
                                 }}
                                 className="p-1 rounded bg-white/[0.04] hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
-                                title={`Avançar para ${PIPELINE_COLUMNS[colIdx + 1].title}`}
+                                title={`Avançar para ${pipelineColumns[colIdx + 1].title}`}
                               >
                                 <ArrowRight className="w-3 h-3" />
                               </button>
@@ -669,6 +775,13 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Modal Executivo de Gerenciamento de Múltiplos Funis */}
+      <PipelineManagerModal
+        isOpen={showPipelineManagerModal}
+        onClose={() => setShowPipelineManagerModal(false)}
+        onPipelinesUpdated={handlePipelinesUpdated}
+      />
     </div>
   );
 };

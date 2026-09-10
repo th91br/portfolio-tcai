@@ -56,6 +56,11 @@ import {
   formatProposalWhatsAppMessage,
 } from '../../../services/crm/proposalsService';
 import { ChatContact } from '../../../services/agent/agentChatService';
+import {
+  SalesRep,
+  getSalesTeam,
+  generateWhatsAppHandoffUrl,
+} from '../../../services/crm/salesTeamService';
 
 interface LeadDetailsDrawerProps {
   leadId: string | null;
@@ -116,6 +121,10 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
   const [commercialSavedSuccess, setCommercialSavedSuccess] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Time Comercial & Vendedor Designado
+  const [salesTeam, setSalesTeam] = useState<SalesRep[]>(getSalesTeam());
+  const [assignedRepId, setAssignedRepId] = useState<string>('');
 
   const handleDeleteLead = async () => {
     if (!details) return;
@@ -199,6 +208,12 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
           );
         }
 
+        // Define vendedor atribuído
+        const team = getSalesTeam();
+        setSalesTeam(team);
+        const rep = dealData?.assigned_rep_id || (leadData?.lead as any)?.assigned_rep_id || team[0]?.id || '';
+        setAssignedRepId(rep);
+
         // Carrega propostas comerciais do lead
         setProposals(getProposals(leadId));
       })
@@ -249,6 +264,8 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
       return isNaN(num) ? null : num;
     };
 
+    const selectedRep = salesTeam.find((r) => r.id === assignedRepId);
+
     const updates: Partial<Deal> = {
       estimated_value: parseNum(estimatedValue),
       proposed_value: parseNum(proposedValue),
@@ -258,6 +275,8 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
       proposal_date: proposalDate || null,
       next_action: nextAction.trim() || null,
       next_action_at: nextActionAt ? new Date(`${nextActionAt}T12:00:00`).toISOString() : null,
+      assigned_rep_id: assignedRepId || undefined,
+      assigned_rep_name: selectedRep?.name || undefined,
     };
 
     try {
@@ -589,6 +608,69 @@ export const LeadDetailsDrawer: React.FC<LeadDetailsDrawerProps> = ({
                         <span className="text-lg font-bold text-emerald-400 font-mono">
                           {probability}%
                         </span>
+                      </div>
+                    </div>
+
+                    {/* Time Comercial & Vendedor Responsável (Round Robin) */}
+                    <div className="p-4 rounded-2xl bg-[#091524] border border-white/10 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                          <span>👤</span>
+                          <span>Vendedor Responsável & Round Robin</span>
+                        </h4>
+                        {assignedRepId && (
+                          <span className="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-mono text-cyan-400 font-bold">
+                            DISTRIBUIÇÃO ATIVA
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex-1">
+                          <label className="block text-[11px] font-mono text-slate-400 mb-1">
+                            Atendente / Closer Designado
+                          </label>
+                          <select
+                            value={assignedRepId}
+                            onChange={(e) => setAssignedRepId(e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#00D2F6] cursor-pointer"
+                          >
+                            <option value="" className="bg-[#091524]">Nenhum (Aguardando Atribuição)</option>
+                            {salesTeam.map((rep) => (
+                              <option key={rep.id} value={rep.id} className="bg-[#091524]">
+                                {rep.avatar} {rep.name} • {rep.roleTitle} {rep.status !== 'active' ? '(Pausado)' : ''}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Botão de Transferência Imediata no WhatsApp */}
+                        {assignedRepId && (
+                          <div className="self-end sm:self-auto">
+                            <label className="block text-[11px] font-mono text-slate-400 mb-1 opacity-0 hidden sm:block">
+                              Ação
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const rep = salesTeam.find((r) => r.id === assignedRepId);
+                                if (!rep) return;
+                                const url = generateWhatsAppHandoffUrl(
+                                  rep,
+                                  details.lead.name,
+                                  details.lead.company || undefined,
+                                  details.lead.score
+                                );
+                                window.open(url, '_blank', 'noopener,noreferrer');
+                              }}
+                              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer whitespace-nowrap"
+                              title="Abrir WhatsApp com mensagem pronta para o vendedor assumir o lead"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                              <span>Transferir no WhatsApp</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
 
