@@ -37,6 +37,8 @@ import {
   Filter,
   FileText,
   Users,
+  AlertTriangle,
+  Smartphone,
 } from 'lucide-react';
 import {
   ChatContact,
@@ -44,6 +46,8 @@ import {
   WhatsAppKPIs,
   DiagnosticItem,
   MeetingItem,
+  ChatOperationalMode,
+  detectHandoverTrigger,
   fetchAgentKPIs,
   fetchContacts,
   saveContactsLocally,
@@ -58,6 +62,8 @@ import {
 } from '../../../services/agent/agentChatService';
 import { loadAgentConfig } from '../../../services/agent/agentConfigStorage';
 import { AgentConfigStore } from '../../../services/agent/agentConfigTypes';
+import { WhatsAppConnectModal } from '../whatsapp/WhatsAppConnectModal';
+import { ColdLeadReactivationModal } from '../crm/ColdLeadReactivationModal';
 import { AgentSettingsModal } from '../settings/AgentSettingsModal';
 import { DiagnosticEditModal } from './whatsapp/DiagnosticEditModal';
 import { MeetingEditModal } from './whatsapp/MeetingEditModal';
@@ -121,10 +127,16 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
   const [searchFilter, setSearchFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'hot' | 'meeting'>('all');
 
-  // Estado do Chat
+  // Estado do Chat & Operação Copiloto
   const [inputText, setInputText] = useState('');
   const [isAiResponding, setIsAiResponding] = useState(false);
   const [aiPaused, setAiPaused] = useState(false);
+  const [operationalMode, setOperationalMode] = useState<ChatOperationalMode>('copilot');
+  const [copilotDraft, setCopilotDraft] = useState<string | null>(null);
+  const [handoverAlert, setHandoverAlert] = useState<{ needsHandover: boolean; reason?: string } | null>(null);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [isWhatsAppConnected, setIsWhatsAppConnected] = useState(true);
+  const [showReactivationModal, setShowReactivationModal] = useState(false);
   const [lightboxImageUrl, setLightboxImageUrl] = useState<string | null>(null);
 
   // Mídias e Gravação de Áudio
@@ -386,40 +398,47 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
       media: mediaToSend || undefined,
     });
 
-    // Se a IA estiver ativa e não pausada, gerar resposta autônoma
-    if (!aiPaused) {
+    // Lógica Operacional: Autônomo vs Copiloto vs Manual
+    if (!aiPaused && operationalMode !== 'human_only') {
       setIsAiResponding(true);
       try {
         const aiReply = await generateAiReply(activeContact, textToSend);
-        const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        const leadReplyMsg: ChatMessage = {
-          sender: 'agent',
-          text: aiReply,
-          time: replyTime,
-        };
+        if (operationalMode === 'copilot') {
+          // No Modo Copiloto, a IA prepara o rascunho com RAG e aguarda validação humana
+          setCopilotDraft(aiReply);
+        } else if (operationalMode === 'autopilot') {
+          // No Modo Autônomo, a IA despacha diretamente
+          const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        setContacts((prev) => {
-          const nextContacts = prev.map((c) => {
-            if (c.id === activeContact.id) {
-              return {
-                ...c,
-                messages: [...(c.messages || []), leadReplyMsg],
-                lastMessage: aiReply,
-                lastMessageTime: replyTime,
-              };
-            }
-            return c;
+          const leadReplyMsg: ChatMessage = {
+            sender: 'agent',
+            text: aiReply,
+            time: replyTime,
+          };
+
+          setContacts((prev) => {
+            const nextContacts = prev.map((c) => {
+              if (c.id === activeContact.id) {
+                return {
+                  ...c,
+                  messages: [...(c.messages || []), leadReplyMsg],
+                  lastMessage: aiReply,
+                  lastMessageTime: replyTime,
+                };
+              }
+              return c;
+            });
+            saveContactsLocally(nextContacts);
+            return nextContacts;
           });
-          saveContactsLocally(nextContacts);
-          return nextContacts;
-        });
 
-        sendChatMessage({
-          contactId: activeContact.id,
-          text: aiReply,
-          sender: 'agent',
-        });
+          sendChatMessage({
+            contactId: activeContact.id,
+            text: aiReply,
+            sender: 'agent',
+          });
+        }
       } catch (err) {
         console.error('Erro ao gerar resposta da IA:', err);
       } finally {
@@ -427,6 +446,38 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
       }
     }
   };
+
+  const handleGenerateCopilotDraft = async () => {
+    if (!activeContact) return;
+    setIsAiResponding(true);
+    try {
+      const aiReply = await generateAiReply(activeContact);
+      setCopilotDraft(aiReply);
+    } catch (err) {
+      console.error('Erro ao gerar sugestão copiloto:', err);
+    } finally {
+      setIsAiResponding(false);
+    }
+  };
+
+  const handleSendDraft = (draftText: string) => {
+    handleSendMessage(undefined, draftText);
+    setCopilotDraft(null);
+  };
+
+  // Detecção Automática de Gatilhos de Transbordo Humano (Handover)
+  useEffect(() => {
+    if (activeContact && activeContact.messages && activeContact.messages.length > 0) {
+      const lastMsg = activeContact.messages[activeContact.messages.length - 1];
+      if (lastMsg && lastMsg.sender === 'lead') {
+        const check = detectHandoverTrigger(lastMsg.text);
+        if (check.needsHandover) {
+          setHandoverAlert(check);
+          setOperationalMode('copilot');
+        }
+      }
+    }
+  }, [activeContact?.id, activeContact?.messages?.length]);
 
   const handleApplySuggestion = (suggestion: string) => {
     setInputText(suggestion);
@@ -697,10 +748,15 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
               <h2 className="text-sm sm:text-base md:text-lg font-extrabold text-white tracking-wide uppercase truncate">
                 Central WhatsApp & Agente IA
               </h2>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono text-emerald-400 font-bold whitespace-nowrap">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                ONLINE • {latencyMs}ms
-              </span>
+              <button
+                type="button"
+                onClick={() => setShowConnectModal(true)}
+                className={'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-bold whitespace-nowrap cursor-pointer transition-all hover:scale-105 ' + (isWhatsAppConnected ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25' : 'bg-rose-500/15 border-rose-500/30 text-rose-400 hover:bg-rose-500/25')}
+                title="Conexão do WhatsApp Web • Clique para gerenciar pareamento e QR Code"
+              >
+                <span className={'w-1.5 h-1.5 rounded-full ' + (isWhatsAppConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400')} />
+                {isWhatsAppConnected ? `ONLINE • ${latencyMs}ms` : 'DESCONECTADO • Parear QR'}
+              </button>
             </div>
             <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 font-sans truncate">
               {(config?.company?.companyName || 'TCAI') + ' • Motor ' + (config?.gemini?.model || 'gemini-2.0-flash') + ' • Visão & Áudio Ativos'}
@@ -861,6 +917,17 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                     <Calendar className="w-3 h-3" /> Meet
                   </button>
                 </div>
+
+                {/* Botão de Reativação de Frios */}
+                <button
+                  type="button"
+                  onClick={() => setShowReactivationModal(true)}
+                  className="w-full py-1.5 px-2.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-mono font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  title="Campanha Inteligente de Reativação com Cadência Anti-Ban"
+                >
+                  <Flame className="w-3 h-3 text-amber-400" />
+                  <span>Reativação de Frios (+7d)</span>
+                </button>
               </div>
 
               {/* Lista de Contatos */}
@@ -923,15 +990,79 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setAiPaused(!aiPaused)}
-                      className={'px-2.5 py-1 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 border transition-all cursor-pointer ' + (aiPaused ? 'bg-amber-500/20 border-amber-500/40 text-amber-300' : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300')}
-                    >
-                      <Bot className="w-3.5 h-3.5" />
-                      <span>{aiPaused ? 'IA Pausada' : 'IA Autônoma'}</span>
-                    </button>
+                    {/* Seletor Tri-State: Autônomo vs Copiloto vs Manual */}
+                    <div className="flex items-center bg-[#07111F] p-0.5 rounded-xl border border-white/10 text-[11px] font-mono">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOperationalMode('autopilot');
+                          setAiPaused(false);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                          operationalMode === 'autopilot' && !aiPaused
+                            ? 'bg-[#00D2F6] text-[#07111F] shadow'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                        title="Modo Autônomo: O motor responde o lead diretamente 24/7"
+                      >
+                        <Zap className="w-3 h-3" />
+                        <span className="hidden xl:inline">Autônomo</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOperationalMode('copilot');
+                          setAiPaused(false);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                          operationalMode === 'copilot' && !aiPaused
+                            ? 'bg-purple-500 text-white shadow'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                        title="Modo Copiloto: A IA sugere respostas baseadas na base RAG para você aprovar"
+                      >
+                        <Sparkles className="w-3 h-3 text-purple-200" />
+                        <span>Copiloto</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOperationalMode('human_only');
+                          setAiPaused(true);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                          operationalMode === 'human_only' || aiPaused
+                            ? 'bg-amber-500 text-slate-950 shadow'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                        title="Modo Manual: Somente o operador humano digita e responde"
+                      >
+                        <UserCheck className="w-3 h-3" />
+                        <span className="hidden xl:inline">Manual</span>
+                      </button>
+                    </div>
                   </div>
+                </div>
+              )}
+
+              {/* Alerta de Transbordo Humano (Handover Alert Banner) */}
+              {handoverAlert && (
+                <div className="px-4 py-2.5 bg-rose-500/15 border-b border-rose-500/30 flex items-center justify-between gap-3 text-xs animate-in fade-in duration-200 flex-shrink-0">
+                  <div className="flex items-center gap-2 text-rose-200">
+                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                    <span>
+                      <strong className="text-white">Alerta de Transbordo Humano:</strong> {handoverAlert.reason}. Transmitido para Copiloto/Manual para garantia executiva.
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setHandoverAlert(null)}
+                    className="text-[10px] font-mono uppercase text-rose-300 hover:text-white underline cursor-pointer shrink-0"
+                  >
+                    Dispensar
+                  </button>
                 </div>
               )}
 
@@ -1007,10 +1138,75 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                 <div ref={chatBottomRef} />
               </div>
 
+              {/* Card de Rascunho do Copiloto (Aprovação Executiva Antes de Enviar) */}
+              {copilotDraft && (
+                <div className="mx-3 my-2 p-3.5 bg-[#081524] border border-[#00D2F6]/40 rounded-xl shadow-xl space-y-2.5 animate-in fade-in slide-in-from-bottom-2 flex-shrink-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-[#00D2F6]" />
+                      <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                        Rascunho Sugerido pelo Copiloto IA (Base RAG)
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                      Validação Humana
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-200 bg-[#0A1624] p-3 rounded-lg border border-white/5 font-sans leading-relaxed">
+                    {copilotDraft}
+                  </p>
+
+                  <div className="flex items-center justify-between gap-2 pt-0.5">
+                    <span className="text-[10px] font-mono text-slate-400">
+                      Identidade: Thiago (1ª pessoa) • Sem alucinações
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setCopilotDraft(null)}
+                        className="px-2.5 py-1 rounded-lg text-xs font-mono text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                      >
+                        Descartar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInputText(copilotDraft);
+                          setCopilotDraft(null);
+                        }}
+                        className="px-2.5 py-1 rounded-lg text-xs font-mono bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                      >
+                        Editar no Campo
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSendDraft(copilotDraft)}
+                        className="px-3.5 py-1 rounded-lg text-xs font-mono font-bold bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] shadow-lg shadow-[#00D2F6]/20 transition-all cursor-pointer flex items-center gap-1.5"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Aprovar & Enviar</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Sugestões Rápidas de Resposta da IA */}
               <div className="px-3 py-1.5 bg-[#0A1624]/70 border-t border-[#16273C] flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-shrink-0">
-                <span className="text-[10px] font-mono text-[#00D2F6] font-bold whitespace-nowrap flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-[#00D2F6]" /> Sugestões IA:
+                <button
+                  type="button"
+                  onClick={handleGenerateCopilotDraft}
+                  disabled={isAiResponding}
+                  className="px-2.5 py-1 rounded-lg bg-[#00D2F6]/15 hover:bg-[#00D2F6]/25 border border-[#00D2F6]/30 text-[10px] font-mono text-[#00D2F6] font-bold whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                  title="Gerar rascunho com IA e base RAG para este lead"
+                >
+                  <Zap className="w-3 h-3 text-[#00D2F6]" />
+                  <span>Gerar Rascunho IA</span>
+                </button>
+
+                <span className="text-[10px] font-mono text-slate-400 font-bold whitespace-nowrap flex items-center gap-1">
+                  Atalhos:
                 </span>
                 <button
                   type="button"
@@ -1457,17 +1653,29 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setEditingContact(null);
-                  setIsContactModalOpen(true);
-                }}
-                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#00D2F6] to-[#015EEF] text-slate-950 font-bold font-mono text-xs flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,210,246,0.3)] hover:opacity-95 cursor-pointer w-fit"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Nova Oportunidade</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowReactivationModal(true)}
+                  className="px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-amber-500/5"
+                  title="Campanha de Reativação de Leads com Pacing Anti-Ban"
+                >
+                  <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Reativação de Frios</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingContact(null);
+                    setIsContactModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#00D2F6] to-[#015EEF] text-slate-950 font-bold font-mono text-xs flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,210,246,0.3)] hover:opacity-95 cursor-pointer w-fit"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Nova Oportunidade</span>
+                </button>
+              </div>
             </div>
 
             {/* Colunas do Kanban */}
@@ -1875,6 +2083,33 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
           </div>
         </div>
       )}
+
+      {/* Modal de Conexão WhatsApp Web com QR Code e Telemetria */}
+      <WhatsAppConnectModal
+        isOpen={showConnectModal}
+        onClose={() => setShowConnectModal(false)}
+        initialConnected={isWhatsAppConnected}
+        onConnectionChange={(connected) => {
+          setIsWhatsAppConnected(connected);
+          showToast(
+            connected
+              ? 'WhatsApp Web conectado e sincronizado!'
+              : 'WhatsApp Web desconectado com segurança.'
+          );
+        }}
+      />
+
+      {/* Modal de Reativação de Leads Frios com Cadência Anti-Ban */}
+      <ColdLeadReactivationModal
+        isOpen={showReactivationModal}
+        onClose={() => setShowReactivationModal(false)}
+        contacts={contacts}
+        onDispatched={(updatedContacts) => {
+          setContacts(updatedContacts);
+          saveContactsLocally(updatedContacts);
+          showToast('Disparos de reativação concluídos com sucesso!');
+        }}
+      />
     </div>
   );
 };

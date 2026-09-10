@@ -1,6 +1,7 @@
 import { ChatMessageMedia, AgentConfigStore } from './agentConfigTypes';
 import { loadAgentConfig } from './agentConfigStorage';
 import { inspectIncomingMessage } from '../security/cyberSentinelService';
+import { searchKnowledge } from './knowledgeBaseService';
 
 export interface ChatMessage {
   id?: string;
@@ -9,6 +10,8 @@ export interface ChatMessage {
   time: string;
   media?: ChatMessageMedia;
 }
+
+export type ChatOperationalMode = 'autopilot' | 'copilot' | 'human_only';
 
 export interface ChatContact {
   id: string;
@@ -26,6 +29,8 @@ export interface ChatContact {
   lastMessage: string;
   lastMessageTime: string;
   messages: ChatMessage[];
+  chatMode?: ChatOperationalMode;
+  pendingDraftReply?: string;
 }
 
 export interface WhatsAppKPIs {
@@ -379,6 +384,8 @@ export function normalizeChatContact(c: any): ChatContact {
     lastMessage: lastMsg,
     lastMessageTime: c.lastMessageTime || 'Hoje',
     messages,
+    chatMode: c.chatMode || 'autopilot',
+    pendingDraftReply: c.pendingDraftReply || undefined,
   };
 }
 
@@ -603,7 +610,29 @@ export async function sendChatMessage(params: {
   return { success: true, message: fallbackMsg };
 }
 
-// Resposta Automática Inteligente da IA (Com Blindagem do Sentinela de Cyber Segurança)
+// Detector Inteligente de Transbordo Humano (Human Handover)
+export function detectHandoverTrigger(text: string): { needsHandover: boolean; reason?: string } {
+  if (!text || typeof text !== 'string') return { needsHandover: false };
+  const lower = text.toLowerCase();
+
+  const triggers: Array<{ pattern: RegExp; reason: string }> = [
+    { pattern: /(falar com (um )?(humano|atendente|pessoa|alguem|thiago))/i, reason: 'Lead solicitou atendimento humano' },
+    { pattern: /(quero uma pessoa|atendente real|pessoa de verdade|humano por favor)/i, reason: 'Preferência explícita por atendimento humano' },
+    { pattern: /(reclamacao|processo|advogado|insatisfeito|cancelamento|cancelar)/i, reason: 'Demanda crítica ou contestação formal' },
+    { pattern: /(quero fechar (agora|hoje)|onde eu pago|passa o pix|vamos fechar)/i, reason: 'Momento de fechamento imediato' },
+    { pattern: /(me liga|pode me ligar|urgente|emergencia)/i, reason: 'Solicitação de contato telefônico urgente' },
+  ];
+
+  for (const t of triggers) {
+    if (t.pattern.test(lower)) {
+      return { needsHandover: true, reason: t.reason };
+    }
+  }
+
+  return { needsHandover: false };
+}
+
+// Resposta Automática Inteligente da IA (Com Blindagem do Sentinela e RAG da Base de Conhecimento)
 export async function generateAiReply(contact: ChatContact, incomingMessageText?: string): Promise<string> {
   const textToCheck = incomingMessageText || contact.lastMessage;
 
@@ -613,13 +642,21 @@ export async function generateAiReply(contact: ChatContact, incomingMessageText?
     return inspection.safeResponse;
   }
 
+  // 2. Base de Conhecimento RAG: Recuperação Contextual de Documentos
+  const rag = searchKnowledge(textToCheck, 2);
+  const ragContext = rag.excerpts.length > 0
+    ? `\n\nDIRETRIZES TÉCNICAS E COMERCIAIS DA EMPRESA (VERDADE ABSOLUTA DO ACERVO):\n${rag.excerpts.join('\n---\n')}\nUtilize estas informações precisas sobre preços, prazos e regras sem inventar ou alucinar nada.`
+    : '';
+
   const config = await loadAgentConfig();
   const apiKey = (config.gemini?.apiKey || '').trim();
   const model = config.gemini?.model || 'gemini-2.0-flash';
 
   if (apiKey) {
     try {
-      const prompt = `${config.gemini.systemPrompt || 'Você é um assistente executivo.'}
+      const prompt = `${config.gemini.systemPrompt || 'Você é o Thiago Cassol Antunes.'}
+${ragContext}
+
 Contexto do Lead:
 Nome: ${contact.name}
 Empresa: ${contact.company}
@@ -647,11 +684,11 @@ Responda em 1 a 2 parágrafos cordiais, assertivos e profissionais para o WhatsA
     } catch {}
   }
 
-  // Fallback cognitivo contextual de alta qualidade
+  // Fallback cognitivo contextual fundamentado com base no projeto
   const replies = [
-    `Perfeito, ${contact.name}! Já registrei essas informações no dossiê de projeto. Nosso SLA para ${contact.projectType} é garantido. Gostaria de agendar uma breve demonstração no Google Meet para fecharmos o escopo?`,
-    `Excelente! Recebi os detalhes. Na TCAI trabalhamos com código proprietário e entrega recorde. Posso te enviar a proposta formal ainda hoje ou prefere tirar mais alguma dúvida aqui pelo WhatsApp?`,
-    `Entendido! Nossos agentes de IA e engenharia cuidam de toda a esteira de implantação. Vamos reservar seu horário na agenda para alinharmos os detalhes técnicos?`,
+    `Perfeito, ${contact.name}! Já consultei nosso catálogo de engenharia. Para "${contact.projectType}", garantimos entrega ágil em dias úteis com código 100% homologado. Gostaria de agendar uma breve demonstração no Google Meet para alinharmos os detalhes?`,
+    `Excelente pergunta, ${contact.name}! Conforme nossa tabela oficial, desenvolvemos soluções sob medida com alta performance e suporte assistido. Posso formatar sua proposta técnico-comercial agora ou prefere tirar mais alguma dúvida?`,
+    `Entendido perfeitamente! Nossos agentes de IA e arquitetura cuidam de toda a esteira de implantação. Vamos reservar 15 minutos amanhã na agenda para apresentar a estrutura?`,
   ];
   return replies[Math.floor(Math.random() * replies.length)];
 }

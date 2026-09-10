@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Building2,
   Sparkles,
+  QrCode,
 } from 'lucide-react';
 import {
   CommercialProposal,
@@ -23,6 +24,7 @@ import {
 } from '../../../services/crm/proposalsService';
 import { addTimelineEvent } from '../../../services/crm/timelineService';
 import { ChatContact } from '../../../services/agent/agentChatService';
+import { PixPaymentModal } from './PixPaymentModal';
 
 interface ProposalModalProps {
   proposal?: CommercialProposal | null;
@@ -104,6 +106,8 @@ export const ProposalModal: React.FC<ProposalModalProps> = ({
     proposal?.paymentTerms?.pixDiscountPercent || 5
   );
   const [status, setStatus] = useState<CommercialProposal['status']>(proposal?.status || 'draft');
+
+  const [showPixModal, setShowPixModal] = useState(false);
 
   // Ao trocar de contato selecionado
   const handleSelectContact = (cId: string) => {
@@ -514,6 +518,16 @@ export const ProposalModal: React.FC<ProposalModalProps> = ({
               <span>Ver PDF / Imprimir</span>
             </button>
 
+            <button
+              type="button"
+              onClick={() => setShowPixModal(true)}
+              className="px-3.5 py-2 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:to-cyan-500/30 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-emerald-500/10"
+              title="Gerar chave e QR Code PIX oficial para o sinal"
+            >
+              <QrCode className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Gerar PIX</span>
+            </button>
+
             {onSendWhatsApp && (
               <button
                 type="button"
@@ -538,6 +552,43 @@ export const ProposalModal: React.FC<ProposalModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Modal Integrado de Cobrança PIX */}
+      {showPixModal && (
+        <PixPaymentModal
+          isOpen={showPixModal}
+          onClose={() => setShowPixModal(false)}
+          contact={
+            initialContact || {
+              id: contactId || 'lead-generic',
+              name: clientName,
+              company,
+              phone,
+              status: 'proposal_sent',
+              statusLabel: 'Proposta Enviada',
+              avatar: '💼',
+              unread: 0,
+              score: 90,
+              slaTimeline: `${slaDays} DIAS ÚTEIS`,
+              projectType: title,
+              lastMessage: 'Proposta emitida',
+              lastMessageTime: 'Hoje',
+              messages: [],
+            }
+          }
+          amount={investmentTotal * (upfrontPercent / 100)}
+          proposalNumber={proposal?.proposalNumber || 'PROP-2026-001'}
+          onSendWhatsApp={(msg) => {
+            if (onSendWhatsApp && contactId) {
+              onSendWhatsApp(msg, contactId);
+            }
+          }}
+          onPaymentConfirmed={() => {
+            setStatus('accepted');
+            handleSave();
+          }}
+        />
+      )}
     </div>
   );
 };

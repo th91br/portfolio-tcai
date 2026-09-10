@@ -25,6 +25,9 @@ import {
 import { getSentinelMetrics } from '../../../services/security/cyberSentinelService';
 import { AgentHireModal } from './AgentHireModal';
 import { SecurityAlertsDrawer } from './SecurityAlertsDrawer';
+import { AgentNetworkGraph } from './AgentNetworkGraph';
+import { KnowledgeBaseDrawer } from '../knowledge/KnowledgeBaseDrawer';
+import { BookOpen, Radio, Network } from 'lucide-react';
 
 export const TeamOrganogramView: React.FC = () => {
   const [agents, setAgents] = useState<SubagentRole[]>([]);
@@ -32,6 +35,8 @@ export const TeamOrganogramView: React.FC = () => {
   const [selectedAgentToEdit, setSelectedAgentToEdit] = useState<SubagentRole | null>(null);
   const [showHireModal, setShowHireModal] = useState(false);
   const [showSecurityDrawer, setShowSecurityDrawer] = useState(false);
+  const [showKnowledgeDrawer, setShowKnowledgeDrawer] = useState(false);
+  const [viewMode, setViewMode] = useState<'cards' | 'telemetry'>('cards');
   const [sentinelMetrics, setSentinelMetrics] = useState(getSentinelMetrics());
 
   const refreshAgents = () => {
@@ -82,14 +87,52 @@ export const TeamOrganogramView: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center flex-wrap gap-2 self-start sm:self-auto">
+          {/* Alternador de Modo: Organograma vs Grafo de Telemetria */}
+          <div className="flex items-center bg-[#07111F] p-1 rounded-xl border border-white/10">
+            <button
+              type="button"
+              onClick={() => setViewMode('cards')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'cards'
+                  ? 'bg-[#00D2F6] text-[#07111F] shadow'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Organograma</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('telemetry')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'telemetry'
+                  ? 'bg-[#00D2F6] text-[#07111F] shadow'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Radio className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Grafo Neural</span>
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowKnowledgeDrawer(true)}
+            className="px-3 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-purple-500/5"
+            title="Base de Conhecimento Empresarial Anti-Alucinação"
+          >
+            <BookOpen className="w-4 h-4 text-purple-400" />
+            <span className="hidden sm:inline">Base RAG</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setShowSecurityDrawer(true)}
-            className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-emerald-500/5"
+            className="px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-emerald-500/5"
           >
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Auditoria Sentinela 24/7</span>
+            <span className="hidden sm:inline">Sentinela</span>
           </button>
 
           <button
@@ -98,16 +141,20 @@ export const TeamOrganogramView: React.FC = () => {
               setSelectedAgentToEdit(null);
               setShowHireModal(true);
             }}
-            className="px-4 py-2 rounded-xl bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-[#00D2F6]/20 transition-all cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-[#00D2F6]/20 transition-all cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
-            <span>Contratar Agente</span>
+            <span>Contratar</span>
           </button>
         </div>
       </div>
 
-      {/* Banner de Proteção do Sentinela de Cyber Segurança */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-[#091524] border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+      {viewMode === 'telemetry' ? (
+        <AgentNetworkGraph />
+      ) : (
+        <>
+          {/* Banner de Proteção do Sentinela de Cyber Segurança */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#091524] border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
             <ShieldCheck className="w-6 h-6 animate-pulse" />
@@ -307,6 +354,8 @@ export const TeamOrganogramView: React.FC = () => {
           </div>
         ))}
       </div>
+        </>
+      )}
 
       {/* Modal de Contratação / Edição de Subagente */}
       {showHireModal && (
@@ -321,6 +370,12 @@ export const TeamOrganogramView: React.FC = () => {
       {showSecurityDrawer && (
         <SecurityAlertsDrawer onClose={() => setShowSecurityDrawer(false)} />
       )}
+
+      {/* Drawer da Base de Conhecimento RAG Anti-Alucinação */}
+      <KnowledgeBaseDrawer
+        isOpen={showKnowledgeDrawer}
+        onClose={() => setShowKnowledgeDrawer(false)}
+      />
     </div>
   );
 };
