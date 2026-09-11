@@ -39,6 +39,7 @@ import {
   Users,
   AlertTriangle,
   Smartphone,
+  Sliders,
 } from 'lucide-react';
 import {
   ChatContact,
@@ -76,6 +77,8 @@ import { LeadTimelineFeed } from '../crm/LeadTimelineFeed';
 import { Lead } from '../../../lib/supabase';
 import { TeamOrganogramView } from '../team/TeamOrganogramView';
 import { synthesizeSpeechAudio } from '../../../services/voice/voiceStudioService';
+import { agentTeamService, DigitalAgent } from '../../../services/agents/agentTeamService';
+import { AgentConfigDrawer } from '../agents/AgentConfigDrawer';
 
 type SubView = 'chat' | 'diagnostics' | 'kanban' | 'calendar' | 'team';
 
@@ -140,6 +143,13 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
   const [isWhatsAppConnected, setIsWhatsAppConnected] = useState(true);
   const [showReactivationModal, setShowReactivationModal] = useState(false);
   const [lightboxImageUrl, setLightboxImageUrl] = useState<string | null>(null);
+
+  // Especialista Digital Autônomo Conectado à Operação
+  const [activeSpecialist, setActiveSpecialist] = useState<DigitalAgent | null>(() => {
+    const all = agentTeamService.getAgents();
+    return all.find((a) => a.id === 'davi-closer') || all[0] || null;
+  });
+  const [isSpecialistDrawerOpen, setIsSpecialistDrawerOpen] = useState(false);
 
   // Mídias e Gravação de Áudio
   const [stagedMedia, setStagedMedia] = useState<{
@@ -873,6 +883,40 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
           </div>
         </div>
       </div>
+
+      {/* Especialista Digital em Operação no WhatsApp */}
+      {activeSpecialist && (
+        <div className="bg-[#091626] border border-slate-800/90 rounded-2xl px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center relative flex-shrink-0">
+              <Bot className="w-5 h-5 text-emerald-400" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-white">
+                  {activeSpecialist.name} • {activeSpecialist.role}
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold">
+                  Operação 24h Ativa
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Voz Vinculada: <strong className="text-slate-200">{activeSpecialist.voiceName || 'Thiago Cassol Antunes'} (Áudios PTT)</strong> • Qualificação Imediata
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsSpecialistDrawerOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+          >
+            <Sliders className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <span>Configurar Especialista</span>
+          </button>
+        </div>
+      )}
 
       {/* 2. SUB-ABAS DE NAVEGAÇÃO INTERNA */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-shrink-0">
@@ -2174,6 +2218,24 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
           saveContactsLocally(updatedContacts);
           showToast('Disparos de reativação concluídos com sucesso!');
         }}
+      />
+
+      {/* Drawer de Configuração do Especialista Ativo */}
+      <AgentConfigDrawer
+        isOpen={isSpecialistDrawerOpen}
+        agent={activeSpecialist}
+        onClose={() => setIsSpecialistDrawerOpen(false)}
+        onSave={(updated) => {
+          agentTeamService.updateAgent('matriz-tcai', updated.id, updated);
+          setActiveSpecialist(updated);
+          showToast(`Parâmetros de ${updated.name} salvos com sucesso!`);
+        }}
+        onToggleHire={(agentId, price) => {
+          agentTeamService.toggleHireAgent('matriz-tcai', agentId, price);
+          const current = agentTeamService.getAgents().find((a) => a.id === agentId) || null;
+          setActiveSpecialist(current);
+        }}
+        tenantName={config?.company?.companyName || 'TCAI Tecnologia'}
       />
     </div>
   );

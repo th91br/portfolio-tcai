@@ -288,7 +288,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
               </span>
             )}
 
-            {/* Equipe Digital (Especialistas 24h) */}
+            {/* Equipe & Atendentes (Especialistas 24h + Vendedores) */}
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('agents'))}
@@ -297,15 +297,15 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
                   ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
                   : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
               } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
-              title="Equipe Digital (Especialistas 24h)"
+              title="Equipe & Atendentes (Especialistas 24h e Vendedores)"
             >
               <div className="flex items-center gap-3">
-                <Sparkles className={`w-4 h-4 flex-shrink-0 ${activeTab === 'agents' ? 'text-[#00D2F6]' : 'text-amber-400'}`} />
-                {(!isCollapsed || isMobileOpen) && <span>Equipe Digital</span>}
+                <Users className={`w-4 h-4 flex-shrink-0 ${activeTab === 'agents' ? 'text-[#00D2F6]' : 'text-cyan-400'}`} />
+                {(!isCollapsed || isMobileOpen) && <span>Equipe & Atendentes</span>}
               </div>
               {(!isCollapsed || isMobileOpen) && (
                 <span className="px-1.5 py-0.2 rounded-full bg-[#00D2F6]/15 text-[#00D2F6] text-[10px] font-bold border border-[#00D2F6]/30">
-                  24h
+                  Híbrido
                 </span>
               )}
             </button>
@@ -321,19 +321,6 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             >
               <Building className="w-4 h-4 text-indigo-400 flex-shrink-0" />
               {(!isCollapsed || isMobileOpen) && <span>Contas & Faturamento</span>}
-            </button>
-
-            {/* Equipe Comercial */}
-            <button
-              type="button"
-              onClick={() => handleItemClick(() => onOpenModal('team'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all cursor-pointer ${
-                isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
-              }`}
-              title="Equipe Comercial & Distribuição"
-            >
-              <Users className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-              {(!isCollapsed || isMobileOpen) && <span>Equipe & Vendedores</span>}
             </button>
           </div>
 
@@ -369,19 +356,6 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             >
               <Radio className="w-4 h-4 text-purple-400 flex-shrink-0" />
               {(!isCollapsed || isMobileOpen) && <span>Entrada de Leads (Ads)</span>}
-            </button>
-
-            {/* Ajustes de Atendimento */}
-            <button
-              type="button"
-              onClick={() => handleItemClick(() => onOpenModal('settings'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all cursor-pointer ${
-                isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
-              }`}
-              title="Ajustes de Atendimento & Horários"
-            >
-              <Sliders className="w-4 h-4 text-[#00D2F6] flex-shrink-0" />
-              {(!isCollapsed || isMobileOpen) && <span>Ajustes de Atendimento</span>}
             </button>
           </div>
         </div>
