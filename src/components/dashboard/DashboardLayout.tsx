@@ -299,8 +299,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
 
         {/* Conteúdo Principal com Rolagem Suave */}
         <main
-          className={`flex-1 overflow-y-auto w-full transition-all duration-300 ${
-            activeTab === 'pipeline' || activeTab === 'whatsapp' ? 'max-w-[1920px] px-3 sm:px-6 py-4' : 'max-w-7xl mx-auto p-4 sm:p-8'
+          className={`flex-1 w-full transition-all duration-300 ${
+            activeTab === 'whatsapp'
+              ? 'h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden max-w-[1920px] px-2.5 sm:px-4 py-2 sm:py-2.5 flex flex-col'
+              : 'overflow-y-auto ' + (activeTab === 'pipeline' ? 'max-w-[1920px] px-3 sm:px-6 py-4' : 'max-w-7xl mx-auto p-4 sm:p-8')
           }`}
         >
         {loading ? (

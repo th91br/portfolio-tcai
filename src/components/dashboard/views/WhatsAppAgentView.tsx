@@ -849,7 +849,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
       className={`w-full flex flex-col transition-all ${
         isFullscreen
           ? 'fixed inset-0 z-50 p-2 sm:p-3 bg-[#060D17] h-screen overflow-hidden space-y-2'
-          : 'space-y-3'
+          : 'h-full max-h-full overflow-hidden space-y-2'
       }`}
     >
       {/* Toast Notification Flutuante */}
@@ -988,55 +988,55 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
       ) : (
         <>
           {/* 1. TOP BANNER DE TELEMETRIA NATIVO */}
-          <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl p-3 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xl relative overflow-hidden flex-shrink-0">
+          <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl p-2.5 sm:p-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5 shadow-xl relative overflow-hidden flex-shrink-0">
             <div className="absolute top-0 left-0 w-64 h-full bg-[#00D2F6]/5 blur-3xl pointer-events-none" />
 
             {/* Lado Esquerdo: Identidade & Status Operacional */}
-            <div className="flex items-center gap-3 z-10 w-full md:w-auto">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-slate-950 font-black shadow-[0_0_20px_rgba(0,210,246,0.3)] flex-shrink-0">
-                <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-slate-950" />
+            <div className="flex items-center gap-2.5 z-10 w-full md:w-auto">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-slate-950 font-black shadow-[0_0_15px_rgba(0,210,246,0.3)] flex-shrink-0">
+                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-slate-950" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-sm sm:text-base md:text-lg font-extrabold text-white tracking-wide uppercase truncate">
+                  <h2 className="text-sm sm:text-base font-extrabold text-white tracking-wide uppercase truncate">
                     Central WhatsApp & Agente IA
                   </h2>
                   <button
                     type="button"
                     onClick={() => setShowConnectModal(true)}
-                    className={'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-bold whitespace-nowrap cursor-pointer transition-all hover:scale-105 ' + (isWhatsAppConnected ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25' : 'bg-rose-500/15 border-rose-500/30 text-rose-400 hover:bg-rose-500/25')}
+                    className={'inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-mono font-bold whitespace-nowrap cursor-pointer transition-all hover:scale-105 ' + (isWhatsAppConnected ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25' : 'bg-rose-500/15 border-rose-500/30 text-rose-400 hover:bg-rose-500/25')}
                     title="Conexão do WhatsApp Web • Clique para gerenciar pareamento e QR Code"
                   >
                     <span className={'w-1.5 h-1.5 rounded-full ' + (isWhatsAppConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400')} />
                     {isWhatsAppConnected ? `ONLINE • ${latencyMs}ms` : 'DESCONECTADO • Parear QR'}
                   </button>
                 </div>
-                <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 font-sans truncate">
+                <p className="text-[11px] text-slate-400 mt-0.5 font-sans truncate">
                   {(config?.company?.companyName || 'TCAI') + ' • Motor ' + (config?.gemini?.model || 'gemini-2.0-flash') + ' • Visão & Áudio Ativos'}
                 </p>
               </div>
             </div>
 
             {/* Lado Direito: KPIs em Tempo Real & Ações */}
-            <div className="flex items-center gap-2 sm:gap-3 z-10 w-full md:w-auto justify-between md:justify-end">
-              <div className="hidden lg:flex items-center gap-3 bg-[#07111F] px-3 py-1.5 rounded-xl border border-white/[0.06] text-xs font-mono shadow-inner">
+            <div className="flex items-center gap-2 sm:gap-2.5 z-10 w-full md:w-auto justify-between md:justify-end">
+              <div className="hidden lg:flex items-center gap-2.5 bg-[#07111F] px-2.5 py-1 rounded-xl border border-white/[0.06] text-xs font-mono shadow-inner">
                 <div className="text-center">
                   <span className="text-[9px] text-slate-400 block uppercase">Leads</span>
                   <span className="font-bold text-[#00D2F6]">{contacts.length || kpis.totalLeads}</span>
                 </div>
-                <div className="w-[1px] h-5 bg-white/[0.08]" />
+                <div className="w-[1px] h-4 bg-white/[0.08]" />
                 <div className="text-center">
                   <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
-                    <Flame className="w-2.5 h-2.5 text-amber-400 inline" /> HOT
+                    <Flame className="w-2 h-2 text-amber-400 inline" /> HOT
                   </span>
                   <span className="font-bold text-amber-400">
                     {diagnostics.filter((d) => d.status === 'HOT').length || kpis.hotLeads}
                   </span>
                 </div>
-                <div className="w-[1px] h-5 bg-white/[0.08]" />
+                <div className="w-[1px] h-4 bg-white/[0.08]" />
                 <div className="text-center">
                   <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
-                    <Calendar className="w-2.5 h-2.5 text-purple-400 inline" /> Meets
+                    <Calendar className="w-2 h-2 text-purple-400 inline" /> Meets
                   </span>
                   <span className="font-bold text-purple-400">
                     {meetings.filter((m) => m.status !== 'CANCELADO').length || kpis.meetingsBooked}
@@ -1044,35 +1044,35 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-2 ml-auto md:ml-0">
+              <div className="flex items-center gap-1.5 ml-auto md:ml-0">
                 {/* Recarregar */}
                 <button
                   type="button"
                   onClick={loadInitialData}
                   disabled={isRefreshing}
-                  className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
+                  className="p-1.5 sm:p-2 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
                   title="Sincronizar Dados"
                 >
-                  <RefreshCw className={'w-3.5 h-3.5 sm:w-4 sm:h-4 ' + (isRefreshing ? 'animate-spin text-[#00D2F6]' : '')} />
+                  <RefreshCw className={'w-3.5 h-3.5 ' + (isRefreshing ? 'animate-spin text-[#00D2F6]' : '')} />
                 </button>
 
                 {/* Tela Cheia */}
                 <button
                   type="button"
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
+                  className="p-1.5 sm:p-2 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
                   title={isFullscreen ? 'Sair do Modo Expandido' : 'Modo Tela Cheia'}
                 >
-                  {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />}
+                  {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 text-slate-300" />}
                 </button>
 
                 {/* Configurações IA */}
                 <button
                   type="button"
                   onClick={() => setShowSettingsModal(true)}
-                  className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-[#00D2F6]/30 bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-[11px] sm:text-xs font-mono text-[#00D2F6] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.15)] whitespace-nowrap"
+                  className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-[#00D2F6]/30 bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-[11px] font-mono text-[#00D2F6] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-[0_0_12px_rgba(0,210,246,0.15)] whitespace-nowrap"
                 >
-                  <Settings className="w-3.5 h-3.5 text-[#00D2F6]" />
+                  <Settings className="w-3 h-3 text-[#00D2F6]" />
                   <span>Ajustes IA</span>
                 </button>
               </div>
@@ -1081,22 +1081,22 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
           {/* Especialista Digital em Operação no WhatsApp */}
           {activeSpecialist && (
-            <div className="bg-[#091626] border border-slate-800/90 rounded-2xl px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center relative flex-shrink-0">
-                  <Bot className="w-5 h-5 text-emerald-400" />
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="bg-[#091626] border border-slate-800/90 rounded-2xl px-3 py-1.5 sm:py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-md flex-shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center relative flex-shrink-0">
+                  <Bot className="w-4 h-4 text-emerald-400" />
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-white">
                       {activeSpecialist.name} • {activeSpecialist.role}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold">
+                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[9px] font-semibold">
                       Operação 24h Ativa
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[10px] text-slate-400">
                     Voz Vinculada: <strong className="text-slate-200">{activeSpecialist.voiceName || 'Thiago Cassol Antunes'} (Áudios PTT)</strong> • Qualificação Imediata
                   </p>
                 </div>
@@ -1105,20 +1105,20 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
               <button
                 type="button"
                 onClick={() => setIsSpecialistDrawerOpen(true)}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+                className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-[11px] font-medium text-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
               >
-                <Sliders className="w-3.5 h-3.5 text-[#00D2F6]" />
+                <Sliders className="w-3 h-3 text-[#00D2F6]" />
                 <span>Configurar Especialista</span>
               </button>
             </div>
           )}
 
           {/* 2. SUB-ABAS DE NAVEGAÇÃO INTERNA (FOCO 100% EM ATENDIMENTO & VENDAS) */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-shrink-0">
+          <div className="flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-none flex-shrink-0">
             <button
               type="button"
               onClick={() => setActiveSubView('chat')}
-              className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'chat' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
+              className={'px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ' + (activeSubView === 'chat' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
             >
               <MessageSquare className="w-3.5 h-3.5" />
               <span>Conversas WhatsApp ({contacts.length})</span>
@@ -1127,7 +1127,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
             <button
               type="button"
               onClick={() => setActiveSubView('diagnostics')}
-              className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'diagnostics' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
+              className={'px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ' + (activeSubView === 'diagnostics' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
             >
               <Flame className="w-3.5 h-3.5 text-amber-400" />
               <span>Diagnósticos HOT ({diagnostics.length})</span>
@@ -1136,7 +1136,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
             <button
               type="button"
               onClick={() => setActiveSubView('calendar')}
-              className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'calendar' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
+              className={'px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ' + (activeSubView === 'calendar' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
             >
               <Calendar className="w-3.5 h-3.5 text-purple-400" />
               <span>Agenda Google Meet ({meetings.length})</span>
@@ -1148,12 +1148,12 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
       {/* 3. PAINEL PRINCIPAL DINÂMICO */}
       <div
         className={`bg-[#0A1624] border border-[#16273C] rounded-2xl flex-1 flex overflow-hidden shadow-2xl min-h-0 ${
-          isFullscreen ? 'h-full' : 'h-[680px] xl:h-[720px] min-h-[580px]'
+          isFullscreen ? 'h-full' : 'h-full max-h-full'
         }`}
       >
         {/* SUB-VISÃO: CHAT WHATSAPP COMPLETO */}
         {activeSubView === 'chat' && (
-          <div className="flex-1 flex overflow-hidden min-h-0 h-full">
+          <div className="w-full flex-1 flex overflow-hidden min-h-0 h-full">
             {/* COLUNA ESQUERDA: LISTA DE CONTATOS */}
             <div className="w-full sm:w-72 lg:w-80 border-r border-[#16273C] bg-[#0A1624] flex flex-col flex-shrink-0 min-h-0 h-full">
               {/* Barra de Busca e Filtros */}
@@ -1256,7 +1256,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
             </div>
 
             {/* COLUNA CENTRAL: CHAT COM O LEAD */}
-            <div className="flex-1 flex flex-col bg-[#07111F] min-w-0 min-h-0 h-full self-stretch">
+            <div className="flex-1 flex flex-col bg-[#07111F] min-w-0 min-h-0 self-stretch">
               {/* Header do Chat Ativo */}
               {activeContact && (
                 <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-[#16273C] bg-[#0A1624] flex items-center justify-between flex-shrink-0 gap-2">
@@ -1375,18 +1375,36 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
               {/* Mensagens do Chat */}
               <div ref={messagesContainerRef} className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-3 min-h-0">
-                {(activeContact?.messages || []).map((msg, idx) => {
-                  const isAgent = msg.sender === 'agent';
-                  return (
-                    <div
-                      key={idx}
-                      className={'flex items-end gap-2 ' + (isAgent ? 'justify-end' : 'justify-start')}
-                    >
-                      {!isAgent && (
-                        <div className="w-6 h-6 rounded-lg bg-[#0A1624] border border-white/10 flex items-center justify-center text-xs flex-shrink-0">
-                          {activeContact?.avatar || '💼'}
-                        </div>
-                      )}
+                {(activeContact?.messages || []).length === 0 ? (
+                  <div className="h-full min-h-[160px] flex flex-col items-center justify-center text-center p-6 text-slate-500 space-y-2 select-none">
+                    <div className="w-11 h-11 rounded-2xl bg-[#0A1624] border border-white/10 flex items-center justify-center text-xl shadow-inner">
+                      {activeContact?.avatar || '💼'}
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-slate-300">
+                        Atendimento iniciado com {activeContact?.name}
+                      </p>
+                      <p className="text-[11px] text-slate-400 font-mono">
+                        {activeContact?.company} • {activeContact?.phone}
+                      </p>
+                      <p className="text-[10px] text-slate-500 max-w-sm pt-0.5">
+                        Canal direto via WhatsApp Web ativo. Digite abaixo ou use os atalhos para gerar respostas com o Copiloto IA.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  (activeContact?.messages || []).map((msg, idx) => {
+                    const isAgent = msg.sender === 'agent';
+                    return (
+                      <div
+                        key={idx}
+                        className={'flex items-end gap-2 ' + (isAgent ? 'justify-end' : 'justify-start')}
+                      >
+                        {!isAgent && (
+                          <div className="w-6 h-6 rounded-lg bg-[#0A1624] border border-white/10 flex items-center justify-center text-xs flex-shrink-0">
+                            {activeContact?.avatar || '💼'}
+                          </div>
+                        )}
 
                       <div
                         className={'max-w-[85%] sm:max-w-[75%] rounded-2xl p-3 shadow-md space-y-1.5 ' + (isAgent ? 'bg-gradient-to-r from-[#00D2F6] to-[#015EEF] text-slate-950 font-medium rounded-br-none' : 'bg-[#0A1624] border border-[#16273C] text-slate-100 rounded-bl-none')}
@@ -1435,7 +1453,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                       </div>
                     </div>
                   );
-                })}
+                }))}
 
                 {/* Indicador de Digitação da IA */}
                 {isAiResponding && (
