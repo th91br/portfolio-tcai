@@ -61,6 +61,7 @@ export interface Deal {
   pipeline_id?: string;
   assigned_rep_id?: string;
   assigned_rep_name?: string;
+  tenant_id?: string;
   created_at: string;
   updated_at: string;
   lead?: Lead;
@@ -160,6 +161,7 @@ export interface Lead {
   pipeline_id?: string;
   assigned_rep_id?: string;
   assigned_rep_name?: string;
+  tenant_id?: string;
   created_at: string;
   updated_at: string;
 }

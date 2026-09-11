@@ -75,6 +75,7 @@ import { CommercialProposal } from '../../../services/crm/proposalsService';
 import { LeadTimelineFeed } from '../crm/LeadTimelineFeed';
 import { Lead } from '../../../lib/supabase';
 import { TeamOrganogramView } from '../team/TeamOrganogramView';
+import { synthesizeSpeechAudio } from '../../../services/voice/voiceStudioService';
 
 type SubView = 'chat' | 'diagnostics' | 'kanban' | 'calendar' | 'team';
 
@@ -133,6 +134,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
   const [aiPaused, setAiPaused] = useState(false);
   const [operationalMode, setOperationalMode] = useState<ChatOperationalMode>('copilot');
   const [copilotDraft, setCopilotDraft] = useState<string | null>(null);
+  const [isGeneratingAudioDraft, setIsGeneratingAudioDraft] = useState(false);
   const [handoverAlert, setHandoverAlert] = useState<{ needsHandover: boolean; reason?: string } | null>(null);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [isWhatsAppConnected, setIsWhatsAppConnected] = useState(true);
@@ -463,6 +465,52 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
   const handleSendDraft = (draftText: string) => {
     handleSendMessage(undefined, draftText);
     setCopilotDraft(null);
+  };
+
+  const handleSendDraftAsAudio = async (draftText: string) => {
+    if (!activeContact) return;
+    setIsGeneratingAudioDraft(true);
+    try {
+      const audioRes = await synthesizeSpeechAudio(draftText);
+      const now = new Date();
+      const timeStr =
+        String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+      const audioMessage: ChatMessage = {
+        sender: 'agent',
+        text: draftText,
+        time: timeStr,
+        media: {
+          type: 'audio',
+          url: audioRes.audioUrl,
+          filename: 'voz-clonada-ptt.ogg',
+          caption: `🎙️ Áudio PTT (${audioRes.voiceUsed.name})`,
+        },
+      };
+
+      const updatedContacts = contacts.map((c) => {
+        if (c.id === activeContact.id) {
+          return {
+            ...c,
+            messages: [...(c.messages || []), audioMessage],
+            lastMessage: `🎙️ Áudio (${audioRes.voiceUsed.name})`,
+            lastMessageTime: timeStr,
+          };
+        }
+        return c;
+      });
+
+      setContacts(updatedContacts);
+      saveContactsLocally(updatedContacts);
+      setCopilotDraft(null);
+      showToast(`Áudio PTT gerado e enviado com a voz de ${audioRes.voiceUsed.name}!`);
+    } catch (err) {
+      console.error('Erro ao enviar áudio do copiloto:', err);
+      showToast('Falha na síntese de voz. Enviando como texto...');
+      handleSendDraft(draftText);
+    } finally {
+      setIsGeneratingAudioDraft(false);
+    }
   };
 
   // Detecção Automática de Gatilhos de Transbordo Humano (Handover)
@@ -1098,12 +1146,15 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                           </div>
                         )}
 
-                        {/* Pré-visualização de Áudio */}
+                        {/* Pré-visualização de Áudio PTT */}
                         {msg.media?.type === 'audio' && msg.media.url && (
-                          <div className="p-2 rounded-xl bg-black/20 space-y-1">
-                            <div className="flex items-center gap-2 text-xs font-mono">
-                              <Mic className="w-4 h-4" />
-                              <span>Áudio de voz ({msg.media.filename || 'gravação'})</span>
+                          <div className={'p-2.5 rounded-xl space-y-1.5 ' + (isAgent ? 'bg-black/30 text-white' : 'bg-black/20 text-slate-200')}>
+                            <div className="flex items-center justify-between text-[11px] font-mono">
+                              <span className="flex items-center gap-1.5 font-bold text-emerald-400">
+                                <Mic className="w-3.5 h-3.5" />
+                                {msg.media.caption || 'Áudio de Voz (PTT)'}
+                              </span>
+                              <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold">PTT HD</span>
                             </div>
                             <audio controls src={msg.media.url} className="w-full h-8" />
                           </div>
@@ -1182,10 +1233,24 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                       <button
                         type="button"
                         onClick={() => handleSendDraft(copilotDraft)}
-                        className="px-3.5 py-1 rounded-lg text-xs font-mono font-bold bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] shadow-lg shadow-[#00D2F6]/20 transition-all cursor-pointer flex items-center gap-1.5"
+                        className="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] shadow-lg shadow-[#00D2F6]/20 transition-all cursor-pointer flex items-center gap-1.5"
                       >
                         <Send className="w-3.5 h-3.5" />
-                        <span>Aprovar & Enviar</span>
+                        <span>Texto</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSendDraftAsAudio(copilotDraft)}
+                        disabled={isGeneratingAudioDraft}
+                        className="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-gradient-to-r from-purple-500 to-[#00D2F6] hover:brightness-110 text-white shadow-lg shadow-purple-500/20 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                        title="Sintetizar com a voz clonada ativa e enviar como áudio nativo PTT"
+                      >
+                        {isGeneratingAudioDraft ? (
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Mic className="w-3.5 h-3.5" />
+                        )}
+                        <span>Áudio PTT</span>
                       </button>
                     </div>
                   </div>

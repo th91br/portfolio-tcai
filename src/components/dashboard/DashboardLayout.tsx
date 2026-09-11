@@ -19,6 +19,9 @@ import {
   MessageSquare,
   Cpu,
   Radio,
+  Building,
+  Mic,
+  ChevronDown,
 } from 'lucide-react';
 import {
   Lead,
@@ -51,6 +54,14 @@ import { ChangePasswordModal } from './auth/ChangePasswordModal';
 import { AgentSettingsModal } from './settings/AgentSettingsModal';
 import { WebhookHubModal } from './integrations/WebhookHubModal';
 import { SalesTeamModal } from './team/SalesTeamModal';
+import { TenantMasterModal } from './tenants/TenantMasterModal';
+import { VoiceStudioModal } from './voice/VoiceStudioModal';
+import {
+  Tenant,
+  getActiveTenant,
+  getStoredTenants,
+  setActiveTenantId,
+} from '../../services/tenants/tenantService';
 
 interface DashboardLayoutProps {
   user: User;
@@ -97,6 +108,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
   const [showAgentSettingsModal, setShowAgentSettingsModal] = useState(false);
   const [showWebhookHubModal, setShowWebhookHubModal] = useState(false);
   const [showSalesTeamModal, setShowSalesTeamModal] = useState(false);
+  const [showTenantMasterModal, setShowTenantMasterModal] = useState(false);
+  const [showVoiceStudioModal, setShowVoiceStudioModal] = useState(false);
+  const [activeTenant, setActiveTenant] = useState<Tenant>(getActiveTenant());
+  const [allTenants, setAllTenants] = useState<Tenant[]>(getStoredTenants());
+  const [showTenantDropdown, setShowTenantDropdown] = useState(false);
   const [isProcessingDemo, setIsProcessingDemo] = useState(false);
   const [showDeleteDemoModal, setShowDeleteDemoModal] = useState(false);
   const [demoFeedback, setDemoFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -207,6 +223,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
     };
   }, [loadData]);
 
+  useEffect(() => {
+    const handleTenantChanged = () => {
+      setActiveTenant(getActiveTenant());
+      setAllTenants(getStoredTenants());
+      loadData();
+      setRefreshKey((k) => k + 1);
+    };
+    window.addEventListener('tcai_tenant_changed', handleTenantChanged);
+    return () => window.removeEventListener('tcai_tenant_changed', handleTenantChanged);
+  }, [loadData]);
+
   const newLeadsCount = leads.filter((l) => l.status === 'NOVO').length;
   const now = new Date().getTime();
   const overdueFollowUpsCount = followUps.filter(
@@ -217,26 +244,89 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
     <div className="min-h-screen w-full bg-[#07111F] text-[#F3F5F7] font-kanit flex flex-col selection:bg-[#00D2F6]/30 selection:text-white">
       {/* Top Bar Administrativa */}
       <header className="sticky top-0 z-40 bg-[#0A1624]/90 backdrop-blur-xl border-b border-white/[0.08] px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
-        {/* Marca & Título */}
-        <div className="flex items-center gap-3">
-          <img
-            src="/logo_tca.png"
-            alt="Logo TCA"
-            className="h-7 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,210,246,0.3)]"
-          />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-xs sm:text-sm text-white tracking-wide uppercase">
-                THIAGO CASSOL ANTUNES
-              </span>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[9px] font-mono text-[#00D2F6] font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
-                DASHBOARD PRIVADO
+        {/* Marca, Título & Tenant Switcher */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo_tca.png"
+              alt="Logo TCA"
+              className="h-7 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,210,246,0.3)]"
+            />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-xs sm:text-sm text-white tracking-wide uppercase">
+                  THIAGO CASSOL ANTUNES
+                </span>
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[9px] font-mono text-[#00D2F6] font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
+                  DASHBOARD PRIVADO
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-slate-400 truncate max-w-[220px]">
+                {user.email}
               </span>
             </div>
-            <span className="text-[10px] font-mono text-slate-400 truncate max-w-[220px]">
-              {user.email}
-            </span>
+          </div>
+
+          {/* Seletor Rápido de Ambiente / Tenant */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowTenantDropdown(!showTenantDropdown)}
+              className="px-2.5 py-1.5 rounded-xl border border-indigo-500/30 hover:border-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 text-xs font-mono text-indigo-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(99,102,241,0.15)]"
+              title="Alternar entre contas de clientes corporativos (Multi-Tenant)"
+            >
+              <Building className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="font-bold text-white max-w-[130px] sm:max-w-[180px] truncate">
+                {activeTenant.tradingName}
+              </span>
+              <span className="hidden md:inline px-1.5 py-0.2 rounded bg-indigo-500/20 text-[9px] text-indigo-300 uppercase">
+                {activeTenant.status}
+              </span>
+              <ChevronDown className="w-3 h-3 text-slate-400" />
+            </button>
+
+            {showTenantDropdown && (
+              <div className="absolute left-0 mt-2 w-64 bg-[#091524] border border-white/10 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in">
+                <div className="px-2 py-1 text-[10px] font-mono text-slate-400 uppercase tracking-wider border-b border-white/5 mb-1">
+                  Contas Corporativas
+                </div>
+                <div className="space-y-1 max-h-48 overflow-y-auto">
+                  {allTenants.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveTenantId(t.id);
+                        setActiveTenant(t);
+                        setShowTenantDropdown(false);
+                        loadData();
+                      }}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center justify-between transition-colors cursor-pointer ${
+                        t.id === activeTenant.id
+                          ? 'bg-indigo-500/20 text-indigo-300 font-bold'
+                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <span className="truncate">{t.tradingName}</span>
+                      <span className="text-[10px] text-slate-500">{t.segment.slice(0, 5)}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="pt-1.5 mt-1 border-t border-white/5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowTenantDropdown(false);
+                      setShowTenantMasterModal(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg text-xs font-mono text-center text-[#00D2F6] hover:bg-[#00D2F6]/10 font-bold transition-colors cursor-pointer"
+                  >
+                    ⚙️ Gerenciar Clientes & MRR
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -282,6 +372,30 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
             onSelectLead={(id) => setSelectedLeadId(id)}
             refreshTrigger={refreshKey}
           />
+
+          {/* Botão de Clientes Corporativos & MRR */}
+          <button
+            type="button"
+            onClick={() => setShowTenantMasterModal(true)}
+            className="px-3 py-1.5 rounded-full border border-indigo-500/30 hover:border-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 text-xs font-mono text-indigo-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(99,102,241,0.15)]"
+            title="Painel SuperAdmin: Gestão de Clientes B2B, Planos e MRR"
+          >
+            <Building className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="hidden sm:inline font-bold">Clientes & MRR</span>
+            <span className="sm:hidden font-bold">MRR</span>
+          </button>
+
+          {/* Botão de Voice Studio (Clonagem de Voz PTT) */}
+          <button
+            type="button"
+            onClick={() => setShowVoiceStudioModal(true)}
+            className="px-3 py-1.5 rounded-full border border-purple-500/30 hover:border-purple-400 bg-purple-500/10 hover:bg-purple-500/20 text-xs font-mono text-purple-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.15)]"
+            title="Voice Studio: Clonagem de Voz, Síntese PTT e Regras Estratégicas de Áudio"
+          >
+            <Mic className="w-3.5 h-3.5 text-purple-400" />
+            <span className="hidden sm:inline font-bold">Voice Studio</span>
+            <span className="sm:hidden font-bold">Voz</span>
+          </button>
 
           {/* Botão de Webhook Inbound & Ads */}
           <button
@@ -551,6 +665,23 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           loadData();
           setRefreshKey((k) => k + 1);
         }}
+      />
+
+      {/* Modal Master de Clientes Corporativos & MRR */}
+      <TenantMasterModal
+        isOpen={showTenantMasterModal}
+        onClose={() => setShowTenantMasterModal(false)}
+        onSelectTenant={(tenant) => {
+          setActiveTenant(tenant);
+          loadData();
+          setRefreshKey((k) => k + 1);
+        }}
+      />
+
+      {/* Modal Voice Studio & Clonagem de Voz PTT */}
+      <VoiceStudioModal
+        isOpen={showVoiceStudioModal}
+        onClose={() => setShowVoiceStudioModal(false)}
       />
 
       {/* Toast de Feedback Demo */}
