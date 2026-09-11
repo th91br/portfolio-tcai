@@ -28,7 +28,14 @@ import {
   X,
 } from 'lucide-react';
 
-export type DashboardTabKey = 'overview' | 'pipeline' | 'followups' | 'leads' | 'analytics' | 'whatsapp';
+export type DashboardTabKey =
+  | 'overview'
+  | 'pipeline'
+  | 'followups'
+  | 'leads'
+  | 'analytics'
+  | 'whatsapp'
+  | 'agents';
 
 export type DashboardModalKey =
   | 'tenants'
@@ -280,6 +287,28 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
                 Empresas & Gestão
               </span>
             )}
+
+            {/* Equipe Digital (Especialistas 24h) */}
+            <button
+              type="button"
+              onClick={() => handleItemClick(() => onSelectTab('agents'))}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                activeTab === 'agents'
+                  ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
+                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              title="Equipe Digital (Especialistas 24h)"
+            >
+              <div className="flex items-center gap-3">
+                <Sparkles className={`w-4 h-4 flex-shrink-0 ${activeTab === 'agents' ? 'text-[#00D2F6]' : 'text-amber-400'}`} />
+                {(!isCollapsed || isMobileOpen) && <span>Equipe Digital</span>}
+              </div>
+              {(!isCollapsed || isMobileOpen) && (
+                <span className="px-1.5 py-0.2 rounded-full bg-[#00D2F6]/15 text-[#00D2F6] text-[10px] font-bold border border-[#00D2F6]/30">
+                  24h
+                </span>
+              )}
+            </button>
 
             {/* Contas & Faturamento (MRR) */}
             <button

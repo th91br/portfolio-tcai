@@ -48,6 +48,7 @@ import { PipelineKanbanView } from './views/PipelineKanbanView';
 import { FollowUpsView } from './views/FollowUpsView';
 import { AnalyticsView } from './views/AnalyticsView';
 import { WhatsAppAgentView } from './views/WhatsAppAgentView';
+import { AgentsMarketplaceView } from './views/AgentsMarketplaceView';
 import { LeadDetailsDrawer } from './views/LeadDetailsDrawer';
 import { NotificationsCenter } from './notifications/NotificationsCenter';
 import { ChangePasswordModal } from './auth/ChangePasswordModal';
@@ -361,6 +362,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
 
             {activeTab === 'whatsapp' && (
               <WhatsAppAgentView leads={leads} />
+            )}
+
+            {activeTab === 'agents' && (
+              <AgentsMarketplaceView activeTenant={activeTenant} />
             )}
           </>
         )}

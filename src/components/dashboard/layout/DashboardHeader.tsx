@@ -47,6 +47,7 @@ const TAB_TITLES: Record<DashboardTabKey, { section: string; title: string }> = 
   leads: { section: 'Comercial', title: 'Oportunidades & Leads' },
   followups: { section: 'Comercial', title: 'Compromissos & Agenda' },
   analytics: { section: 'Comercial', title: 'Métricas & Conversão' },
+  agents: { section: 'Empresas & Gestão', title: 'Equipe Digital' },
 };
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
