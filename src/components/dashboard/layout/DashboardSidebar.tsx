@@ -95,14 +95,32 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         } ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-64'}`}
       >
         {/* Cabeçalho da Sidebar */}
-        <div className="h-16 px-4 flex items-center justify-between border-b border-slate-800/80">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <img
-              src="/logo_tca.png"
-              alt="Logo TCA"
-              className="h-7 w-auto object-contain flex-shrink-0 drop-shadow-[0_2px_8px_rgba(0,210,246,0.3)]"
-            />
-            {(!isCollapsed || isMobileOpen) && (
+        {isCollapsed && !isMobileOpen ? (
+          <div className="h-16 flex items-center justify-center border-b border-slate-800/80">
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-800/80 transition-all text-slate-400 hover:text-white group cursor-pointer relative"
+              title="Expandir barra lateral"
+            >
+              <img
+                src="/logo_tca.png"
+                alt="Logo TCA"
+                className="h-7 w-auto object-contain group-hover:scale-105 transition-transform drop-shadow-[0_2px_8px_rgba(0,210,246,0.3)]"
+              />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#07111F] border border-slate-700 flex items-center justify-center text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity shadow">
+                <ChevronRight className="w-2.5 h-2.5 text-[#00D2F6]" />
+              </div>
+            </button>
+          </div>
+        ) : (
+          <div className="h-16 px-4 flex items-center justify-between border-b border-slate-800/80">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <img
+                src="/logo_tca.png"
+                alt="Logo TCA"
+                className="h-7 w-auto object-contain flex-shrink-0 drop-shadow-[0_2px_8px_rgba(0,210,246,0.3)]"
+              />
               <div className="flex flex-col truncate">
                 <span className="text-xs font-bold text-white tracking-wider uppercase font-sans">
                   TCAI COMERCIAL
@@ -111,26 +129,26 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
                   Motor de Vendas B2B
                 </span>
               </div>
-            )}
+            </div>
+
+            {/* Botão de Fechar no Mobile */}
+            <button
+              onClick={onCloseMobile}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 lg:hidden cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Botão de Recolher no Desktop */}
+            <button
+              onClick={onToggleCollapse}
+              className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Recolher barra lateral"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
           </div>
-
-          {/* Botão de Fechar no Mobile */}
-          <button
-            onClick={onCloseMobile}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 lg:hidden cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
-          {/* Botão de Recolher/Expandir no Desktop */}
-          <button
-            onClick={onToggleCollapse}
-            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-            title={isCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
-          >
-            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
-        </div>
+        )}
 
         {/* Busca Rápida Estilo ⌘K */}
         {(!isCollapsed || isMobileOpen) ? (
@@ -149,36 +167,53 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             </div>
           </div>
         ) : (
-          <div className="py-3 flex justify-center">
+          <div className="py-2.5 flex justify-center">
             <button
+              type="button"
               onClick={() => onSelectTab('leads')}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white cursor-pointer"
+              className="w-10 h-10 mx-auto flex items-center justify-center rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer shadow-sm"
               title="Buscar (⌘K)"
             >
-              <Search className="w-4 h-4" />
+              <Search className="w-4 h-4 flex-shrink-0" />
             </button>
           </div>
         )}
 
         {/* Lista de Navegação por Grupos */}
-        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
+        <div
+          className={`flex-1 py-2 space-y-4 ${
+            isCollapsed && !isMobileOpen
+              ? 'px-0 overflow-y-auto scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+              : 'px-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800'
+          }`}
+        >
           {/* Grupo 1: Comercial */}
-          <div className="space-y-1">
-            {(!isCollapsed || isMobileOpen) && (
+          <div className={`space-y-1 ${isCollapsed && !isMobileOpen ? 'w-full flex flex-col items-center' : ''}`}>
+            {(!isCollapsed || isMobileOpen) ? (
               <span className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
                 Comercial
               </span>
+            ) : (
+              <div className="my-1.5 w-8 h-[1px] bg-slate-800/80 mx-auto" />
             )}
 
             {/* Visão Geral */}
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('overview'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                activeTab === 'overview'
-                  ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? `w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative ${
+                      activeTab === 'overview'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 shadow-[0_0_12px_rgba(0,210,246,0.15)]'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    }`
+                  : `w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium ${
+                      activeTab === 'overview'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`
+              }`}
               title="Painel Geral"
             >
               <LayoutDashboard className={`w-4 h-4 flex-shrink-0 ${activeTab === 'overview' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
@@ -189,19 +224,34 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('whatsapp'))}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                activeTab === 'whatsapp'
-                  ? 'bg-emerald-500/15 text-emerald-300 font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? `w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative ${
+                      activeTab === 'whatsapp'
+                        ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    }`
+                  : `w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium ${
+                      activeTab === 'whatsapp'
+                        ? 'bg-emerald-500/15 text-emerald-300 font-semibold'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`
+              }`}
               title="Atendimento WhatsApp"
             >
-              <div className="flex items-center gap-3">
-                <MessageSquare className={`w-4 h-4 flex-shrink-0 ${activeTab === 'whatsapp' ? 'text-emerald-400' : 'text-slate-400'}`} />
-                {(!isCollapsed || isMobileOpen) && <span>Atendimento WhatsApp</span>}
-              </div>
-              {(!isCollapsed || isMobileOpen) && (
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              {isCollapsed && !isMobileOpen ? (
+                <>
+                  <MessageSquare className={`w-4 h-4 flex-shrink-0 ${activeTab === 'whatsapp' ? 'text-emerald-400' : 'text-slate-400'}`} />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <MessageSquare className={`w-4 h-4 flex-shrink-0 ${activeTab === 'whatsapp' ? 'text-emerald-400' : 'text-slate-400'}`} />
+                    <span>Atendimento WhatsApp</span>
+                  </div>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                </>
               )}
             </button>
 
@@ -209,11 +259,19 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('pipeline'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                activeTab === 'pipeline'
-                  ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? `w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative ${
+                      activeTab === 'pipeline'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 shadow-[0_0_12px_rgba(0,210,246,0.15)]'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    }`
+                  : `w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium ${
+                      activeTab === 'pipeline'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`
+              }`}
               title="Funis de Vendas (Kanban)"
             >
               <Kanban className={`w-4 h-4 flex-shrink-0 ${activeTab === 'pipeline' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
@@ -224,21 +282,42 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('leads'))}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                activeTab === 'leads'
-                  ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? `w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative ${
+                      activeTab === 'leads'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 shadow-[0_0_12px_rgba(0,210,246,0.15)]'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    }`
+                  : `w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium ${
+                      activeTab === 'leads'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`
+              }`}
               title="Oportunidades & Leads"
             >
-              <div className="flex items-center gap-3">
-                <Users className={`w-4 h-4 flex-shrink-0 ${activeTab === 'leads' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
-                {(!isCollapsed || isMobileOpen) && <span>Oportunidades & Leads</span>}
-              </div>
-              {(!isCollapsed || isMobileOpen) && newLeadsCount > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-[#07111F] text-[10px] font-bold">
-                  {newLeadsCount}
-                </span>
+              {isCollapsed && !isMobileOpen ? (
+                <>
+                  <Users className={`w-4 h-4 flex-shrink-0 ${activeTab === 'leads' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
+                  {newLeadsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-amber-400 text-[#07111F] text-[9px] font-bold flex items-center justify-center shadow">
+                      {newLeadsCount}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <Users className={`w-4 h-4 flex-shrink-0 ${activeTab === 'leads' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
+                    <span>Oportunidades & Leads</span>
+                  </div>
+                  {newLeadsCount > 0 && (
+                    <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-[#07111F] text-[10px] font-bold">
+                      {newLeadsCount}
+                    </span>
+                  )}
+                </>
               )}
             </button>
 
@@ -246,21 +325,42 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('followups'))}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                activeTab === 'followups'
-                  ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? `w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative ${
+                      activeTab === 'followups'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 shadow-[0_0_12px_rgba(0,210,246,0.15)]'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    }`
+                  : `w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium ${
+                      activeTab === 'followups'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`
+              }`}
               title="Compromissos & Agenda"
             >
-              <div className="flex items-center gap-3">
-                <Clock className={`w-4 h-4 flex-shrink-0 ${activeTab === 'followups' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
-                {(!isCollapsed || isMobileOpen) && <span>Compromissos & Agenda</span>}
-              </div>
-              {(!isCollapsed || isMobileOpen) && overdueFollowUpsCount > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-bold">
-                  {overdueFollowUpsCount}
-                </span>
+              {isCollapsed && !isMobileOpen ? (
+                <>
+                  <Clock className={`w-4 h-4 flex-shrink-0 ${activeTab === 'followups' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
+                  {overdueFollowUpsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shadow">
+                      {overdueFollowUpsCount}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <Clock className={`w-4 h-4 flex-shrink-0 ${activeTab === 'followups' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
+                    <span>Compromissos & Agenda</span>
+                  </div>
+                  {overdueFollowUpsCount > 0 && (
+                    <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-bold">
+                      {overdueFollowUpsCount}
+                    </span>
+                  )}
+                </>
               )}
             </button>
 
@@ -268,11 +368,19 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('analytics'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                activeTab === 'analytics'
-                  ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? `w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative ${
+                      activeTab === 'analytics'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 shadow-[0_0_12px_rgba(0,210,246,0.15)]'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    }`
+                  : `w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium ${
+                      activeTab === 'analytics'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`
+              }`}
               title="Métricas & Conversão"
             >
               <BarChart3 className={`w-4 h-4 flex-shrink-0 ${activeTab === 'analytics' ? 'text-[#00D2F6]' : 'text-slate-400'}`} />
@@ -281,32 +389,49 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           </div>
 
           {/* Grupo 2: Empresas & Gestão */}
-          <div className="space-y-1 pt-2 border-t border-slate-800/60">
-            {(!isCollapsed || isMobileOpen) && (
-              <span className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
+          <div className={`space-y-1 ${isCollapsed && !isMobileOpen ? 'w-full flex flex-col items-center' : ''}`}>
+            {(!isCollapsed || isMobileOpen) ? (
+              <span className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5 pt-2 border-t border-slate-800/60">
                 Empresas & Gestão
               </span>
+            ) : (
+              <div className="my-1.5 w-8 h-[1px] bg-slate-800/80 mx-auto" />
             )}
 
             {/* Equipe & Atendentes (Especialistas 24h + Vendedores) */}
             <button
               type="button"
               onClick={() => handleItemClick(() => onSelectTab('agents'))}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                activeTab === 'agents'
-                  ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-              } ${isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''}`}
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? `w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative ${
+                      activeTab === 'agents'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 shadow-[0_0_12px_rgba(0,210,246,0.15)]'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    }`
+                  : `w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium ${
+                      activeTab === 'agents'
+                        ? 'bg-[#00D2F6]/15 text-[#00D2F6] font-semibold'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`
+              }`}
               title="Equipe & Atendentes (Especialistas 24h e Vendedores)"
             >
-              <div className="flex items-center gap-3">
-                <Users className={`w-4 h-4 flex-shrink-0 ${activeTab === 'agents' ? 'text-[#00D2F6]' : 'text-cyan-400'}`} />
-                {(!isCollapsed || isMobileOpen) && <span>Equipe & Atendentes</span>}
-              </div>
-              {(!isCollapsed || isMobileOpen) && (
-                <span className="px-1.5 py-0.2 rounded-full bg-[#00D2F6]/15 text-[#00D2F6] text-[10px] font-bold border border-[#00D2F6]/30">
-                  Híbrido
-                </span>
+              {isCollapsed && !isMobileOpen ? (
+                <>
+                  <Users className={`w-4 h-4 flex-shrink-0 ${activeTab === 'agents' ? 'text-[#00D2F6]' : 'text-cyan-400'}`} />
+                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#00D2F6]" />
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <Users className={`w-4 h-4 flex-shrink-0 ${activeTab === 'agents' ? 'text-[#00D2F6]' : 'text-cyan-400'}`} />
+                    <span>Equipe & Atendentes</span>
+                  </div>
+                  <span className="px-1.5 py-0.2 rounded-full bg-[#00D2F6]/15 text-[#00D2F6] text-[10px] font-bold border border-[#00D2F6]/30">
+                    Híbrido
+                  </span>
+                </>
               )}
             </button>
 
@@ -314,8 +439,10 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               type="button"
               onClick={() => handleItemClick(() => onOpenModal('tenants'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all cursor-pointer ${
-                isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? 'w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                  : 'w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white'
               }`}
               title="Contas & Faturamento (MRR)"
             >
@@ -325,19 +452,23 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           </div>
 
           {/* Grupo 3: Canais & Automações */}
-          <div className="space-y-1 pt-2 border-t border-slate-800/60">
-            {(!isCollapsed || isMobileOpen) && (
-              <span className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
+          <div className={`space-y-1 ${isCollapsed && !isMobileOpen ? 'w-full flex flex-col items-center' : ''}`}>
+            {(!isCollapsed || isMobileOpen) ? (
+              <span className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5 pt-2 border-t border-slate-800/60">
                 Canais & Configurações
               </span>
+            ) : (
+              <div className="my-1.5 w-8 h-[1px] bg-slate-800/80 mx-auto" />
             )}
 
             {/* Mensagens de Voz */}
             <button
               type="button"
               onClick={() => handleItemClick(() => onOpenModal('voice'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all cursor-pointer ${
-                isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? 'w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                  : 'w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white'
               }`}
               title="Mensagens de Voz & Timbre Comercial"
             >
@@ -349,8 +480,10 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               type="button"
               onClick={() => handleItemClick(() => onOpenModal('webhooks'))}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all cursor-pointer ${
-                isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
+              className={`transition-all cursor-pointer ${
+                isCollapsed && !isMobileOpen
+                  ? 'w-10 h-10 mx-auto flex items-center justify-center rounded-xl relative text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                  : 'w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/60 hover:text-white'
               }`}
               title="Entrada de Leads (Webhooks & Ads)"
             >
@@ -361,13 +494,15 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         </div>
 
         {/* Rodapé da Sidebar: Segurança, Portfólio & Logout */}
-        <div className="p-3 border-t border-slate-800/80 bg-slate-950/40 space-y-1">
+        <div className={`border-t border-slate-800/80 bg-slate-950/40 space-y-1 ${isCollapsed && !isMobileOpen ? 'p-2 flex flex-col items-center' : 'p-3'}`}>
           {/* Trocar Senha */}
           <button
             type="button"
             onClick={() => handleItemClick(() => onOpenModal('password'))}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors cursor-pointer ${
-              isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
+            className={`transition-colors cursor-pointer ${
+              isCollapsed && !isMobileOpen
+                ? 'w-10 h-10 mx-auto flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60'
+                : 'w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
             title="Segurança & Senha"
           >
@@ -378,8 +513,10 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           {/* Ver Portfólio */}
           <a
             href="/"
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors ${
-              isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
+            className={`transition-colors flex items-center ${
+              isCollapsed && !isMobileOpen
+                ? 'w-10 h-10 mx-auto justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60'
+                : 'w-full gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
             title="Ver Portfólio"
           >
@@ -391,8 +528,10 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <button
             type="button"
             onClick={() => handleItemClick(onLogout)}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer ${
-              isCollapsed && !isMobileOpen ? 'justify-center px-0' : ''
+            className={`transition-colors cursor-pointer ${
+              isCollapsed && !isMobileOpen
+                ? 'w-10 h-10 mx-auto flex items-center justify-center rounded-xl text-rose-400 hover:bg-rose-500/10'
+                : 'w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-500/10'
             }`}
             title="Encerrar Sessão"
           >

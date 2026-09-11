@@ -243,6 +243,17 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
     loadInitialData();
   }, []);
 
+  // Atalho Tecla Escape para sair do modo tela cheia
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   // Rolar para a última mensagem apenas internamente no container de chat
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -835,7 +846,11 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
   return (
     <div
-      className={'w-full flex flex-col space-y-3 transition-all ' + (isFullscreen ? 'fixed inset-0 z-50 p-2 sm:p-4 bg-[#060D17] overflow-hidden' : '')}
+      className={`w-full flex flex-col transition-all ${
+        isFullscreen
+          ? 'fixed inset-0 z-50 p-2 sm:p-3 bg-[#060D17] h-screen overflow-hidden space-y-2'
+          : 'space-y-3'
+      }`}
     >
       {/* Toast Notification Flutuante */}
       {toastMessage && (
@@ -845,171 +860,304 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
         </div>
       )}
 
-      {/* 1. TOP BANNER DE TELEMETRIA NATIVO */}
-      <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl p-3 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xl relative overflow-hidden flex-shrink-0">
-        <div className="absolute top-0 left-0 w-64 h-full bg-[#00D2F6]/5 blur-3xl pointer-events-none" />
+      {/* HEADER: SE COMPACTO EM TELA CHEIA OU EXPANDIDO NORMAL */}
+      {isFullscreen ? (
+        /* HEADER ULTRA-STREAMLINED PARA MODO TELA CHEIA (Altura ~52px) */
+        <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl px-3 py-2 flex items-center justify-between gap-3 shadow-xl flex-shrink-0">
+          {/* Esquerda: Identidade, Conexão e Especialista Ativo */}
+          <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-slate-950 font-black shadow-[0_0_15px_rgba(0,210,246,0.3)] flex-shrink-0">
+              <MessageSquare className="w-4 h-4 text-slate-950" />
+            </div>
+            <div className="min-w-0 hidden sm:block">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-extrabold text-white tracking-wide uppercase truncate">
+                  Central WhatsApp & Agente IA
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowConnectModal(true)}
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-mono font-bold whitespace-nowrap cursor-pointer transition-all ${
+                    isWhatsAppConnected
+                      ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+                      : 'bg-rose-500/15 border-rose-500/30 text-rose-400'
+                  }`}
+                  title="Conexão WhatsApp Web • Clique para gerenciar"
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${isWhatsAppConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                  <span>{isWhatsAppConnected ? `${latencyMs}ms` : 'Parear QR'}</span>
+                </button>
+              </div>
+            </div>
 
-        {/* Lado Esquerdo: Identidade & Status Operacional */}
-        <div className="flex items-center gap-3 z-10 w-full md:w-auto">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-slate-950 font-black shadow-[0_0_20px_rgba(0,210,246,0.3)] flex-shrink-0">
-            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-slate-950" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-sm sm:text-base md:text-lg font-extrabold text-white tracking-wide uppercase truncate">
-                Central WhatsApp & Agente IA
-              </h2>
-              <button
-                type="button"
-                onClick={() => setShowConnectModal(true)}
-                className={'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-bold whitespace-nowrap cursor-pointer transition-all hover:scale-105 ' + (isWhatsAppConnected ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25' : 'bg-rose-500/15 border-rose-500/30 text-rose-400 hover:bg-rose-500/25')}
-                title="Conexão do WhatsApp Web • Clique para gerenciar pareamento e QR Code"
+            {/* Pill do Especialista 24h */}
+            {activeSpecialist && (
+              <div
+                onClick={() => setIsSpecialistDrawerOpen(true)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#091626] border border-emerald-500/30 text-[11px] cursor-pointer hover:bg-slate-900 transition-colors"
+                title={`Especialista: ${activeSpecialist.name} (${activeSpecialist.role}). Voz: ${activeSpecialist.voiceName || 'Thiago'}. Clique para ajustar.`}
               >
-                <span className={'w-1.5 h-1.5 rounded-full ' + (isWhatsAppConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400')} />
-                {isWhatsAppConnected ? `ONLINE • ${latencyMs}ms` : 'DESCONECTADO • Parear QR'}
-              </button>
-            </div>
-            <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 font-sans truncate">
-              {(config?.company?.companyName || 'TCAI') + ' • Motor ' + (config?.gemini?.model || 'gemini-2.0-flash') + ' • Visão & Áudio Ativos'}
-            </p>
-          </div>
-        </div>
-
-        {/* Lado Direito: KPIs em Tempo Real & Ações */}
-        <div className="flex items-center gap-2 sm:gap-3 z-10 w-full md:w-auto justify-between md:justify-end">
-          <div className="hidden lg:flex items-center gap-3 bg-[#07111F] px-3 py-1.5 rounded-xl border border-white/[0.06] text-xs font-mono shadow-inner">
-            <div className="text-center">
-              <span className="text-[9px] text-slate-400 block uppercase">Leads</span>
-              <span className="font-bold text-[#00D2F6]">{contacts.length || kpis.totalLeads}</span>
-            </div>
-            <div className="w-[1px] h-5 bg-white/[0.08]" />
-            <div className="text-center">
-              <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
-                <Flame className="w-2.5 h-2.5 text-amber-400 inline" /> HOT
-              </span>
-              <span className="font-bold text-amber-400">
-                {diagnostics.filter((d) => d.status === 'HOT').length || kpis.hotLeads}
-              </span>
-            </div>
-            <div className="w-[1px] h-5 bg-white/[0.08]" />
-            <div className="text-center">
-              <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
-                <Calendar className="w-2.5 h-2.5 text-purple-400 inline" /> Meets
-              </span>
-              <span className="font-bold text-purple-400">
-                {meetings.filter((m) => m.status !== 'CANCELADO').length || kpis.meetingsBooked}
-              </span>
-            </div>
+                <Bot className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                <span className="text-white font-bold hidden md:inline truncate max-w-[120px]">
+                  {activeSpecialist.name}
+                </span>
+                <span className="text-emerald-400 text-[10px] font-semibold hidden lg:inline">
+                  24h Ativo
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 ml-auto md:ml-0">
-            {/* Recarregar */}
+          {/* Centro: Sub-abas integradas na barra superior */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setActiveSubView('chat')}
+              className={`px-3 py-1 rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ${
+                activeSubView === 'chat'
+                  ? 'bg-[#00D2F6]/20 border-[#00D2F6] text-[#00D2F6] shadow-sm'
+                  : 'bg-[#07111F] border-[#16273C] text-slate-400 hover:text-white'
+              }`}
+            >
+              <MessageSquare className="w-3 h-3" />
+              <span>Chats ({contacts.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveSubView('diagnostics')}
+              className={`px-3 py-1 rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ${
+                activeSubView === 'diagnostics'
+                  ? 'bg-[#00D2F6]/20 border-[#00D2F6] text-[#00D2F6] shadow-sm'
+                  : 'bg-[#07111F] border-[#16273C] text-slate-400 hover:text-white'
+              }`}
+            >
+              <Flame className="w-3 h-3 text-amber-400" />
+              <span>HOT ({diagnostics.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveSubView('calendar')}
+              className={`px-3 py-1 rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ${
+                activeSubView === 'calendar'
+                  ? 'bg-[#00D2F6]/20 border-[#00D2F6] text-[#00D2F6] shadow-sm'
+                  : 'bg-[#07111F] border-[#16273C] text-slate-400 hover:text-white'
+              }`}
+            >
+              <Calendar className="w-3 h-3 text-purple-400" />
+              <span>Meet ({meetings.length})</span>
+            </button>
+          </div>
+
+          {/* Direita: Ações & Botão de Sair da Tela Cheia */}
+          <div className="flex items-center gap-1.5 flex-shrink-0">
             <button
               type="button"
               onClick={loadInitialData}
               disabled={isRefreshing}
-              className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
+              className="p-2 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer"
               title="Sincronizar Dados"
             >
-              <RefreshCw className={'w-3.5 h-3.5 sm:w-4 sm:h-4 ' + (isRefreshing ? 'animate-spin text-[#00D2F6]' : '')} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-[#00D2F6]' : ''}`} />
             </button>
 
-            {/* Tela Cheia */}
-            <button
-              type="button"
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
-              title={isFullscreen ? 'Sair do Modo Expandido' : 'Modo Tela Cheia'}
-            >
-              {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />}
-            </button>
-
-            {/* Configurações IA */}
             <button
               type="button"
               onClick={() => setShowSettingsModal(true)}
-              className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-[#00D2F6]/30 bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-[11px] sm:text-xs font-mono text-[#00D2F6] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.15)] whitespace-nowrap"
+              className="px-2.5 py-1.5 rounded-xl border border-[#00D2F6]/30 bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-[11px] font-mono text-[#00D2F6] font-bold flex items-center gap-1 transition-all cursor-pointer"
+              title="Ajustes do Agente IA"
             >
-              <Settings className="w-3.5 h-3.5 text-[#00D2F6]" />
-              <span>Ajustes IA</span>
+              <Settings className="w-3 h-3" />
+              <span className="hidden xl:inline">Ajustes IA</span>
+            </button>
+
+            {/* Sair da Tela Cheia */}
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="px-3 py-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/15 hover:bg-cyan-500/25 text-[11px] font-mono font-bold text-cyan-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_12px_rgba(0,210,246,0.2)]"
+              title="Sair do Modo Tela Cheia (Esc)"
+            >
+              <Minimize2 className="w-3.5 h-3.5 text-cyan-300" />
+              <span className="hidden sm:inline">Sair da Tela Cheia</span>
             </button>
           </div>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* 1. TOP BANNER DE TELEMETRIA NATIVO */}
+          <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl p-3 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xl relative overflow-hidden flex-shrink-0">
+            <div className="absolute top-0 left-0 w-64 h-full bg-[#00D2F6]/5 blur-3xl pointer-events-none" />
 
-      {/* Especialista Digital em Operação no WhatsApp */}
-      {activeSpecialist && (
-        <div className="bg-[#091626] border border-slate-800/90 rounded-2xl px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center relative flex-shrink-0">
-              <Bot className="w-5 h-5 text-emerald-400" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-white">
-                  {activeSpecialist.name} • {activeSpecialist.role}
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold">
-                  Operação 24h Ativa
-                </span>
+            {/* Lado Esquerdo: Identidade & Status Operacional */}
+            <div className="flex items-center gap-3 z-10 w-full md:w-auto">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#00D2F6] to-[#015EEF] flex items-center justify-center text-slate-950 font-black shadow-[0_0_20px_rgba(0,210,246,0.3)] flex-shrink-0">
+                <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-slate-950" />
               </div>
-              <p className="text-[11px] text-slate-400">
-                Voz Vinculada: <strong className="text-slate-200">{activeSpecialist.voiceName || 'Thiago Cassol Antunes'} (Áudios PTT)</strong> • Qualificação Imediata
-              </p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="text-sm sm:text-base md:text-lg font-extrabold text-white tracking-wide uppercase truncate">
+                    Central WhatsApp & Agente IA
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setShowConnectModal(true)}
+                    className={'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-bold whitespace-nowrap cursor-pointer transition-all hover:scale-105 ' + (isWhatsAppConnected ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25' : 'bg-rose-500/15 border-rose-500/30 text-rose-400 hover:bg-rose-500/25')}
+                    title="Conexão do WhatsApp Web • Clique para gerenciar pareamento e QR Code"
+                  >
+                    <span className={'w-1.5 h-1.5 rounded-full ' + (isWhatsAppConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400')} />
+                    {isWhatsAppConnected ? `ONLINE • ${latencyMs}ms` : 'DESCONECTADO • Parear QR'}
+                  </button>
+                </div>
+                <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 font-sans truncate">
+                  {(config?.company?.companyName || 'TCAI') + ' • Motor ' + (config?.gemini?.model || 'gemini-2.0-flash') + ' • Visão & Áudio Ativos'}
+                </p>
+              </div>
+            </div>
+
+            {/* Lado Direito: KPIs em Tempo Real & Ações */}
+            <div className="flex items-center gap-2 sm:gap-3 z-10 w-full md:w-auto justify-between md:justify-end">
+              <div className="hidden lg:flex items-center gap-3 bg-[#07111F] px-3 py-1.5 rounded-xl border border-white/[0.06] text-xs font-mono shadow-inner">
+                <div className="text-center">
+                  <span className="text-[9px] text-slate-400 block uppercase">Leads</span>
+                  <span className="font-bold text-[#00D2F6]">{contacts.length || kpis.totalLeads}</span>
+                </div>
+                <div className="w-[1px] h-5 bg-white/[0.08]" />
+                <div className="text-center">
+                  <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
+                    <Flame className="w-2.5 h-2.5 text-amber-400 inline" /> HOT
+                  </span>
+                  <span className="font-bold text-amber-400">
+                    {diagnostics.filter((d) => d.status === 'HOT').length || kpis.hotLeads}
+                  </span>
+                </div>
+                <div className="w-[1px] h-5 bg-white/[0.08]" />
+                <div className="text-center">
+                  <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
+                    <Calendar className="w-2.5 h-2.5 text-purple-400 inline" /> Meets
+                  </span>
+                  <span className="font-bold text-purple-400">
+                    {meetings.filter((m) => m.status !== 'CANCELADO').length || kpis.meetingsBooked}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 sm:gap-2 ml-auto md:ml-0">
+                {/* Recarregar */}
+                <button
+                  type="button"
+                  onClick={loadInitialData}
+                  disabled={isRefreshing}
+                  className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
+                  title="Sincronizar Dados"
+                >
+                  <RefreshCw className={'w-3.5 h-3.5 sm:w-4 sm:h-4 ' + (isRefreshing ? 'animate-spin text-[#00D2F6]' : '')} />
+                </button>
+
+                {/* Tela Cheia */}
+                <button
+                  type="button"
+                  onClick={() => setIsFullscreen(!isFullscreen)}
+                  className="p-2 sm:p-2.5 rounded-xl border border-white/[0.08] bg-[#07111F] hover:bg-white/[0.05] text-slate-300 hover:text-white transition-all cursor-pointer shadow"
+                  title={isFullscreen ? 'Sair do Modo Expandido' : 'Modo Tela Cheia'}
+                >
+                  {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />}
+                </button>
+
+                {/* Configurações IA */}
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(true)}
+                  className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-[#00D2F6]/30 bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-[11px] sm:text-xs font-mono text-[#00D2F6] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.15)] whitespace-nowrap"
+                >
+                  <Settings className="w-3.5 h-3.5 text-[#00D2F6]" />
+                  <span>Ajustes IA</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsSpecialistDrawerOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
-          >
-            <Sliders className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span>Configurar Especialista</span>
-          </button>
-        </div>
+          {/* Especialista Digital em Operação no WhatsApp */}
+          {activeSpecialist && (
+            <div className="bg-[#091626] border border-slate-800/90 rounded-2xl px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center relative flex-shrink-0">
+                  <Bot className="w-5 h-5 text-emerald-400" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-white">
+                      {activeSpecialist.name} • {activeSpecialist.role}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold">
+                      Operação 24h Ativa
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    Voz Vinculada: <strong className="text-slate-200">{activeSpecialist.voiceName || 'Thiago Cassol Antunes'} (Áudios PTT)</strong> • Qualificação Imediata
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsSpecialistDrawerOpen(true)}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+              >
+                <Sliders className="w-3.5 h-3.5 text-[#00D2F6]" />
+                <span>Configurar Especialista</span>
+              </button>
+            </div>
+          )}
+
+          {/* 2. SUB-ABAS DE NAVEGAÇÃO INTERNA (FOCO 100% EM ATENDIMENTO & VENDAS) */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setActiveSubView('chat')}
+              className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'chat' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              <span>Conversas WhatsApp ({contacts.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveSubView('diagnostics')}
+              className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'diagnostics' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
+            >
+              <Flame className="w-3.5 h-3.5 text-amber-400" />
+              <span>Diagnósticos HOT ({diagnostics.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveSubView('calendar')}
+              className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'calendar' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
+            >
+              <Calendar className="w-3.5 h-3.5 text-purple-400" />
+              <span>Agenda Google Meet ({meetings.length})</span>
+            </button>
+          </div>
+        </>
       )}
 
-      {/* 2. SUB-ABAS DE NAVEGAÇÃO INTERNA (FOCO 100% EM ATENDIMENTO & VENDAS) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-shrink-0">
-        <button
-          type="button"
-          onClick={() => setActiveSubView('chat')}
-          className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'chat' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
-        >
-          <MessageSquare className="w-3.5 h-3.5" />
-          <span>Conversas WhatsApp ({contacts.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveSubView('diagnostics')}
-          className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'diagnostics' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
-        >
-          <Flame className="w-3.5 h-3.5 text-amber-400" />
-          <span>Diagnósticos HOT ({diagnostics.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveSubView('calendar')}
-          className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'calendar' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
-        >
-          <Calendar className="w-3.5 h-3.5 text-purple-400" />
-          <span>Agenda Google Meet ({meetings.length})</span>
-        </button>
-      </div>
-
       {/* 3. PAINEL PRINCIPAL DINÂMICO */}
-      <div className="bg-[#0A1624] border border-[#16273C] rounded-2xl flex-1 flex overflow-hidden shadow-2xl min-h-[580px] lg:min-h-[640px]">
+      <div
+        className={`bg-[#0A1624] border border-[#16273C] rounded-2xl flex-1 flex overflow-hidden shadow-2xl min-h-0 ${
+          isFullscreen ? 'h-full' : 'h-[680px] xl:h-[720px] min-h-[580px]'
+        }`}
+      >
         {/* SUB-VISÃO: CHAT WHATSAPP COMPLETO */}
         {activeSubView === 'chat' && (
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex overflow-hidden min-h-0 h-full">
             {/* COLUNA ESQUERDA: LISTA DE CONTATOS */}
-            <div className="w-full sm:w-80 md:w-88 border-r border-[#16273C] bg-[#0A1624] flex flex-col flex-shrink-0">
+            <div className="w-full sm:w-72 lg:w-80 border-r border-[#16273C] bg-[#0A1624] flex flex-col flex-shrink-0 min-h-0 h-full">
               {/* Barra de Busca e Filtros */}
-              <div className="p-3 border-b border-[#16273C] space-y-2">
+              <div className="p-3 border-b border-[#16273C] space-y-2 flex-shrink-0">
                 <div className="flex items-center gap-1.5">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
@@ -1071,7 +1219,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
               </div>
 
               {/* Lista de Contatos */}
-              <div className="flex-1 overflow-y-auto divide-y divide-[#16273C]/50">
+              <div className="flex-1 overflow-y-auto divide-y divide-[#16273C]/50 min-h-0">
                 {filteredContacts.map((contact) => {
                   const isSelected = contact.id === activeContact?.id;
                   return (
@@ -1108,10 +1256,10 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
             </div>
 
             {/* COLUNA CENTRAL: CHAT COM O LEAD */}
-            <div className="flex-1 flex flex-col bg-[#07111F] min-w-0">
+            <div className="flex-1 flex flex-col bg-[#07111F] min-w-0 min-h-0 h-full self-stretch">
               {/* Header do Chat Ativo */}
               {activeContact && (
-                <div className="px-4 py-3 border-b border-[#16273C] bg-[#0A1624] flex items-center justify-between flex-shrink-0">
+                <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-[#16273C] bg-[#0A1624] flex items-center justify-between flex-shrink-0 gap-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-9 h-9 rounded-xl bg-[#07111F] border border-[#00D2F6]/30 flex items-center justify-center text-lg flex-shrink-0">
                       {activeContact.avatar}
@@ -1119,7 +1267,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className="text-sm font-bold text-white truncate">{activeContact.name}</h3>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold flex-shrink-0">
                           {activeContact.score}% Score
                         </span>
                       </div>
@@ -1128,7 +1276,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                           {activeContact.company + ' • ' + activeContact.phone}
                         </p>
                         {assignedRepForActiveContact && (
-                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-[11px]">
+                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-[11px] flex-shrink-0">
                             <span>{assignedRepForActiveContact.avatar}</span>
                             <span className="text-slate-300 font-medium">{assignedRepForActiveContact.name.split(' ')[0]}</span>
                             {assignedRepForActiveContact.voiceStatus === 'active' ? (
@@ -1150,14 +1298,14 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Seletor Tri-State: Autônomo vs Copiloto vs Manual */}
-                    <div className="flex items-center bg-[#07111F] p-0.5 rounded-xl border border-white/10 text-[11px] font-mono">
+                    <div className="flex items-center bg-[#07111F] p-0.5 rounded-xl border border-white/10 text-[11px] font-mono flex-shrink-0">
                       <button
                         type="button"
                         onClick={() => {
                           setOperationalMode('autopilot');
                           setAiPaused(false);
                         }}
-                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                        className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
                           operationalMode === 'autopilot' && !aiPaused
                             ? 'bg-[#00D2F6] text-[#07111F] shadow'
                             : 'text-slate-400 hover:text-white'
@@ -1165,7 +1313,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                         title="Modo Autônomo: O motor responde o lead diretamente 24/7"
                       >
                         <Zap className="w-3 h-3" />
-                        <span className="hidden xl:inline">Autônomo</span>
+                        <span className="hidden sm:inline">Autônomo</span>
                       </button>
 
                       <button
@@ -1174,7 +1322,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                           setOperationalMode('copilot');
                           setAiPaused(false);
                         }}
-                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                        className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
                           operationalMode === 'copilot' && !aiPaused
                             ? 'bg-purple-500 text-white shadow'
                             : 'text-slate-400 hover:text-white'
@@ -1182,7 +1330,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                         title="Modo Copiloto: A IA sugere respostas baseadas na base RAG para você aprovar"
                       >
                         <Sparkles className="w-3 h-3 text-purple-200" />
-                        <span>Copiloto</span>
+                        <span className="hidden sm:inline">Copiloto</span>
                       </button>
 
                       <button
@@ -1191,7 +1339,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                           setOperationalMode('human_only');
                           setAiPaused(true);
                         }}
-                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                        className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
                           operationalMode === 'human_only' || aiPaused
                             ? 'bg-amber-500 text-slate-950 shadow'
                             : 'text-slate-400 hover:text-white'
@@ -1199,7 +1347,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                         title="Modo Manual: Somente o operador humano digita e responde"
                       >
                         <UserCheck className="w-3 h-3" />
-                        <span className="hidden xl:inline">Manual</span>
+                        <span className="hidden sm:inline">Manual</span>
                       </button>
                     </div>
                   </div>
@@ -1226,7 +1374,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
               )}
 
               {/* Mensagens do Chat */}
-              <div ref={messagesContainerRef} className="flex-1 p-4 overflow-y-auto space-y-3">
+              <div ref={messagesContainerRef} className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-3 min-h-0">
                 {(activeContact?.messages || []).map((msg, idx) => {
                   const isAgent = msg.sender === 'agent';
                   return (
@@ -1302,7 +1450,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
               {/* Card de Rascunho do Copiloto (Aprovação Executiva Antes de Enviar) */}
               {copilotDraft && (
-                <div className="mx-3 my-2 p-3.5 bg-[#081524] border border-[#00D2F6]/40 rounded-xl shadow-xl space-y-2.5 animate-in fade-in slide-in-from-bottom-2 flex-shrink-0">
+                <div className="mx-3 my-2 p-3.5 bg-[#081524] border border-[#00D2F6]/40 rounded-xl shadow-xl space-y-2.5 animate-in fade-in slide-in-from-bottom-2 flex-shrink-0 max-h-52 overflow-y-auto">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-[#00D2F6]" />
@@ -1534,7 +1682,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
             {/* COLUNA DIREITA: DOSSIÊ DO LEAD */}
             {activeContact && (
-              <div className="hidden lg:flex w-72 xl:w-80 border-l border-[#16273C] bg-[#0A1624] flex-col p-4 space-y-3 overflow-y-auto flex-shrink-0">
+              <div className={`${isFullscreen ? 'hidden lg:flex' : 'hidden xl:flex'} w-72 2xl:w-80 border-l border-[#16273C] bg-[#0A1624] flex-col p-3.5 sm:p-4 space-y-3 overflow-y-auto flex-shrink-0 min-h-0 h-full`}>
                 <div className="border-b border-[#16273C] pb-3 flex items-start justify-between">
                   <div>
                     <span className="text-[10px] font-mono text-[#00D2F6] uppercase tracking-wider block font-bold">
@@ -1748,7 +1896,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
         {/* SUB-VISÃO: DIAGNÓSTICOS HOT */}
         {activeSubView === 'diagnostics' && (
-          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 min-h-0 h-full">
             <div className="max-w-6xl mx-auto space-y-4">
               {/* Header com Filtro e Botão Novo */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0C1B2E] p-4 rounded-2xl border border-[#16273C]">
@@ -1905,7 +2053,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
         {/* SUB-VISÃO: AGENDA GOOGLE MEET */}
         {activeSubView === 'calendar' && (
-          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 min-h-0 h-full">
             <div className="max-w-4xl mx-auto space-y-4">
               {/* Header com Filtro e Botão Novo */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0C1B2E] p-4 rounded-2xl border border-[#16273C]">
