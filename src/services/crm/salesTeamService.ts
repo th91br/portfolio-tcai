@@ -14,6 +14,13 @@ export interface SalesRep {
   totalRevenueWon: number;
   lastAssignedAt?: string;
   isHead?: boolean;
+  // Biometria Vocal & Clonagem Multi-Vendedor
+  voiceId?: string;
+  voiceName?: string;
+  voiceStatus?: 'not_configured' | 'active' | 'revoked';
+  voiceSampleUrl?: string;
+  voiceClonedAt?: string;
+  voiceConsentAccepted?: boolean;
 }
 
 export type RoundRobinMode = 'circular' | 'capacity';
@@ -52,6 +59,11 @@ export function getSalesTeam(): SalesRep[] {
       totalRevenueWon: 68000,
       isHead: true,
       lastAssignedAt: new Date(Date.now() - 3600000).toISOString(),
+      voiceId: 'voice-thiago-fundador',
+      voiceName: 'Thiago Cassol (Fundador)',
+      voiceStatus: 'active',
+      voiceConsentAccepted: true,
+      voiceClonedAt: '2026-03-01T10:00:00Z',
     },
     {
       id: 'rep_rafael',
@@ -68,6 +80,11 @@ export function getSalesTeam(): SalesRep[] {
       dealsWonCount: 5,
       totalRevenueWon: 42500,
       lastAssignedAt: new Date(Date.now() - 7200000).toISOString(),
+      voiceId: 'voice-rafael-closer',
+      voiceName: 'Rafael Mendonça',
+      voiceStatus: 'active',
+      voiceConsentAccepted: true,
+      voiceClonedAt: '2026-03-05T14:30:00Z',
     },
     {
       id: 'rep_camila',
@@ -84,6 +101,10 @@ export function getSalesTeam(): SalesRep[] {
       dealsWonCount: 6,
       totalRevenueWon: 51000,
       lastAssignedAt: new Date(Date.now() - 10800000).toISOString(),
+      voiceId: 'voice-camila-closer',
+      voiceName: 'Camila Duarte',
+      voiceStatus: 'not_configured',
+      voiceConsentAccepted: false,
     },
   ];
 
@@ -201,4 +222,58 @@ export function generateWhatsAppHandoffUrl(
   }${score ? ` com Score Comercial de ${score}%` : ''}. O contato foi atribuído a você para continuidade no fechamento!`;
 
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+}
+
+/**
+ * Atualiza e Ativa a Biometria Vocal de um Vendedor
+ */
+export function updateSalesRepVoice(
+  repId: string,
+  voiceData: {
+    voiceId: string;
+    voiceName: string;
+    voiceSampleUrl?: string;
+    voiceConsentAccepted: boolean;
+  }
+): SalesRep[] {
+  const team = getSalesTeam();
+  const updated = team.map((r) => {
+    if (r.id === repId) {
+      return {
+        ...r,
+        voiceId: voiceData.voiceId,
+        voiceName: voiceData.voiceName,
+        voiceStatus: 'active' as const,
+        voiceSampleUrl: voiceData.voiceSampleUrl,
+        voiceClonedAt: new Date().toISOString(),
+        voiceConsentAccepted: voiceData.voiceConsentAccepted,
+      };
+    }
+    return r;
+  });
+  saveSalesTeam(updated);
+  return updated;
+}
+
+/**
+ * Revoga e Exclui a Biometria Vocal de um Vendedor (Desligamento / LGPD)
+ */
+export function revokeSalesRepVoice(repId: string): SalesRep[] {
+  const team = getSalesTeam();
+  const updated = team.map((r) => {
+    if (r.id === repId) {
+      return {
+        ...r,
+        voiceId: undefined,
+        voiceName: undefined,
+        voiceStatus: 'revoked' as const,
+        voiceSampleUrl: undefined,
+        voiceClonedAt: undefined,
+        voiceConsentAccepted: false,
+      };
+    }
+    return r;
+  });
+  saveSalesTeam(updated);
+  return updated;
 }

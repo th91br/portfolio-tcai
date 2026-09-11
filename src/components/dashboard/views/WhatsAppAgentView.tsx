@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   MessageSquare,
   Search,
@@ -76,6 +76,7 @@ import { CommercialProposal } from '../../../services/crm/proposalsService';
 import { LeadTimelineFeed } from '../crm/LeadTimelineFeed';
 import { Lead, PipelineStage } from '../../../lib/supabase';
 import { synthesizeSpeechAudio } from '../../../services/voice/voiceStudioService';
+import { SalesRep, getSalesTeam } from '../../../services/crm/salesTeamService';
 import { agentTeamService, DigitalAgent } from '../../../services/agents/agentTeamService';
 import { AgentConfigDrawer } from '../agents/AgentConfigDrawer';
 import {
@@ -199,6 +200,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
 
   // Referências
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
@@ -241,13 +243,44 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
     loadInitialData();
   }, []);
 
-  // Rolar para a última mensagem ao trocar de contato ou receber mensagens
+  // Rolar para a última mensagem apenas internamente no container de chat
   useEffect(() => {
-    chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [selectedContactId, contacts, isAiResponding]);
 
   // Contato Ativo
   const activeContact = contacts.find((c) => c.id === selectedContactId) || contacts[0];
+
+  // Vendedor Responsável pelo Lead Ativo (Regra de Continuidade Vocal: 1 Lead = 1 Vendedor = 1 Voz)
+  const assignedRepForActiveContact: SalesRep | undefined = useMemo(() => {
+    if (!activeContact) return undefined;
+    const salesTeam = getSalesTeam();
+    if (activeContact.assignedRepId) {
+      const found = salesTeam.find((r) => r.id === activeContact.assignedRepId);
+      if (found) return found;
+    }
+    if (activeContact.assignedRepName) {
+      const found = salesTeam.find((r) =>
+        r.name.toLowerCase().includes(activeContact.assignedRepName!.toLowerCase())
+      );
+      if (found) return found;
+    }
+    if (leads && leads.length > 0) {
+      const matchingLead = leads.find(
+        (l) =>
+          l.id === activeContact.id ||
+          (l.whatsapp &&
+            activeContact.phone &&
+            l.whatsapp.replace(/\D/g, '') === activeContact.phone.replace(/\D/g, ''))
+      );
+      if (matchingLead && (matchingLead as any).assigned_rep_id) {
+        return salesTeam.find((r) => r.id === (matchingLead as any).assigned_rep_id);
+      }
+    }
+    return undefined;
+  }, [activeContact, leads]);
 
   // Contatos Filtrados
   const filteredContacts = contacts.filter((c) => {
@@ -489,7 +522,18 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
     if (!activeContact) return;
     setIsGeneratingAudioDraft(true);
     try {
-      const audioRes = await synthesizeSpeechAudio(draftText);
+      // Regra de Continuidade (1 Lead = 1 Vendedor = 1 Voz):
+      // Se o vendedor responsável pelo lead possui biometria vocal ativa, utiliza a voz dele
+      let voiceIdToUse: string | undefined = undefined;
+      if (
+        assignedRepForActiveContact &&
+        assignedRepForActiveContact.voiceStatus === 'active' &&
+        assignedRepForActiveContact.voiceId
+      ) {
+        voiceIdToUse = assignedRepForActiveContact.voiceId;
+      }
+
+      const audioRes = await synthesizeSpeechAudio(draftText, voiceIdToUse);
       const now = new Date();
       const timeStr =
         String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
@@ -502,7 +546,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
           type: 'audio',
           url: audioRes.audioUrl,
           filename: 'voz-clonada-ptt.ogg',
-          caption: `🎙️ Áudio PTT (${audioRes.voiceUsed.name})`,
+          caption: `🎙️ Áudio PTT (Voz: ${audioRes.voiceUsed.name})`,
         },
       };
 
@@ -1079,9 +1123,28 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                           {activeContact.score}% Score
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 font-mono truncate">
-                        {activeContact.company + ' • ' + activeContact.phone}
-                      </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-xs text-slate-400 font-mono truncate">
+                          {activeContact.company + ' • ' + activeContact.phone}
+                        </p>
+                        {assignedRepForActiveContact && (
+                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-[11px]">
+                            <span>{assignedRepForActiveContact.avatar}</span>
+                            <span className="text-slate-300 font-medium">{assignedRepForActiveContact.name.split(' ')[0]}</span>
+                            {assignedRepForActiveContact.voiceStatus === 'active' ? (
+                              <span className="inline-flex items-center gap-0.5 text-emerald-400 font-semibold text-[10px]" title={`Voz Clonada Ativa: ${assignedRepForActiveContact.voiceName || assignedRepForActiveContact.name}`}>
+                                <Mic className="w-2.5 h-2.5" />
+                                <span>Voz Ativa</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-0.5 text-slate-500 text-[10px]" title="Voz Padrão Corporativa">
+                                <Mic className="w-2.5 h-2.5 opacity-40" />
+                                <span>Voz Padrão</span>
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -1163,7 +1226,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
               )}
 
               {/* Mensagens do Chat */}
-              <div className="flex-1 p-4 overflow-y-auto space-y-3">
+              <div ref={messagesContainerRef} className="flex-1 p-4 overflow-y-auto space-y-3">
                 {(activeContact?.messages || []).map((msg, idx) => {
                   const isAgent = msg.sender === 'agent';
                   return (
@@ -1291,14 +1354,26 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                         onClick={() => handleSendDraftAsAudio(copilotDraft)}
                         disabled={isGeneratingAudioDraft}
                         className="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-gradient-to-r from-purple-500 to-[#00D2F6] hover:brightness-110 text-white shadow-lg shadow-purple-500/20 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
-                        title="Sintetizar com a voz clonada ativa e enviar como áudio nativo PTT"
+                        title={
+                          assignedRepForActiveContact
+                            ? `Sintetizar com a voz de ${assignedRepForActiveContact.name} (${
+                                assignedRepForActiveContact.voiceStatus === 'active'
+                                  ? 'Voz Clonada Ativa'
+                                  : 'Voz Padrão Corporativa'
+                              })`
+                            : 'Sintetizar com voz corporativa padrão'
+                        }
                       >
                         {isGeneratingAudioDraft ? (
                           <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         ) : (
                           <Mic className="w-3.5 h-3.5" />
                         )}
-                        <span>Áudio PTT</span>
+                        <span>
+                          {assignedRepForActiveContact && assignedRepForActiveContact.voiceStatus === 'active'
+                            ? `Áudio (${assignedRepForActiveContact.name.split(' ')[0]})`
+                            : 'Áudio PTT'}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -1480,6 +1555,37 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
+                </div>
+
+                {/* Vendedor Responsável & Biometria Vocal Ativa */}
+                <div className="p-3 rounded-xl bg-[#07111F] border border-white/[0.06] space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">
+                      Vendedor Responsável
+                    </span>
+                    {assignedRepForActiveContact?.voiceStatus === 'active' ? (
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold flex items-center gap-1">
+                        <Mic className="w-2.5 h-2.5" /> Voz Clonada Ativa
+                      </span>
+                    ) : (
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                        Voz Padrão Empresa
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2.5 pt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-base">
+                      {assignedRepForActiveContact?.avatar || '👨‍💼'}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-white truncate">
+                        {assignedRepForActiveContact?.name || activeContact.assignedRepName || 'Vendedor Comercial'}
+                      </p>
+                      <p className="text-[10px] text-slate-400 truncate">
+                        {assignedRepForActiveContact?.roleTitle || 'Atendimento Consultivo'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Score Comercial */}

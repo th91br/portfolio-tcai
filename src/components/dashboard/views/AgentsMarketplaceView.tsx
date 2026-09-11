@@ -41,6 +41,7 @@ import {
 } from '../../../services/crm/salesTeamService';
 import { AgentConfigDrawer } from '../agents/AgentConfigDrawer';
 import { CustomAgentModal } from '../agents/CustomAgentModal';
+import { SalesRepVoiceModal } from '../voice/SalesRepVoiceModal';
 import { Tenant } from '../../../services/tenants/tenantService';
 
 interface AgentsMarketplaceViewProps {
@@ -65,6 +66,7 @@ export const AgentsMarketplaceView: React.FC<AgentsMarketplaceViewProps> = ({
   const [teamSettings, setTeamSettings] = useState<SalesTeamSettings>(getSalesTeamSettings());
   const [editingRep, setEditingRep] = useState<SalesRep | null>(null);
   const [isCreatingRep, setIsCreatingRep] = useState(false);
+  const [voiceModalRep, setVoiceModalRep] = useState<SalesRep | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Carregar dados
@@ -755,6 +757,52 @@ export const AgentsMarketplaceView: React.FC<AgentsMarketplaceViewProps> = ({
                         <span className="truncate">{rep.email}</span>
                       </div>
                     </div>
+
+                    {/* Biometria Vocal & Clonagem Individual por Vendedor */}
+                    <div className="mt-3 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/90 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className={`p-1.5 rounded-lg flex-shrink-0 ${
+                            rep.voiceStatus === 'active'
+                              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-slate-800 text-slate-400 border border-slate-700'
+                          }`}
+                        >
+                          <Mic className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] font-semibold text-white truncate">
+                              {rep.voiceStatus === 'active'
+                                ? 'Voz Clonada Ativa'
+                                : rep.voiceStatus === 'revoked'
+                                ? 'Biometria Revogada'
+                                : 'Voz Padrão Empresa'}
+                            </span>
+                            {rep.voiceStatus === 'active' && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            )}
+                          </div>
+                          <span className="text-[10px] text-slate-400 block truncate">
+                            {rep.voiceStatus === 'active'
+                              ? (rep.voiceName || 'Áudio PTT no WhatsApp')
+                              : 'Usa voz da empresa'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setVoiceModalRep(rep)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all flex-shrink-0 cursor-pointer border ${
+                          rep.voiceStatus === 'active'
+                            ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700 hover:text-white'
+                            : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:border-emerald-500/50'
+                        }`}
+                      >
+                        {rep.voiceStatus === 'active' ? 'Gerenciar' : 'Clonar Voz'}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Rodapé do Card Humano */}
@@ -822,6 +870,18 @@ export const AgentsMarketplaceView: React.FC<AgentsMarketplaceViewProps> = ({
         onClose={() => setIsCustomModalOpen(false)}
         tenantId={activeTenant.id}
         tenantName={activeTenant.tradingName}
+      />
+
+      {/* Modal de Biometria Vocal & Clonagem Multi-Vendedor */}
+      <SalesRepVoiceModal
+        rep={voiceModalRep}
+        isOpen={!!voiceModalRep}
+        onClose={() => setVoiceModalRep(null)}
+        onSaved={(updatedTeam) => {
+          setHumanTeam(updatedTeam);
+          setVoiceModalRep(null);
+          showToast('Biometria vocal e perfil de voz atualizados com sucesso!');
+        }}
       />
     </div>
   );

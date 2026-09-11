@@ -31,6 +31,8 @@ export interface ChatContact {
   messages: ChatMessage[];
   chatMode?: ChatOperationalMode;
   pendingDraftReply?: string;
+  assignedRepId?: string;
+  assignedRepName?: string;
 }
 
 export interface WhatsAppKPIs {
@@ -84,6 +86,8 @@ export const INITIAL_CONTACTS: ChatContact[] = [
     score: 86,
     slaTimeline: '7 DIAS ÚTEIS',
     projectType: 'SITE DE ALTA CONVERSÃO & POSICIONAMENTO',
+    assignedRepId: 'rep_thiago',
+    assignedRepName: 'Thiago Cassol Antunes',
     lastMessage: 'Diagnóstico recebido para SITE DE ALTA CONVERSÃO & POSICIONAMENTO',
     lastMessageTime: '17:17',
     messages: [
@@ -111,6 +115,8 @@ export const INITIAL_CONTACTS: ChatContact[] = [
     score: 96,
     slaTimeline: '7 DIAS ÚTEIS',
     projectType: 'Automação com IA & Atendimento 24/7',
+    assignedRepId: 'rep_rafael',
+    assignedRepName: 'Rafael Mendonça',
     lastMessage: 'Recebi sua mídia com sucesso! 📷🎙️ Já registrei no dossiê de atendimento.',
     lastMessageTime: '20:11',
     messages: [
@@ -386,6 +392,20 @@ export function normalizeChatContact(c: any): ChatContact {
     messages,
     chatMode: c.chatMode || 'autopilot',
     pendingDraftReply: c.pendingDraftReply || undefined,
+    assignedRepId:
+      c.assignedRepId ||
+      (c.id === '8799e52e-4383-4764-94a9-8f63a106d9b7'
+        ? 'rep_thiago'
+        : c.id === 'lead-1'
+        ? 'rep_rafael'
+        : undefined),
+    assignedRepName:
+      c.assignedRepName ||
+      (c.id === '8799e52e-4383-4764-94a9-8f63a106d9b7'
+        ? 'Thiago Cassol Antunes'
+        : c.id === 'lead-1'
+        ? 'Rafael Mendonça'
+        : undefined),
   };
 }
 

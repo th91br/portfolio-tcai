@@ -1,6 +1,8 @@
 // src/services/voice/voiceStudioService.ts
 // Motor Corporativo de Clonagem de Voz & Síntese Estratégica PTT (WhatsApp Voice Engine)
 
+import { getSalesTeam } from '../crm/salesTeamService';
+
 export interface VoiceProfile {
   id: string;
   name: string;
@@ -262,6 +264,45 @@ function audioBufferToWav(buffer: AudioBuffer): ArrayBuffer {
   return out;
 }
 
+/**
+ * Obtém ou resolve o perfil de voz clonada de um vendedor do time comercial
+ */
+export function getVoiceForSalesRep(repIdOrVoiceId: string): VoiceProfile | null {
+  try {
+    const salesTeam = getSalesTeam();
+    const rep = salesTeam.find((r) => r.id === repIdOrVoiceId || r.voiceId === repIdOrVoiceId);
+    if (rep && rep.voiceStatus === 'active') {
+      const profiles = getStoredVoiceProfiles();
+      const existing = profiles.find((p) => p.id === rep.voiceId);
+      if (existing) {
+        return {
+          ...existing,
+          name: rep.voiceName || rep.name,
+          role: rep.roleTitle,
+        };
+      }
+      return {
+        id: rep.voiceId || `voice-${rep.id}`,
+        name: rep.voiceName || rep.name,
+        role: rep.roleTitle,
+        elevenLabsVoiceId: 'ErXwobaYiN019PkySvjV',
+        description: `Voz Biometrizada Clonada de ${rep.name} (${rep.roleTitle})`,
+        isCloned: true,
+        sampleDurationSec: 15,
+        settings: {
+          stability: 0.65,
+          similarityBoost: 0.85,
+          style: 0.4,
+          speed: 1.0,
+        },
+      };
+    }
+  } catch (err) {
+    console.warn('[voiceStudio] Erro ao buscar voz do vendedor:', err);
+  }
+  return null;
+}
+
 // Síntese Principal: Conecta na ElevenLabs se houver chave, ou gera áudio sintético local
 export async function synthesizeSpeechAudio(
   text: string,
@@ -269,7 +310,14 @@ export async function synthesizeSpeechAudio(
 ): Promise<AudioGenerationResult> {
   const config = getStoredVoiceConfig();
   const profiles = getStoredVoiceProfiles();
-  const profile = profiles.find((p) => p.id === (voiceProfileId || config.activeVoiceId)) || getActiveVoiceProfile();
+  
+  let profile: VoiceProfile | undefined;
+  if (voiceProfileId) {
+    profile = getVoiceForSalesRep(voiceProfileId) || profiles.find((p) => p.id === voiceProfileId);
+  }
+  if (!profile) {
+    profile = profiles.find((p) => p.id === config.activeVoiceId) || getActiveVoiceProfile();
+  }
 
   // Estima duração: média de 14 caracteres por segundo em fala normal
   const estimatedDuration = Math.max(3, Math.min(config.maxAudioDurationSec, Math.round(text.length / 14)));
