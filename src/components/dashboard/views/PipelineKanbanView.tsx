@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
+  Globe,
 } from 'lucide-react';
 import {
   Deal,
@@ -506,9 +507,26 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                         {/* Topo do Card: Lead / Empresa */}
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-sm text-white truncate group-hover:text-[#00D2F6] transition-colors">
-                              {lead?.name || 'Lead Sem Nome'}
-                            </h4>
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <h4 className="font-bold text-sm text-white truncate group-hover:text-[#00D2F6] transition-colors">
+                                {lead?.name || 'Lead Sem Nome'}
+                              </h4>
+                              {(lead?.source === 'whatsapp' || lead?.id?.startsWith('lead_wa_')) ? (
+                                <span
+                                  className="inline-flex items-center gap-1 px-1.5 py-0.2 text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded shrink-0"
+                                  title="Lead originado ou atendido no WhatsApp"
+                                >
+                                  <MessageCircle className="w-2.5 h-2.5" /> WA
+                                </span>
+                              ) : (
+                                <span
+                                  className="inline-flex items-center gap-1 px-1.5 py-0.2 text-[9px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded shrink-0"
+                                  title="Lead originado via Site / Diagnóstico"
+                                >
+                                  <Globe className="w-2.5 h-2.5" /> Web
+                                </span>
+                              )}
+                            </div>
                             {lead?.company && (
                               <div className="flex items-center gap-1 text-[11px] text-slate-400 font-mono truncate">
                                 <Building className="w-3 h-3 text-slate-500 shrink-0" />

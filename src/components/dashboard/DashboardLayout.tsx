@@ -361,7 +361,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
             )}
 
             {activeTab === 'whatsapp' && (
-              <WhatsAppAgentView leads={leads} />
+              <WhatsAppAgentView
+                leads={leads}
+                onNavigateToPipeline={() => setActiveTab('pipeline')}
+              />
             )}
 
             {activeTab === 'agents' && (

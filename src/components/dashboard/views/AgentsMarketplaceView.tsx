@@ -20,8 +20,10 @@ import {
   Mail,
   CheckCircle2,
   ExternalLink,
-  Bot
+  Bot,
+  Network
 } from 'lucide-react';
+import { TeamOrganogramView } from '../team/TeamOrganogramView';
 import {
   agentTeamService,
   DigitalAgent,
@@ -48,8 +50,8 @@ interface AgentsMarketplaceViewProps {
 export const AgentsMarketplaceView: React.FC<AgentsMarketplaceViewProps> = ({
   activeTenant
 }) => {
-  // Aba principal de Equipe: Especialistas 24h vs Equipe Humana
-  const [activeMainTab, setActiveMainTab] = useState<'ai' | 'human'>('ai');
+  // Aba principal de Equipe: Especialistas 24h vs Equipe Humana vs Organograma
+  const [activeMainTab, setActiveMainTab] = useState<'ai' | 'human' | 'organogram'>('ai');
 
   // Estado dos Agentes de IA
   const [agents, setAgents] = useState<DigitalAgent[]>([]);
@@ -262,6 +264,19 @@ export const AgentsMarketplaceView: React.FC<AgentsMarketplaceViewProps> = ({
             <span className="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-slate-950/40">
               {activeHumanCount}/{humanTeam.length}
             </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveMainTab('organogram')}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              activeMainTab === 'organogram'
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm border border-purple-400/30'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Network className="w-3.5 h-3.5 text-purple-300" />
+            <span>Organograma & Hierarquia</span>
           </button>
         </div>
       </div>
@@ -779,6 +794,15 @@ export const AgentsMarketplaceView: React.FC<AgentsMarketplaceViewProps> = ({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* ABA 3: ORGANOGRAMA & HIERARQUIA DA EMPRESA                                */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'organogram' && (
+        <div className="pt-1 animate-fadeIn">
+          <TeamOrganogramView />
         </div>
       )}
 

@@ -40,6 +40,7 @@ import {
   AlertTriangle,
   Smartphone,
   Sliders,
+  Kanban,
 } from 'lucide-react';
 import {
   ChatContact,
@@ -69,21 +70,25 @@ import { AgentSettingsModal } from '../settings/AgentSettingsModal';
 import { DiagnosticEditModal } from './whatsapp/DiagnosticEditModal';
 import { MeetingEditModal } from './whatsapp/MeetingEditModal';
 import { ContactEditModal } from './whatsapp/ContactEditModal';
-import { syncWhatsAppContactsToCrm } from '../../../services/crm/unifiedCrmService';
 import { ProposalModal } from '../proposals/ProposalModal';
 import { ProposalPrintView } from '../proposals/ProposalPrintView';
 import { CommercialProposal } from '../../../services/crm/proposalsService';
 import { LeadTimelineFeed } from '../crm/LeadTimelineFeed';
-import { Lead } from '../../../lib/supabase';
-import { TeamOrganogramView } from '../team/TeamOrganogramView';
+import { Lead, PipelineStage } from '../../../lib/supabase';
 import { synthesizeSpeechAudio } from '../../../services/voice/voiceStudioService';
 import { agentTeamService, DigitalAgent } from '../../../services/agents/agentTeamService';
 import { AgentConfigDrawer } from '../agents/AgentConfigDrawer';
+import {
+  syncWhatsAppContactsToCrm,
+  mapContactStageToPipeline,
+  mapPipelineToContactStage,
+} from '../../../services/crm/unifiedCrmService';
 
-type SubView = 'chat' | 'diagnostics' | 'kanban' | 'calendar' | 'team';
+type SubView = 'chat' | 'diagnostics' | 'calendar';
 
 interface WhatsAppAgentViewProps {
   leads?: Lead[];
+  onNavigateToPipeline?: () => void;
 }
 
 const KANBAN_STAGES: Array<{
@@ -101,7 +106,10 @@ const KANBAN_STAGES: Array<{
   { key: 'closed', label: 'Fechado / Ganho', color: 'border-emerald-400', badgeBg: 'bg-emerald-400/15', badgeBorder: 'border-emerald-400/30', badgeText: 'text-emerald-300' },
 ];
 
-export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = [] }) => {
+export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
+  leads = [],
+  onNavigateToPipeline,
+}) => {
   // Configurações e Telemetria
   const [config, setConfig] = useState<AgentConfigStore | null>(null);
   const [kpis, setKpis] = useState<WhatsAppKPIs>({
@@ -612,16 +620,16 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
   };
 
   // ========================================================
-  // Handlers para Kanban
+  // Sincronização Direta com o Funil de Vendas (CRM Central)
   // ========================================================
-  const handleMoveContactStage = (contactId: string, newStage: ChatContact['status']) => {
-    const stageMeta = KANBAN_STAGES.find((s) => s.key === newStage);
+  const handleMoveContactPipelineStage = (contactId: string, newPipelineStage: PipelineStage) => {
+    const contactStatus = mapPipelineToContactStage(newPipelineStage);
     const updated = contacts.map((c) => {
       if (c.id === contactId) {
         return {
           ...c,
-          status: newStage,
-          statusLabel: stageMeta?.label || c.statusLabel,
+          status: contactStatus,
+          statusLabel: newPipelineStage,
         };
       }
       return c;
@@ -631,10 +639,11 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
     saveContactsLocally(updated);
     updateContactDetails({
       id: contactId,
-      status: newStage,
-      statusLabel: stageMeta?.label,
+      status: contactStatus,
+      statusLabel: newPipelineStage,
     });
-    showToast('Lead movido para ' + (stageMeta?.label || newStage) + '!');
+    syncWhatsAppContactsToCrm(updated);
+    showToast(`Lead atualizado no CRM para "${newPipelineStage}"!`);
   };
 
   const handleSaveContact = (contactData: Partial<ChatContact> & { id: string }) => {
@@ -918,7 +927,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
         </div>
       )}
 
-      {/* 2. SUB-ABAS DE NAVEGAÇÃO INTERNA */}
+      {/* 2. SUB-ABAS DE NAVEGAÇÃO INTERNA (FOCO 100% EM ATENDIMENTO & VENDAS) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-shrink-0">
         <button
           type="button"
@@ -940,29 +949,11 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
 
         <button
           type="button"
-          onClick={() => setActiveSubView('kanban')}
-          className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'kanban' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
-        >
-          <Layers className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Kanban de Oportunidades</span>
-        </button>
-
-        <button
-          type="button"
           onClick={() => setActiveSubView('calendar')}
           className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'calendar' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
         >
           <Calendar className="w-3.5 h-3.5 text-purple-400" />
           <span>Agenda Google Meet ({meetings.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveSubView('team')}
-          className={'px-4 py-2 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ' + (activeSubView === 'team' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
-        >
-          <Users className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Equipe & Organograma IA</span>
         </button>
       </div>
 
@@ -975,15 +966,28 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
             <div className="w-full sm:w-80 md:w-88 border-r border-[#16273C] bg-[#0A1624] flex flex-col flex-shrink-0">
               {/* Barra de Busca e Filtros */}
               <div className="p-3 border-b border-[#16273C] space-y-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-                  <input
-                    type="text"
-                    value={searchFilter}
-                    onChange={(e) => setSearchFilter(e.target.value)}
-                    placeholder="Buscar lead ou empresa..."
-                    className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-[#07111F] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00D2F6]/50 transition-colors"
-                  />
+                <div className="flex items-center gap-1.5">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      value={searchFilter}
+                      onChange={(e) => setSearchFilter(e.target.value)}
+                      placeholder="Buscar lead ou empresa..."
+                      className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-[#07111F] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00D2F6]/50 transition-colors"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingContact(null);
+                      setIsContactModalOpen(true);
+                    }}
+                    className="p-1.5 rounded-xl bg-[#00D2F6]/15 hover:bg-[#00D2F6]/25 border border-[#00D2F6]/30 text-[#00D2F6] transition-colors cursor-pointer flex-shrink-0"
+                    title="Novo Contato / Lead"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-1 text-[11px] font-mono">
@@ -1513,6 +1517,51 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
                   </p>
                 </div>
 
+                {/* Sincronia de Funil de Vendas (CRM 360°) */}
+                <div className="p-3 rounded-xl bg-[#07111F] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">
+                      Funil de Vendas Central
+                    </span>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30 font-bold">
+                      CRM Único
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-slate-400 font-mono block">Estágio do Negócio:</label>
+                    <select
+                      value={mapContactStageToPipeline(activeContact.status || 'triage')}
+                      onChange={(e) => {
+                        const targetStage = e.target.value as PipelineStage;
+                        handleMoveContactPipelineStage(activeContact.id, targetStage);
+                      }}
+                      className="w-full bg-[#0A1624] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:border-[#00D2F6] outline-none cursor-pointer"
+                    >
+                      <option value="NOVO">NOVO (Triagem Inicial)</option>
+                      <option value="QUALIFICADO">QUALIFICADO (IA / Score)</option>
+                      <option value="CONTATADO">CONTATADO (Em Atendimento)</option>
+                      <option value="REUNIÃO">REUNIÃO (Agendada)</option>
+                      <option value="PROPOSTA">PROPOSTA (Apresentada)</option>
+                      <option value="NEGOCIAÇÃO">NEGOCIAÇÃO (Ajustes Finais)</option>
+                      <option value="FECHADO">FECHADO (Venda Ganha 🎉)</option>
+                      <option value="PERDIDO">PERDIDO (Sem Fechamento)</option>
+                    </select>
+                  </div>
+
+                  {onNavigateToPipeline && (
+                    <button
+                      type="button"
+                      onClick={onNavigateToPipeline}
+                      className="w-full py-1 text-[11px] font-mono text-[#00D2F6] hover:text-[#00B4D8] flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:underline pt-1"
+                      title="Ver este lead no Kanban Oficial da empresa"
+                    >
+                      <Kanban className="w-3.5 h-3.5" />
+                      <span>Abrir no Funis de Vendas</span>
+                    </button>
+                  )}
+                </div>
+
                 {/* Ações Rápidas do Dossiê */}
                 <div className="space-y-2 pt-2">
                   <button
@@ -1747,150 +1796,6 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
           </div>
         )}
 
-        {/* SUB-VISÃO: KANBAN DE LEADS */}
-        {activeSubView === 'kanban' && (
-          <div className="flex-1 p-4 sm:p-6 overflow-y-auto flex flex-col space-y-4">
-            {/* Header do Kanban */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0C1B2E] p-4 rounded-2xl border border-[#16273C] flex-shrink-0">
-              <div>
-                <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-[#00D2F6]" />
-                  Pipeline de Oportunidades & Qualificação por IA
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Arraste e avance leads entre os estágios comerciais de triagem e fechamento.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowReactivationModal(true)}
-                  className="px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-amber-500/5"
-                  title="Campanha de Reativação de Leads com Pacing Anti-Ban"
-                >
-                  <Flame className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Reativação de Frios</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditingContact(null);
-                    setIsContactModalOpen(true);
-                  }}
-                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#00D2F6] to-[#015EEF] text-slate-950 font-bold font-mono text-xs flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,210,246,0.3)] hover:opacity-95 cursor-pointer w-fit"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Nova Oportunidade</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Colunas do Kanban */}
-            <div className="flex-1 overflow-x-auto pb-2">
-              <div className="flex gap-4 min-w-[1050px] h-full items-stretch">
-                {KANBAN_STAGES.map((column, colIdx) => {
-                  const columnContacts = contacts.filter((c) => c.status === column.key);
-                  return (
-                    <div
-                      key={column.key}
-                      className="flex-1 flex flex-col bg-[#07111F] border border-[#16273C] rounded-2xl p-3.5 min-w-[240px] shadow-lg"
-                    >
-                      <div className={'border-b ' + column.color + ' pb-2.5 mb-3 flex items-center justify-between'}>
-                        <span className="text-xs font-bold text-white uppercase tracking-wider">
-                          {column.label}
-                        </span>
-                        <span className={'text-[10px] font-mono px-2 py-0.5 rounded-full ' + column.badgeBg + ' ' + column.badgeBorder + ' ' + column.badgeText + ' font-bold'}>
-                          {columnContacts.length}
-                        </span>
-                      </div>
-
-                      <div className="flex-1 space-y-3 overflow-y-auto pr-0.5">
-                        {columnContacts.map((c) => (
-                          <div
-                            key={c.id}
-                            className="p-3 rounded-xl bg-[#0A1624] border border-white/[0.06] hover:border-[#00D2F6]/50 transition-all space-y-2 shadow-md relative group"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-bold text-white truncate pr-2">{c.name}</span>
-                              <span className="text-sm">{c.avatar}</span>
-                            </div>
-
-                            <p className="text-[11px] text-slate-400 font-mono truncate">{c.company}</p>
-                            <p className="text-[11px] text-slate-300 font-sans line-clamp-1">{c.projectType}</p>
-
-                            <div className="flex items-center justify-between text-[10px] font-mono pt-1">
-                              <span className="text-[#00D2F6] font-bold">{c.score}% Score</span>
-                              <span className="text-slate-400">{c.slaTimeline}</span>
-                            </div>
-
-                            {/* Controles de Movimentação de Estágio e Edição */}
-                            <div className="pt-2 border-t border-[#16273C] flex items-center justify-between gap-1 text-[11px] font-mono">
-                              <div className="flex items-center gap-1">
-                                {colIdx > 0 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleMoveContactStage(c.id, KANBAN_STAGES[colIdx - 1].key)}
-                                    className="p-1 rounded bg-white/[0.04] hover:bg-[#00D2F6]/20 border border-white/10 text-slate-300 hover:text-[#00D2F6] cursor-pointer"
-                                    title="Mover para estágio anterior"
-                                  >
-                                    <ChevronLeft className="w-3.5 h-3.5" />
-                                  </button>
-                                )}
-                                {colIdx < KANBAN_STAGES.length - 1 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleMoveContactStage(c.id, KANBAN_STAGES[colIdx + 1].key)}
-                                    className="p-1 rounded bg-white/[0.04] hover:bg-[#00D2F6]/20 border border-white/10 text-slate-300 hover:text-[#00D2F6] cursor-pointer"
-                                    title="Avançar para próximo estágio"
-                                  >
-                                    <ChevronRight className="w-3.5 h-3.5" />
-                                  </button>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-1">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setEditingContact(c);
-                                    setIsContactModalOpen(true);
-                                  }}
-                                  className="p-1 rounded bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-slate-300 hover:text-white cursor-pointer"
-                                  title="Editar Lead"
-                                >
-                                  <Edit2 className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setSelectedContactId(c.id);
-                                    setActiveSubView('chat');
-                                  }}
-                                  className="px-2 py-0.5 rounded bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 border border-[#00D2F6]/30 text-[#00D2F6] font-bold cursor-pointer"
-                                  title="Abrir Chat"
-                                >
-                                  Chat
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-
-                        {columnContacts.length === 0 && (
-                          <div className="py-8 text-center border border-dashed border-[#16273C] rounded-xl text-slate-500 text-[11px] font-mono">
-                            Vazio
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* SUB-VISÃO: AGENDA GOOGLE MEET */}
         {activeSubView === 'calendar' && (
@@ -2063,12 +1968,6 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({ leads = []
           </div>
         )}
 
-        {/* SUB-VISÃO: EQUIPE & ORGANOGRAMA DE IA */}
-        {activeSubView === 'team' && (
-          <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
-            <TeamOrganogramView />
-          </div>
-        )}
       </div>
 
       {/* LIGHTBOX MODAL PARA FOTOS EM ALTA RESOLUÇÃO */}
