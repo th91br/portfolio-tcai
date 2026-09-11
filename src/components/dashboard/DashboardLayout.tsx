@@ -56,6 +56,8 @@ import { WebhookHubModal } from './integrations/WebhookHubModal';
 import { SalesTeamModal } from './team/SalesTeamModal';
 import { TenantMasterModal } from './tenants/TenantMasterModal';
 import { VoiceStudioModal } from './voice/VoiceStudioModal';
+import { DashboardSidebar, DashboardTabKey, DashboardModalKey } from './layout/DashboardSidebar';
+import { DashboardHeader } from './layout/DashboardHeader';
 import {
   Tenant,
   getActiveTenant,
@@ -68,10 +70,10 @@ interface DashboardLayoutProps {
   onLogout: () => void;
 }
 
-type TabKey = 'overview' | 'pipeline' | 'followups' | 'leads' | 'analytics' | 'whatsapp';
-
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout }) => {
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useState<DashboardTabKey>('overview');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [followUps, setFollowUps] = useState<FollowUp[]>([]);
@@ -241,327 +243,65 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
   ).length;
 
   return (
-    <div className="min-h-screen w-full bg-[#07111F] text-[#F3F5F7] font-kanit flex flex-col selection:bg-[#00D2F6]/30 selection:text-white">
-      {/* Top Bar Administrativa */}
-      <header className="sticky top-0 z-40 bg-[#0A1624]/90 backdrop-blur-xl border-b border-white/[0.08] px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
-        {/* Marca, Título & Tenant Switcher */}
-        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <img
-              src="/logo_tca.png"
-              alt="Logo TCA"
-              className="h-7 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,210,246,0.3)]"
-            />
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-xs sm:text-sm text-white tracking-wide uppercase">
-                  THIAGO CASSOL ANTUNES
-                </span>
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[9px] font-mono text-[#00D2F6] font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00D2F6] animate-pulse" />
-                  DASHBOARD PRIVADO
-                </span>
-              </div>
-              <span className="text-[10px] font-mono text-slate-400 truncate max-w-[220px]">
-                {user.email}
-              </span>
-            </div>
-          </div>
+    <div className="h-screen w-full bg-[#07111F] text-[#F3F5F7] font-sans flex overflow-hidden selection:bg-[#00D2F6]/30 selection:text-white">
+      {/* Sidebar Lateral Recolhível */}
+      <DashboardSidebar
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        onOpenModal={(modalKey) => {
+          if (modalKey === 'tenants') setShowTenantMasterModal(true);
+          if (modalKey === 'voice') setShowVoiceStudioModal(true);
+          if (modalKey === 'webhooks') setShowWebhookHubModal(true);
+          if (modalKey === 'team') setShowSalesTeamModal(true);
+          if (modalKey === 'settings') setShowAgentSettingsModal(true);
+          if (modalKey === 'password') setShowChangePasswordModal(true);
+        }}
+        newLeadsCount={newLeadsCount}
+        overdueFollowUpsCount={overdueFollowUpsCount}
+        activeTenantName={activeTenant.tradingName}
+        onLogout={onLogout}
+      />
 
-          {/* Seletor Rápido de Ambiente / Tenant */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowTenantDropdown(!showTenantDropdown)}
-              className="px-2.5 py-1.5 rounded-xl border border-indigo-500/30 hover:border-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 text-xs font-mono text-indigo-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(99,102,241,0.15)]"
-              title="Alternar entre contas de clientes corporativos (Multi-Tenant)"
-            >
-              <Building className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="font-bold text-white max-w-[130px] sm:max-w-[180px] truncate">
-                {activeTenant.tradingName}
-              </span>
-              <span className="hidden md:inline px-1.5 py-0.2 rounded bg-indigo-500/20 text-[9px] text-indigo-300 uppercase">
-                {activeTenant.status}
-              </span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
-            </button>
-
-            {showTenantDropdown && (
-              <div className="absolute left-0 mt-2 w-64 bg-[#091524] border border-white/10 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in">
-                <div className="px-2 py-1 text-[10px] font-mono text-slate-400 uppercase tracking-wider border-b border-white/5 mb-1">
-                  Contas Corporativas
-                </div>
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {allTenants.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => {
-                        setActiveTenantId(t.id);
-                        setActiveTenant(t);
-                        setShowTenantDropdown(false);
-                        loadData();
-                      }}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center justify-between transition-colors cursor-pointer ${
-                        t.id === activeTenant.id
-                          ? 'bg-indigo-500/20 text-indigo-300 font-bold'
-                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                      }`}
-                    >
-                      <span className="truncate">{t.tradingName}</span>
-                      <span className="text-[10px] text-slate-500">{t.segment.slice(0, 5)}</span>
-                    </button>
-                  ))}
-                </div>
-                <div className="pt-1.5 mt-1 border-t border-white/5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowTenantDropdown(false);
-                      setShowTenantMasterModal(true);
-                    }}
-                    className="w-full px-2.5 py-1.5 rounded-lg text-xs font-mono text-center text-[#00D2F6] hover:bg-[#00D2F6]/10 font-bold transition-colors cursor-pointer"
-                  >
-                    ⚙️ Gerenciar Clientes & MRR
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Ações Rápidas & Notificações */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Botão de Gestão de Base de Demonstração */}
-          {isDemoActive ? (
-            <button
-              type="button"
-              onClick={() => setShowDeleteDemoModal(true)}
-              disabled={isProcessingDemo}
-              className="px-3 py-1.5 rounded-full border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-mono text-rose-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.1)]"
-              title="Excluir registros de demonstração"
-            >
-              {isProcessingDemo ? (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-300" />
-              ) : (
-                <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-              )}
-              <span className="hidden sm:inline font-bold">Excluir Registros ({demoCount})</span>
-              <span className="sm:hidden font-bold">Excluir ({demoCount})</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleGenerateDemo}
-              disabled={isProcessingDemo}
-              className="px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-mono text-amber-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:border-amber-400"
-              title="Popular base com registros para apresentação comercial"
-            >
-              {isProcessingDemo ? (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-400" />
-              ) : (
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              )}
-              <span className="hidden sm:inline font-bold">Gerar Demonstração</span>
-              <span className="sm:hidden font-bold">Demo</span>
-            </button>
-          )}
-
-          {/* Central de Notificações Internas */}
-          <NotificationsCenter
-            onSelectLead={(id) => setSelectedLeadId(id)}
-            refreshTrigger={refreshKey}
-          />
-
-          {/* Botão de Clientes Corporativos & MRR */}
-          <button
-            type="button"
-            onClick={() => setShowTenantMasterModal(true)}
-            className="px-3 py-1.5 rounded-full border border-indigo-500/30 hover:border-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 text-xs font-mono text-indigo-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(99,102,241,0.15)]"
-            title="Painel SuperAdmin: Gestão de Clientes B2B, Planos e MRR"
-          >
-            <Building className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="hidden sm:inline font-bold">Clientes & MRR</span>
-            <span className="sm:hidden font-bold">MRR</span>
-          </button>
-
-          {/* Botão de Voice Studio (Clonagem de Voz PTT) */}
-          <button
-            type="button"
-            onClick={() => setShowVoiceStudioModal(true)}
-            className="px-3 py-1.5 rounded-full border border-purple-500/30 hover:border-purple-400 bg-purple-500/10 hover:bg-purple-500/20 text-xs font-mono text-purple-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.15)]"
-            title="Voice Studio: Clonagem de Voz, Síntese PTT e Regras Estratégicas de Áudio"
-          >
-            <Mic className="w-3.5 h-3.5 text-purple-400" />
-            <span className="hidden sm:inline font-bold">Voice Studio</span>
-            <span className="sm:hidden font-bold">Voz</span>
-          </button>
-
-          {/* Botão de Webhook Inbound & Ads */}
-          <button
-            type="button"
-            onClick={() => setShowWebhookHubModal(true)}
-            className="px-3 py-1.5 rounded-full border border-purple-500/30 hover:border-purple-400 bg-purple-500/10 hover:bg-purple-500/20 text-xs font-mono text-purple-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.15)]"
-            title="Entrada Universal de Leads via Webhook (Meta Ads, Google Ads, Elementor)"
-          >
-            <Radio className="w-3.5 h-3.5 text-purple-400" />
-            <span className="hidden sm:inline font-bold">Webhooks & Ads</span>
-            <span className="sm:hidden font-bold">Webhooks</span>
-          </button>
-
-          {/* Botão de Time Comercial & Round Robin */}
-          <button
-            type="button"
-            onClick={() => setShowSalesTeamModal(true)}
-            className="px-3 py-1.5 rounded-full border border-cyan-500/30 hover:border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 text-xs font-mono text-cyan-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.15)]"
-            title="Time Comercial & Regras de Distribuição Round Robin"
-          >
-            <Users className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="hidden sm:inline font-bold">Time & Vendedores</span>
-            <span className="sm:hidden font-bold">Time</span>
-          </button>
-
-          {/* Botão de Ajustes IA & WhatsApp */}
-          <button
-            type="button"
-            onClick={() => setShowAgentSettingsModal(true)}
-            className="px-3 py-1.5 rounded-full border border-[#00D2F6]/30 hover:border-[#00D2F6] bg-[#00D2F6]/10 hover:bg-[#00D2F6]/20 text-xs font-mono text-[#00D2F6] flex items-center gap-1.5 transition-colors cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.15)]"
-            title="Configurações do Agente IA, Gemini API e WhatsApp"
-          >
-            <Cpu className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span className="hidden sm:inline font-bold">Ajustes IA</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowChangePasswordModal(true)}
-            className="px-3 py-1.5 rounded-full border border-white/10 hover:border-[#00D2F6]/40 bg-white/[0.03] hover:bg-[#00D2F6]/10 text-xs font-mono text-slate-300 hover:text-[#00D2F6] flex items-center gap-1.5 transition-colors cursor-pointer"
-            title="Segurança & Alteração de Senha"
-          >
-            <KeyRound className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span className="hidden sm:inline">Trocar Senha</span>
-          </button>
-
-          <a
-            href="/"
-            className="px-3 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/[0.03] text-xs font-mono text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
-          >
-            <span className="hidden sm:inline">Ver Portfólio</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-
-          <button
-            type="button"
-            onClick={onLogout}
-            className="p-1.5 sm:px-3 sm:py-1.5 rounded-full border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-mono text-rose-300 flex items-center gap-1.5 transition-colors cursor-pointer"
-            title="Encerrar Sessão"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Sair</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Navegação por Abas */}
-      <nav className="bg-[#07111F] border-b border-white/[0.06] px-4 sm:px-8 py-2 overflow-x-auto">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs font-mono">
-          <button
-            type="button"
-            onClick={() => setActiveTab('overview')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'overview'
-                ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
-            }`}
-          >
-            <LayoutDashboard className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span>VISÃO GERAL</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('pipeline')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'pipeline'
-                ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
-            }`}
-          >
-            <Kanban className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span>PIPELINE (8 ETAPAS)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('followups')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'followups'
-                ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span>FOLLOW-UPS</span>
-            {overdueFollowUpsCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-bold animate-pulse">
-                {overdueFollowUpsCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('leads')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'leads'
-                ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
-            }`}
-          >
-            <Users className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span>LEADS</span>
-            {newLeadsCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-[#07111F] text-[10px] font-bold">
-                {newLeadsCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('analytics')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'analytics'
-                ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span>MÉTRICAS & FUNIL</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('whatsapp')}
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'whatsapp'
-                ? 'bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/40 text-white font-bold shadow-[0_0_15px_rgba(0,210,246,0.2)]'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
-            }`}
-          >
-            <MessageSquare className="w-3.5 h-3.5 text-[#00D2F6]" />
-            <span>WHATSAPP & AGENTE IA</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Central Ativa" />
-          </button>
-        </div>
-      </nav>
-
-      {/* Conteúdo Principal */}
-      <main
-        className={`flex-1 w-full mx-auto transition-all duration-300 ${
-          activeTab === 'pipeline' || activeTab === 'whatsapp' ? 'max-w-[1920px] px-3 sm:px-6 py-4' : 'max-w-7xl p-4 sm:p-8'
+      {/* Área Principal de Conteúdo */}
+      <div
+        className={`flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 ${
+          isSidebarCollapsed ? 'lg:pl-[72px]' : 'lg:pl-64'
         }`}
       >
+        {/* Topbar Limpa & Executiva */}
+        <DashboardHeader
+          user={user}
+          activeTab={activeTab}
+          activeTenant={activeTenant}
+          allTenants={allTenants}
+          onSelectTenant={(t) => {
+            setActiveTenant(t);
+            loadData();
+            setRefreshKey((k) => k + 1);
+          }}
+          onOpenTenantMaster={() => setShowTenantMasterModal(true)}
+          onOpenChangePassword={() => setShowChangePasswordModal(true)}
+          onToggleMobileMenu={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          isDemoActive={isDemoActive}
+          demoCount={demoCount}
+          isProcessingDemo={isProcessingDemo}
+          onGenerateDemo={handleGenerateDemo}
+          onOpenDeleteDemo={() => setShowDeleteDemoModal(true)}
+          onSelectLead={(id) => setSelectedLeadId(id)}
+          refreshKey={refreshKey}
+          onLogout={onLogout}
+        />
+
+        {/* Conteúdo Principal com Rolagem Suave */}
+        <main
+          className={`flex-1 overflow-y-auto w-full transition-all duration-300 ${
+            activeTab === 'pipeline' || activeTab === 'whatsapp' ? 'max-w-[1920px] px-3 sm:px-6 py-4' : 'max-w-7xl mx-auto p-4 sm:p-8'
+          }`}
+        >
         {loading ? (
           <div className="h-96 flex flex-col items-center justify-center text-slate-400 gap-3">
             <RefreshCw className="w-8 h-8 animate-spin text-[#00D2F6]" />
@@ -625,6 +365,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           </>
         )}
       </main>
+      </div>
 
       {/* Dossiê Lateral do Lead (Drawer com Ficha Comercial) */}
       <LeadDetailsDrawer
