@@ -7,6 +7,7 @@ const steps = [
   { name: 'Testes de Segurança e Isolamento', cmd: 'npm run test:security' },
   { name: 'Testes de Performance e Chunks', cmd: 'npm run test:perf' },
   { name: 'Jornadas de Navegação (Playwright)', cmd: 'npm run test:navigation' },
+  { name: 'Hardening Final (Viewports 390-1440px, Teclado, Offline e Rolagem)', cmd: 'npm run test:hardening' },
   { name: 'Build de Produção', cmd: 'npm run build' },
   { name: 'Auditoria de Orçamento de Performance (Budget Gate)', cmd: 'node scripts/verify-performance-budget.js' },
 ];
