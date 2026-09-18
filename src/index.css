@@ -29,6 +29,21 @@ html {
   scroll-behavior: auto !important;
 }
 
+/* Hardening: Foco Visível Universal para Navegação por Teclado */
+:focus-visible {
+  outline: 2px solid var(--brand-cyan, #00D2F6);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--brand-cyan, #00D2F6);
+  outline-offset: 2px;
+}
+
 html, body, #root {
   background-color: #07111F;
   font-family: 'Kanit', sans-serif;

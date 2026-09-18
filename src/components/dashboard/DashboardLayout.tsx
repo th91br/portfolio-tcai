@@ -54,6 +54,7 @@ import {
   setActiveTenantId,
 } from '../../services/tenants/tenantService';
 import { ModuleSkeletonLoader } from './common/ModuleSkeletonLoader';
+import { NetworkStatusBanner } from './common/NetworkStatusBanner';
 
 // Cada módulo operacional é carregado somente quando aberto. O painel inicial
 // permanece leve sem alterar contratos, dados ou a navegação existente.
@@ -320,6 +321,37 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
     (f) => f.status === 'PENDENTE' && new Date(f.scheduled_at).getTime() < now
   ).length;
 
+  // Hardening: Acessibilidade de Teclado (Fechar modais, drawers e menus móveis com Escape)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (selectedLeadId) setSelectedLeadId(null);
+        if (showChangePasswordModal) setShowChangePasswordModal(false);
+        if (showAgentSettingsModal) setShowAgentSettingsModal(false);
+        if (showWebhookHubModal) setShowWebhookHubModal(false);
+        if (showSalesTeamModal) setShowSalesTeamModal(false);
+        if (showTenantMasterModal) setShowTenantMasterModal(false);
+        if (showVoiceStudioModal) setShowVoiceStudioModal(false);
+        if (showKnowledgeBaseDrawer) setShowKnowledgeBaseDrawer(false);
+        if (showDeleteDemoModal) setShowDeleteDemoModal(false);
+        if (isMobileSidebarOpen) setIsMobileSidebarOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [
+    selectedLeadId,
+    showChangePasswordModal,
+    showAgentSettingsModal,
+    showWebhookHubModal,
+    showSalesTeamModal,
+    showTenantMasterModal,
+    showVoiceStudioModal,
+    showKnowledgeBaseDrawer,
+    showDeleteDemoModal,
+    isMobileSidebarOpen,
+  ]);
+
   return (
     <div className="dashboard-shell h-[100dvh] w-full bg-[#111512] text-[#F1EEE5] font-sans flex overflow-hidden selection:bg-[#C08E3A]/30 selection:text-white">
       {/* Sidebar Lateral Recolhível */}
@@ -374,6 +406,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout
           refreshKey={refreshKey}
           onLogout={onLogout}
         />
+
+        {/* Indicador de Status de Rede / Modo Offline */}
+        <NetworkStatusBanner />
 
         {/* Conteúdo Principal com Rolagem Suave */}
         <main
