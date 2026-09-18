@@ -1,34 +1,34 @@
-import React from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Sparkles } from '@react-three/drei';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { HeroStaticDepth } from './HeroStaticDepth';
+
+const HeroCanvasWebGL = lazy(() => import('./HeroCanvasWebGL'));
 
 export const HeroScene: React.FC = () => {
+  const [shouldRender3D, setShouldRender3D] = useState(false);
+
+  useEffect(() => {
+    // 1. Verifica preferência de acessibilidade (movimento reduzido)
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 2. Verifica se é dispositivo móvel (tela < 768px)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    // 3. Só inicializa WebGL em desktops que não solicitaram redução de movimento
+    if (!prefersReducedMotion && !isMobile) {
+      setShouldRender3D(true);
+    }
+  }, []);
+
+  if (!shouldRender3D) {
+    return <HeroStaticDepth />;
+  }
+
   return (
-    <div
-      className="fixed inset-0 w-full h-full pointer-events-none -z-10 select-none overflow-hidden"
-      aria-hidden="true"
-    >
-      <Canvas
-        camera={{ position: [0, 0, 7], fov: 45 }}
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: 'high-performance',
-        }}
-        dpr={[1, 2]}
-      >
-        <ambientLight intensity={0.8} />
-        {/* Soft subtle sapphire & sky particles */}
-        <Sparkles
-          count={35}
-          scale={10}
-          size={2.4}
-          speed={0.25}
-          color="#0284C7"
-          opacity={0.25}
-        />
-      </Canvas>
-    </div>
+    <Suspense fallback={<HeroStaticDepth />}>
+      <HeroCanvasWebGL />
+    </Suspense>
   );
 };
 
