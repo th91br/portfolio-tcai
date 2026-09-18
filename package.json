@@ -14,8 +14,9 @@
     "test:unit": "npx tsx --test tests/unit/**/*.test.ts",
     "test:integration": "npx tsx --test tests/integration/**/*.test.ts",
     "test:security": "npx tsx --test tests/security/**/*.test.ts",
+    "test:perf": "npx tsx --test tests/performance/**/*.test.ts",
     "test:navigation": "npx tsx tests/navigation/run-navigation-tests.ts",
-    "test:all": "npm run test:unit && npm run test:integration && npm run test:security && npm run test:navigation",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:security && npm run test:perf && npm run test:navigation",
     "test": "npx tsx --test tests/**/*.test.ts",
     "verify": "node scripts/verify-quality.js"
   },
