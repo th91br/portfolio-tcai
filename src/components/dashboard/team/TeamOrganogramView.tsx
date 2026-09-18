@@ -119,11 +119,11 @@ export const TeamOrganogramView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowKnowledgeDrawer(true)}
-            className="px-3 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-purple-500/5"
+            className="px-3 py-2 rounded-xl bg-[#C08E3A]/10 hover:bg-[#C08E3A]/20 text-[#C08E3A] border border-[#C08E3A]/30 text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm"
             title="Base de Conhecimento Empresarial Anti-Alucinação"
           >
-            <BookOpen className="w-4 h-4 text-purple-400" />
-            <span className="hidden sm:inline">Base RAG</span>
+            <BookOpen className="w-4 h-4 text-[#C08E3A]" />
+            <span className="hidden sm:inline">Conhecimento</span>
           </button>
 
           <button
