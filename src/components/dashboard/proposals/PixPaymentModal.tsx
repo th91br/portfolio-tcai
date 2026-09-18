@@ -19,6 +19,8 @@ import {
   confirmPixPayment,
 } from '../../../services/crm/pixPaymentService';
 import { ChatContact } from '../../../services/agent/agentChatService';
+import { maskCnpjCpf } from '../../../utils/maskingUtils';
+import { SystemRole, canPerformAction } from '../../../services/security/rolePermissionsService';
 
 interface PixPaymentModalProps {
   isOpen: boolean;
@@ -26,6 +28,7 @@ interface PixPaymentModalProps {
   contact: ChatContact;
   amount: number;
   proposalNumber?: string;
+  userRole?: SystemRole;
   onPaymentConfirmed?: () => void;
   onSendWhatsApp?: (messageText: string) => void;
 }
@@ -36,6 +39,7 @@ export const PixPaymentModal: React.FC<PixPaymentModalProps> = ({
   contact,
   amount,
   proposalNumber = 'PROP-2026-001',
+  userRole,
   onPaymentConfirmed,
   onSendWhatsApp,
 }) => {
@@ -52,6 +56,12 @@ export const PixPaymentModal: React.FC<PixPaymentModalProps> = ({
   const [isPaid, setIsPaid] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
+  const canEditBilling = !userRole || canPerformAction(userRole, 'billing:edit');
+  const canViewBilling = !userRole || canPerformAction(userRole, 'billing:view');
+
+  const displayAmount = canViewBilling ? charge.amountFormatted : 'R$ ***,**';
+  const displayPixKey = canViewBilling ? charge.pixKey : maskCnpjCpf(charge.pixKey);
+
   if (!isOpen) return null;
 
   const handleCopy = () => {
@@ -61,10 +71,10 @@ export const PixPaymentModal: React.FC<PixPaymentModalProps> = ({
   };
 
   const handleSendToWhatsApp = () => {
-    const text = `⚡ *COBRANÇA PIX INSTANTÂNEA — TCAI SOLUÇÕES INTELIGENTES*
-📌 *Proposta:* ${proposalNumber}
-👤 *Titular:* ${contact.name} (${contact.company})
-💰 *Valor do Sinal:* ${charge.amountFormatted}
+    const text = `*COBRANÇA PIX INSTANTÂNEA — TCAI SOLUÇÕES INTELIGENTES*
+Proposta: ${proposalNumber}
+Titular: ${contact.name} (${contact.company})
+Valor do Sinal: ${displayAmount}
 
 *Chave PIX Copia e Cola:*
 \`\`\`${charge.copiaECola}\`\`\`
@@ -105,9 +115,9 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
 
   return (
     <div className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 font-kanit">
-      <div className="w-full max-w-lg bg-[#091524] border border-white/15 rounded-3xl overflow-hidden shadow-2xl space-y-0 animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full max-w-lg bg-[#20271F] border border-white/15 rounded-3xl overflow-hidden shadow-2xl space-y-0 animate-in fade-in zoom-in-95 duration-200">
         {/* Topo do Modal */}
-        <div className="p-5 sm:p-6 border-b border-white/10 bg-[#07111F] flex items-center justify-between">
+        <div className="p-5 sm:p-6 border-b border-white/10 bg-[#111512] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <QrCode className="w-5 h-5" />
@@ -138,7 +148,7 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
         <div className="p-5 sm:p-6 space-y-5">
           {isPaid ? (
             <div className="py-8 text-center space-y-4">
-              <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto animate-bounce">
+              <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto animate-pulse">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div>
@@ -158,7 +168,7 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#07111F] text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#111512] text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
                 >
                   Concluir e Voltar ao CRM
                 </button>
@@ -167,16 +177,16 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
           ) : (
             <>
               {/* Valor e Dados do Recebedor */}
-              <div className="p-4 rounded-2xl bg-[#07111F] border border-white/10 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-[#111512] border border-white/10 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-mono text-slate-400 uppercase block">
                     Valor do Sinal / Parcela
                   </span>
                   <div className="text-2xl font-black text-white font-mono mt-0.5">
-                    {charge.amountFormatted}
+                    {displayAmount}
                   </div>
-                  <span className="text-[10px] font-mono text-cyan-400">
-                    Chave CNPJ: {charge.pixKey}
+                  <span className="text-[10px] font-mono text-amber-400">
+                    Chave CNPJ: {displayPixKey}
                   </span>
                 </div>
 
@@ -210,14 +220,14 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
                     type="text"
                     readOnly
                     value={charge.copiaECola}
-                    className="flex-1 bg-[#07111F] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-300 select-all focus:outline-none"
+                    className="flex-1 bg-[#111512] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-300 select-all focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={handleCopy}
                     className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                       copied
-                        ? 'bg-emerald-500 text-[#07111F]'
+                        ? 'bg-emerald-500 text-[#111512]'
                         : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
                     }`}
                   >
@@ -229,7 +239,7 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
 
               {/* Feedback */}
               {feedback && (
-                <div className="p-3 rounded-xl bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-xs font-mono text-[#00D2F6] text-center">
+                <div className="p-3 rounded-xl bg-[#C08E3A]/10 border border-[#C08E3A]/30 text-xs font-mono text-[#C08E3A] text-center">
                   {feedback}
                 </div>
               )}
@@ -239,7 +249,8 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
                 <button
                   type="button"
                   onClick={handleSendToWhatsApp}
-                  className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#07111F] text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
+                  disabled={!canEditBilling}
+                  className="w-full py-2.5 rounded-xl bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-400 text-[#111512] text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Disparar no WhatsApp</span>
@@ -249,7 +260,7 @@ Assim que realizar a transferência, a conciliação bancária dará baixa autom
                   type="button"
                   onClick={handleSimulateBankConfirmation}
                   disabled={isProcessing}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 hover:from-[#00D2F6]/30 hover:to-[#015EEF]/30 border border-[#00D2F6]/40 text-[#00D2F6] text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#C08E3A]/20 to-[#606C38]/20 hover:from-[#C08E3A]/30 hover:to-[#606C38]/30 border border-[#C08E3A]/40 text-[#C08E3A] text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
                   title="Simula a confirmação via webhook do banco com baixa automática no Kanban"
                 >
                   <Zap className={`w-3.5 h-3.5 ${isProcessing ? 'animate-spin' : ''}`} />
