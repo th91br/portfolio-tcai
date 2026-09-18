@@ -93,25 +93,25 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#07111F]/80 backdrop-blur-md font-kanit">
-      <div className="relative w-full max-w-4xl bg-[#091524] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#111512]/80 backdrop-blur-md font-kanit">
+      <div className="relative w-full max-w-4xl bg-[#20271F] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in fade-in zoom-in-95 duration-200">
         {/* Cabeçalho Executivo */}
-        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-[#0A1624]">
+        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-[#1B211C]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#00D2F6]/10 border border-[#00D2F6]/30 flex items-center justify-center text-[#00D2F6]">
+            <div className="w-10 h-10 rounded-xl bg-[#C08E3A]/10 border border-[#C08E3A]/30 flex items-center justify-center text-[#C08E3A]">
               <Radio className="w-5 h-5 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-white uppercase tracking-wider">
-                  Hub de Webhooks & Entrada de Leads em 1 Clique
+                  Conexão de Anúncios & Entrada de Leads
                 </h3>
-                <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 uppercase">
-                  Universal Gateway v3.0
+                <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#C08E3A]/15 text-[#C08E3A] border border-[#C08E3A]/30 uppercase">
+                  CAPTAÇÃO AUTOMÁTICA 24H
                 </span>
               </div>
               <p className="text-xs text-slate-400 font-light">
-                Pluge Meta Ads (Instagram/Facebook), Google Ads, Elementor e formulários externos diretamente no funil e na IA.
+                Conecte seus anúncios do Instagram, Google ou formulários do site para que cada novo cliente receba atendimento imediato no WhatsApp.
               </p>
             </div>
           </div>
@@ -128,14 +128,14 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
         {/* Corpo do Modal com Scroll */}
         <div className="p-5 sm:p-6 space-y-6 overflow-y-auto flex-1">
           {/* Card Principal: URL do Webhook Inbound */}
-          <div className="p-5 rounded-2xl bg-[#0A1624] border border-white/10 space-y-3 shadow-lg">
+          <div className="p-5 rounded-2xl bg-[#1B211C] border border-white/10 space-y-3 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-                  Sua URL de Webhook Oficial (POST Inbound):
+                  Seu Link Exclusivo de Integração:
                 </span>
                 <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  SSL / HTTPS ATIVO
+                  CONEXÃO SEGURA CRIPTOGRAFADA
                 </span>
               </div>
 
@@ -149,23 +149,23 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
                       : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
                   }`}
                 >
-                  {config.isActive ? 'ENDPOINT ATIVO' : 'PAUSADO'}
+                  {config.isActive ? 'RECEBIMENTO ATIVO' : 'PAUSADO'}
                 </button>
               </div>
             </div>
 
             {/* Input com botão Copiar */}
-            <div className="flex items-center gap-2 bg-[#07111F] p-1.5 rounded-xl border border-white/10">
+            <div className="flex items-center gap-2 bg-[#111512] p-1.5 rounded-xl border border-white/10">
               <input
                 type="text"
                 readOnly
                 value={webhookUrl}
-                className="flex-1 bg-transparent px-3 py-1 text-xs font-mono text-cyan-300 focus:outline-none select-all"
+                className="flex-1 bg-transparent px-3 py-1 text-xs font-mono text-amber-300 focus:outline-none select-all"
               />
               <button
                 type="button"
                 onClick={handleCopyUrl}
-                className="px-3 py-1.5 rounded-lg bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] text-xs font-mono font-bold uppercase flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
+                className="px-3 py-1.5 rounded-lg bg-[#C08E3A] hover:bg-[#A8782F] text-[#111512] text-xs font-mono font-bold uppercase flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? 'Copiado!' : 'Copiar URL'}</span>
@@ -182,20 +182,20 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
             </div>
 
             <div className="flex items-center justify-between text-xs font-mono text-slate-400 pt-1">
-              <span>Leads Recebidos no Gateway: <strong className="text-white">{config.totalReceived}</strong></span>
-              <span>Última Transmissão: <strong className="text-emerald-400">{config.lastWebhookAt ? new Date(config.lastWebhookAt).toLocaleTimeString() : 'Aguardando'}</strong></span>
+              <span>Clientes Recebidos Automaticamente: <strong className="text-white">{config.totalReceived}</strong></span>
+              <span>Último Cliente Recebido: <strong className="text-emerald-400">{config.lastWebhookAt ? new Date(config.lastWebhookAt).toLocaleTimeString() : 'Aguardando'}</strong></span>
             </div>
           </div>
 
           {/* Simulador Interativo de Disparo (Meta Ads / Instagram) */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#00D2F6]/10 to-purple-500/10 border border-[#00D2F6]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#C08E3A]/10 to-stone-900/40 border border-[#C08E3A]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#00D2F6]" />
-                <h4 className="font-bold text-white text-sm">Simulador de Teste ao Vivo</h4>
+                <Sparkles className="w-4 h-4 text-[#C08E3A]" />
+                <h4 className="font-bold text-white text-sm">Teste em 1 Clique</h4>
               </div>
               <p className="text-xs text-slate-300 max-w-xl font-light">
-                Dispare um payload real de anúncio do <strong>Instagram Lead Ads</strong> agora mesmo para ver o lead entrar no Kanban, receber pontuação de score e ser atribuído ao vendedor.
+                Simule a chegada de um novo cliente pelo <strong>Instagram</strong> para ver o contato entrar no CRM e a conversa iniciar no WhatsApp.
               </p>
             </div>
 
@@ -203,17 +203,17 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
               type="button"
               disabled={isSimulating}
               onClick={handleSimulateMetaAds}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#00D2F6] to-[#015EEF] hover:opacity-95 text-[#07111F] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-[#00D2F6]/20 transition-all cursor-pointer whitespace-nowrap shrink-0"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#C08E3A] to-[#606C38] hover:opacity-95 text-[#111512] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-[#C08E3A]/20 transition-all cursor-pointer whitespace-nowrap shrink-0"
             >
               <Play className={`w-4 h-4 ${isSimulating ? 'animate-spin' : ''}`} />
-              <span>{isSimulating ? 'Processando...' : 'Disparar Lead Teste (Meta)'}</span>
+              <span>{isSimulating ? 'Processando...' : 'Simular Cliente de Teste'}</span>
             </button>
           </div>
 
           {/* Guias Rápidos de Conexão em 1 Clique */}
           <div className="space-y-3">
             <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-              Instruções de Conexão por Provedor:
+              Como Conectar por Canal de Venda:
             </h4>
 
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -224,18 +224,18 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
                   onClick={() => setSelectedProvider(prov)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                     selectedProvider === prov
-                      ? 'bg-[#00D2F6] text-[#07111F]'
-                      : 'bg-[#0A1624] text-slate-400 border border-white/5 hover:text-white'
+                      ? 'bg-[#C08E3A] text-[#111512]'
+                      : 'bg-[#1B211C] text-slate-400 border border-white/5 hover:text-white'
                   }`}
                 >
-                  {prov === 'meta' && 'Meta Ads (Insta/Face)'}
-                  {prov === 'google' && 'Google Ads Leads'}
-                  {prov === 'elementor' && 'Elementor / Webflow / Forms'}
+                  {prov === 'meta' && 'Instagram & Facebook (Meta Ads)'}
+                  {prov === 'google' && 'Google Ads (Formulários)'}
+                  {prov === 'elementor' && 'Site / Landing Page (Formulários)'}
                 </button>
               ))}
             </div>
 
-            <div className="p-4 rounded-xl bg-[#0A1624] border border-white/5 text-xs text-slate-300 leading-relaxed font-sans">
+            <div className="p-4 rounded-xl bg-[#1B211C] border border-white/5 text-xs text-slate-300 leading-relaxed font-sans">
               {selectedProvider === 'meta' && (
                 <ol className="list-decimal list-inside space-y-1.5">
                   <li>Acesse o <strong>Gerenciador de Anúncios da Meta</strong> ➔ Ferramentas ➔ Leads.</li>
@@ -265,10 +265,10 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-                Histórico de Transmissões & Auditoria ({logs.length}):
+                Últimos Clientes Recebidos via Anúncios ({logs.length}):
               </h4>
               <span className="text-[10px] font-mono text-slate-400">
-                JSON Normalizado Automaticamente
+                Processamento Imediato
               </span>
             </div>
 
@@ -276,14 +276,14 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3 rounded-xl bg-[#0A1624] border border-white/5 flex items-center justify-between gap-3 text-xs"
+                  className="p-3 rounded-xl bg-[#1B211C] border border-white/5 flex items-center justify-between gap-3 text-xs"
                 >
                   <div className="flex items-center gap-3">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
                     <div>
                       <div className="flex items-center gap-2">
                         <strong className="text-white">{log.parsedData.name}</strong>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-[#00D2F6] border border-white/10">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-[#C08E3A] border border-white/10">
                           {log.provider.toUpperCase()}
                         </span>
                       </div>
@@ -311,9 +311,9 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
 
           {/* Modal Modal Viewer de JSON Bruto */}
           {activeLogPayload && (
-            <div className="p-4 rounded-xl bg-[#07111F] border border-[#00D2F6]/30 space-y-2">
+            <div className="p-4 rounded-xl bg-[#111512] border border-[#C08E3A]/30 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-[#00D2F6] uppercase">Payload JSON Bruto Recebido:</span>
+                <span className="text-xs font-mono font-bold text-[#C08E3A] uppercase">Dados Completos do Lead:</span>
                 <button
                   type="button"
                   onClick={() => setActiveLogPayload(null)}
@@ -330,7 +330,7 @@ export const WebhookHubModal: React.FC<WebhookHubModalProps> = ({
         </div>
 
         {/* Rodapé */}
-        <div className="p-4 border-t border-white/10 bg-[#0A1624] flex items-center justify-end">
+        <div className="p-4 border-t border-white/10 bg-[#1B211C] flex items-center justify-end">
           <button
             type="button"
             onClick={onClose}

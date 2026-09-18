@@ -139,7 +139,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-[#060D17]/85 backdrop-blur-md"
+          className="fixed inset-0 bg-[#10140F]/85 backdrop-blur-md"
         />
 
         {/* Modal Container */}
@@ -148,22 +148,22 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 16 }}
           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-4xl bg-[#091524] border border-white/[0.12] rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.8)] overflow-hidden z-10 flex flex-col max-h-[92vh]"
+          className="relative w-full max-w-4xl bg-[#20271F] border border-white/[0.12] rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.8)] overflow-hidden z-10 flex flex-col max-h-[calc(100dvh-1.5rem)]"
         >
           {/* Top Header */}
-          <div className="px-6 py-5 border-b border-white/[0.08] bg-[#0A1624] flex items-center justify-between">
+          <div className="px-6 py-5 border-b border-white/[0.08] bg-[#1B211C] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#00D2F6]/20 to-[#015EEF]/20 border border-[#00D2F6]/30 flex items-center justify-center text-[#00D2F6]">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#C08E3A]/20 to-[#606C38]/20 border border-[#C08E3A]/30 flex items-center justify-center text-[#C08E3A]">
                 <Settings className="w-5 h-5 animate-[spin_12s_linear_infinite]" />
               </div>
               <div>
                 <h3 className="font-kanit font-black text-lg sm:text-xl text-white uppercase tracking-tight flex items-center gap-2">
                   <span>Central de Configurações de IA & WhatsApp</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00D2F6]/10 text-[#00D2F6] border border-[#00D2F6]/25">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#C08E3A]/10 text-[#C08E3A] border border-[#C08E3A]/25">
                     MULTIMODAL 2.0
                   </span>
                 </h3>
-                <p className="text-xs text-[#94A3B8] font-light">
+                <p className="text-xs text-[#B5B8AD] font-light">
                   Personalize o cérebro do Gemini, fotos, áudios, perfil da empresa e conectores de envio.
                 </p>
               </div>
@@ -178,13 +178,13 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
           </div>
 
           {/* Navigation Tabs */}
-          <div className="px-6 pt-3 bg-[#07111F] border-b border-white/[0.06] flex gap-2 overflow-x-auto">
+          <div className="px-6 pt-3 bg-[#111512] border-b border-white/[0.06] flex gap-2 overflow-x-auto">
             <button
               type="button"
               onClick={() => setActiveTab('company')}
-              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b ${
                 activeTab === 'company'
-                  ? 'bg-[#091524] text-[#00D2F6] border-[#00D2F6]'
+                  ? 'bg-[#20271F] text-[#C08E3A] border-[#C08E3A]'
                   : 'text-slate-400 hover:text-white border-transparent'
               }`}
             >
@@ -195,9 +195,9 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('gemini')}
-              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b ${
                 activeTab === 'gemini'
-                  ? 'bg-[#091524] text-[#00D2F6] border-[#00D2F6]'
+                  ? 'bg-[#20271F] text-[#C08E3A] border-[#C08E3A]'
                   : 'text-slate-400 hover:text-white border-transparent'
               }`}
             >
@@ -211,9 +211,9 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('prompt')}
-              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b ${
                 activeTab === 'prompt'
-                  ? 'bg-[#091524] text-[#00D2F6] border-[#00D2F6]'
+                  ? 'bg-[#20271F] text-[#C08E3A] border-[#C08E3A]'
                   : 'text-slate-400 hover:text-white border-transparent'
               }`}
             >
@@ -224,9 +224,9 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('whatsapp')}
-              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+              className={`px-4 py-2.5 rounded-t-xl font-kanit text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer border-b ${
                 activeTab === 'whatsapp'
-                  ? 'bg-[#091524] text-[#00D2F6] border-[#00D2F6]'
+                  ? 'bg-[#20271F] text-[#C08E3A] border-[#C08E3A]'
                   : 'text-slate-400 hover:text-white border-transparent'
               }`}
             >
@@ -236,20 +236,20 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
           </div>
 
           {/* Modal Content Body */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 text-[#F3F5F7]">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 text-[#F1EEE5]">
             {/* TAB 1: PERFIL DA EMPRESA */}
             {activeTab === 'company' && (
               <div className="space-y-5">
-                <div className="p-4 rounded-2xl bg-[#00D2F6]/08 border border-[#00D2F6]/20 flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-[#00D2F6] shrink-0 mt-0.5" />
-                  <p className="text-xs text-[#CBD5E1] leading-relaxed">
+                <div className="p-4 rounded-2xl bg-[#C08E3A]/08 border border-[#C08E3A]/20 flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-[#C08E3A] shrink-0 mt-0.5" />
+                  <p className="text-xs text-[#D8D5C9] leading-relaxed">
                     Estas informações são injetadas diretamente no contexto do Agente de IA. Assim, qualquer pessoa ou empresa que usar seu sistema terá o agente falando com o nome, nicho, logotipo e catálogo correto.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Razão Social / Nome Oficial da Empresa
                     </label>
                     <input
@@ -261,12 +261,12 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                           company: { ...prev.company, companyName: e.target.value },
                         }))
                       }
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-sm"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Nome Fantasia / Marca de Exibição
                     </label>
                     <input
@@ -278,14 +278,14 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                           company: { ...prev.company, tradingName: e.target.value },
                         }))
                       }
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-sm font-semibold"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-sm font-semibold"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       URL da Foto / Logo da Empresa
                     </label>
                     <div className="flex items-center gap-3">
@@ -313,13 +313,13 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                           }))
                         }
                         placeholder="/favicon.svg ou https://..."
-                        className="flex-1 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-sm font-mono text-xs"
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-sm font-mono text-xs"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Nicho / Segmento de Atuação
                     </label>
                     <input
@@ -332,13 +332,13 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         }))
                       }
                       placeholder="Ex: Medicina, Advocacia, Software, Imobiliária"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-sm"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                     Descrição Institucional & Diferenciais
                   </label>
                   <textarea
@@ -350,12 +350,12 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         company: { ...prev.company, description: e.target.value },
                       }))
                     }
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-sm leading-relaxed"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-sm leading-relaxed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1.5">
                     Serviços & Produtos Oferecidos pelo Agente
                   </label>
                   <div className="flex flex-wrap gap-2 mb-2">
@@ -387,7 +387,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                     <button
                       type="button"
                       onClick={addService}
-                      className="px-4 py-2 rounded-xl bg-[#00D2F6]/20 text-[#00D2F6] border border-[#00D2F6]/40 hover:bg-[#00D2F6]/30 text-xs font-mono font-bold flex items-center gap-1 cursor-pointer"
+                      className="px-4 py-2 rounded-xl bg-[#C08E3A]/20 text-[#C08E3A] border border-[#C08E3A]/40 hover:bg-[#C08E3A]/30 text-xs font-mono font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Adicionar</span>
@@ -397,7 +397,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Faixa de Preço / Ticket Médio
                     </label>
                     <input
@@ -413,7 +413,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Telefone Oficial de Contato
                     </label>
                     <input
@@ -429,7 +429,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Localização / Base
                     </label>
                     <input
@@ -452,13 +452,13 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
             {activeTab === 'gemini' && (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                  <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1.5 flex items-center justify-between">
                     <span>Chave de API do Google Gemini (GEMINI_API_KEY)</span>
                     <a
                       href="https://aistudio.google.com/app/apikey"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#00D2F6] hover:underline font-normal text-[11px]"
+                      className="text-[#C08E3A] hover:underline font-normal text-[11px]"
                     >
                       Obter chave gratuita no Google AI Studio ↗
                     </a>
@@ -474,7 +474,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         }))
                       }
                       placeholder="AIzaSy..."
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-sm font-mono pr-12"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-sm font-mono pr-12"
                     />
                     <button
                       type="button"
@@ -491,7 +491,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Modelo do Google Gemini
                     </label>
                     <select
@@ -502,7 +502,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                           gemini: { ...prev.gemini, model: e.target.value as GeminiModel },
                         }))
                       }
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#0A1624] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#1B211C] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-sm"
                     >
                       <option value="gemini-2.0-flash">
                         gemini-2.0-flash (Recomendado: Ultra-rápido & Multimodal)
@@ -517,9 +517,9 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1 flex items-center justify-between">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1 flex items-center justify-between">
                       <span>Temperatura (Criatividade vs Precisão)</span>
-                      <span className="text-[#00D2F6] font-bold">{config.gemini.temperature}</span>
+                      <span className="text-[#C08E3A] font-bold">{config.gemini.temperature}</span>
                     </label>
                     <input
                       type="range"
@@ -533,7 +533,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                           gemini: { ...prev.gemini, temperature: parseFloat(e.target.value) },
                         }))
                       }
-                      className="w-full mt-2 accent-[#00D2F6] cursor-pointer"
+                      className="w-full mt-2 accent-[#C08E3A] cursor-pointer"
                     />
                     <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
                       <span>0.1 (Fiel & Preciso)</span>
@@ -543,8 +543,8 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                 </div>
 
                 {/* Multimodal Features */}
-                <div className="p-4 rounded-2xl bg-[#060D17] border border-white/[0.08] space-y-3">
-                  <h4 className="text-xs font-mono uppercase tracking-wider text-[#00D2F6] font-bold flex items-center gap-2">
+                <div className="p-4 rounded-2xl bg-[#10140F] border border-white/[0.08] space-y-3">
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-[#C08E3A] font-bold flex items-center gap-2">
                     <Zap className="w-4 h-4" />
                     <span>Recursos Multimodais Ativos</span>
                   </h4>
@@ -559,7 +559,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                             gemini: { ...prev.gemini, enableMultimodalVision: e.target.checked },
                           }))
                         }
-                        className="w-4 h-4 rounded text-[#00D2F6] accent-[#00D2F6]"
+                        className="w-4 h-4 rounded text-[#C08E3A] accent-[#C08E3A]"
                       />
                       <div className="flex items-center gap-2">
                         <ImageIcon className="w-4 h-4 text-emerald-400" />
@@ -580,10 +580,10 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                             gemini: { ...prev.gemini, enableAudioTranscription: e.target.checked },
                           }))
                         }
-                        className="w-4 h-4 rounded text-[#00D2F6] accent-[#00D2F6]"
+                        className="w-4 h-4 rounded text-[#C08E3A] accent-[#C08E3A]"
                       />
                       <div className="flex items-center gap-2">
-                        <Mic className="w-4 h-4 text-purple-400" />
+                        <Mic className="w-4 h-4 text-[#C08E3A]" />
                         <div>
                           <p className="text-xs font-semibold text-white">Compreender Áudios de Voz</p>
                           <p className="text-[10px] text-slate-400">Escuta mensagens de voz e responde</p>
@@ -599,7 +599,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                     type="button"
                     onClick={handleTestGemini}
                     disabled={isTestingGemini || !config.gemini.apiKey}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#00D2F6]/20 to-[#015EEF]/20 hover:from-[#00D2F6]/30 hover:to-[#015EEF]/30 border border-[#00D2F6]/40 text-[#00D2F6] font-mono font-bold text-xs flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#C08E3A]/20 to-[#606C38]/20 hover:from-[#C08E3A]/30 hover:to-[#606C38]/30 border border-[#C08E3A]/40 text-[#C08E3A] font-mono font-bold text-xs flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Radio className={`w-4 h-4 ${isTestingGemini ? 'animate-pulse text-amber-400' : ''}`} />
                     <span>{isTestingGemini ? 'Testando Conexão...' : 'Testar Conexão com Gemini'}</span>
@@ -634,7 +634,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
             {activeTab === 'prompt' && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-2">
                     Carregar Template Pronto por Nicho
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
@@ -643,9 +643,9 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         key={preset.id}
                         type="button"
                         onClick={() => applyPreset(preset.id)}
-                        className="p-3 rounded-xl bg-white/[0.03] hover:bg-[#00D2F6]/10 border border-white/10 hover:border-[#00D2F6]/40 text-left transition-all cursor-pointer group"
+                        className="p-3 rounded-xl bg-white/[0.03] hover:bg-[#C08E3A]/10 border border-white/10 hover:border-[#C08E3A]/40 text-left transition-all cursor-pointer group"
                       >
-                        <p className="text-xs font-semibold text-white group-hover:text-[#00D2F6] leading-tight">
+                        <p className="text-xs font-semibold text-white group-hover:text-[#C08E3A] leading-tight">
                           {preset.title}
                         </p>
                         <p className="text-[10px] text-slate-400 font-mono mt-1">{preset.niche}</p>
@@ -656,7 +656,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider">
+                    <label className="text-xs font-mono text-[#B5B8AD] uppercase tracking-wider">
                       Instrução Mestra do Sistema (System Prompt)
                     </label>
                     <span className="text-[10px] font-mono text-slate-500">
@@ -672,7 +672,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         gemini: { ...prev.gemini, systemPrompt: e.target.value },
                       }))
                     }
-                    className="w-full p-4 rounded-xl bg-[#060D17] border border-white/10 text-white focus:border-[#00D2F6] focus:outline-none text-xs font-mono leading-relaxed"
+                    className="w-full p-4 rounded-xl bg-[#10140F] border border-white/10 text-white focus:border-[#C08E3A] focus:outline-none text-xs font-mono leading-relaxed"
                   />
                 </div>
               </div>
@@ -682,7 +682,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
             {activeTab === 'whatsapp' && (
               <div className="space-y-5">
                 <div>
-                  <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-2">
                     Provedor da API de WhatsApp
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -706,7 +706,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         }
                         className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
                           config.whatsapp.provider === prov.id
-                            ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-white shadow-[0_0_20px_rgba(0,210,246,0.15)]'
+                            ? 'bg-[#C08E3A]/15 border-[#C08E3A] text-white shadow-[0_0_20px_rgba(192,142,58,0.15)]'
                             : 'bg-white/[0.03] border-white/10 text-slate-300 hover:border-white/25'
                         }`}
                       >
@@ -719,7 +719,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Endpoint Base / URL da API
                     </label>
                     <input
@@ -732,12 +732,12 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         }))
                       }
                       placeholder="https://api.evolution.seuservidor.com"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-xs focus:border-[#00D2F6] focus:outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-xs focus:border-[#C08E3A] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Token de Autenticação / API Key
                     </label>
                     <input
@@ -750,14 +750,14 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                         }))
                       }
                       placeholder="Token do provedor..."
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-xs focus:border-[#00D2F6] focus:outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-xs focus:border-[#C08E3A] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Instância / Nome da Sessão (Evolution / Z-API)
                     </label>
                     <input
@@ -774,7 +774,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-mono text-[#B5B8AD] uppercase tracking-wider mb-1">
                       Número Conectado do Agente
                     </label>
                     <input
@@ -791,8 +791,8 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#060D17] border border-white/[0.08] space-y-3">
-                  <h4 className="text-xs font-mono uppercase tracking-wider text-[#00D2F6] font-bold">
+                <div className="p-4 rounded-2xl bg-[#10140F] border border-white/[0.08] space-y-3">
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-[#C08E3A] font-bold">
                     Opções de Disparo Outbound
                   </h4>
                   <div className="space-y-2">
@@ -806,7 +806,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
                             whatsapp: { ...prev.whatsapp, outboundDeliveryEnabled: e.target.checked },
                           }))
                         }
-                        className="w-4 h-4 rounded text-[#00D2F6] accent-[#00D2F6]"
+                        className="w-4 h-4 rounded text-[#C08E3A] accent-[#C08E3A]"
                       />
                       <div>
                         <p className="text-xs font-semibold text-white">
@@ -824,7 +824,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
           </div>
 
           {/* Bottom Footer Actions */}
-          <div className="px-6 py-4 border-t border-white/[0.08] bg-[#0A1624] flex items-center justify-between">
+          <div className="px-6 py-4 border-t border-white/[0.08] bg-[#1B211C] flex items-center justify-between">
             <div className="flex items-center gap-2">
               {saveSuccess && (
                 <motion.div
@@ -850,7 +850,7 @@ export const AgentSettingsModal: React.FC<AgentSettingsModalProps> = ({
               <button
                 type="button"
                 onClick={handleSave}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#00D2F6] to-[#015EEF] text-[#07111F] font-kanit font-bold text-xs uppercase tracking-wider flex items-center gap-2 hover:opacity-95 shadow-[0_0_25px_rgba(0,210,246,0.3)] transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#C08E3A] to-[#606C38] text-[#111512] font-kanit font-bold text-xs uppercase tracking-wider flex items-center gap-2 hover:opacity-95 shadow-[0_0_25px_rgba(192,142,58,0.3)] transition-all cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>Salvar Configurações</span>

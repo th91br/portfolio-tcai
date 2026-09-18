@@ -52,7 +52,7 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
   };
 
   const handleDelete = (id: string, title: string) => {
-    if (confirm(`Remover o documento "${title}" da base de conhecimento da IA?`)) {
+    if (confirm(`Remover o documento "${title}" das diretrizes de atendimento da empresa?`)) {
       deleteKnowledgeDocument(id);
       refreshDocs();
     }
@@ -145,22 +145,22 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
         <div className="w-screen max-w-2xl bg-[#091524] border-l border-white/10 shadow-2xl flex flex-col">
           {/* Header Executivo da Gaveta */}
-          <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between bg-[#07111F]">
+          <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between bg-[#111512]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#00D2F6]/10 border border-[#00D2F6]/30 flex items-center justify-center text-[#00D2F6]">
+              <div className="w-10 h-10 rounded-xl bg-[#C08E3A]/10 border border-[#C08E3A]/30 flex items-center justify-center text-[#C08E3A]">
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#00D2F6]/15 text-[#00D2F6] border border-[#00D2F6]/30 font-bold">
-                    Enterprise RAG Hub
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#C08E3A]/15 text-[#C08E3A] border border-[#C08E3A]/30 font-bold">
+                    Diretrizes Oficiais
                   </span>
                   <span className="text-xs text-slate-400 font-mono">
                     {activeCount} de {documents.length} ativos
                   </span>
                 </div>
                 <h3 className="text-lg font-bold text-white uppercase tracking-tight mt-0.5">
-                  Base de Conhecimento & Acervo
+                  Orientações e Diretrizes da Empresa
                 </h3>
               </div>
             </div>
@@ -175,9 +175,9 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
           </div>
 
           {/* Banner de Eficiência e Tokens */}
-          <div className="px-6 py-3 bg-[#0A1624] border-b border-white/5 flex items-center justify-between text-xs font-mono">
+          <div className="px-6 py-3 bg-[#1B211C] border-b border-white/5 flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-2 text-slate-300">
-              <Database className="w-4 h-4 text-[#00D2F6]" />
+              <Database className="w-4 h-4 text-[#C08E3A]" />
               <span>Memória Indexada:</span>
               <strong className="text-white">{totalTokens.toLocaleString()} tokens</strong>
             </div>
@@ -190,9 +190,9 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
           {/* Conteúdo com Scroll */}
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
             {/* 1. Área de Upload e Adição */}
-            <div className="p-4 rounded-2xl bg-[#07111F] border border-dashed border-white/20 hover:border-[#00D2F6]/50 transition-colors text-center space-y-3">
+            <div className="p-4 rounded-2xl bg-[#111512] border border-dashed border-white/20 hover:border-[#C08E3A]/50 transition-colors text-center space-y-3">
               <div className="w-10 h-10 rounded-xl bg-white/5 mx-auto flex items-center justify-center text-slate-300">
-                <Upload className="w-5 h-5 text-[#00D2F6]" />
+                <Upload className="w-5 h-5 text-[#C08E3A]" />
               </div>
               <div>
                 <h4 className="text-sm font-bold text-white">Anexar Catálogos e Tabelas de Preço</h4>
@@ -202,7 +202,7 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
               </div>
 
               <div className="flex items-center justify-center gap-3 pt-1">
-                <label className="px-4 py-2 rounded-xl bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-[#00D2F6]/20">
+                <label className="px-4 py-2 rounded-xl bg-[#C08E3A] hover:bg-[#A8782F] text-[#111512] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-[#C08E3A]/20">
                   <Upload className="w-3.5 h-3.5" />
                   <span>Subir Arquivo (PDF / TXT)</span>
                   <input
@@ -226,15 +226,15 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
 
             {/* Formulário de inserção rápida de diretriz */}
             {showAddForm && (
-              <form onSubmit={handleCreateDocument} className="p-4 rounded-2xl bg-[#0A1624] border border-[#00D2F6]/30 space-y-3">
+              <form onSubmit={handleCreateDocument} className="p-4 rounded-2xl bg-[#1B211C] border border-[#C08E3A]/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono uppercase text-[#00D2F6] font-bold">
+                  <span className="text-xs font-mono uppercase text-[#C08E3A] font-bold">
                     Nova Diretriz Corporativa
                   </span>
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value as any)}
-                    className="bg-[#07111F] border border-white/10 rounded-lg px-2 py-1 text-xs text-slate-300 font-mono"
+                    className="bg-[#111512] border border-white/10 rounded-lg px-2 py-1 text-xs text-slate-300 font-mono"
                   >
                     <option value="catalogo">Catálogo de Serviços</option>
                     <option value="tabela_precos">Tabela de Preços</option>
@@ -248,7 +248,7 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
                   placeholder="Título do Documento (Ex: Tabela Odontológica 2026)"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full bg-[#07111F] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00D2F6]"
+                  className="w-full bg-[#111512] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#C08E3A]"
                   required
                 />
 
@@ -257,7 +257,7 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
                   placeholder="Cole aqui os valores, procedimentos, regras e diferenciais..."
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
-                  className="w-full bg-[#07111F] border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00D2F6] font-mono leading-relaxed"
+                  className="w-full bg-[#111512] border border-white/10 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#C08E3A] font-mono leading-relaxed"
                   required
                 />
 
@@ -271,7 +271,7 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-lg bg-[#00D2F6] text-[#07111F] text-xs font-mono font-bold uppercase"
+                    className="px-4 py-1.5 rounded-lg bg-[#C08E3A] text-[#111512] text-xs font-mono font-bold uppercase"
                   >
                     Indexar Documento
                   </button>
@@ -280,9 +280,9 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
             )}
 
             {/* 2. Simulador RAG: Teste de Consulta da IA */}
-            <div className="p-4 rounded-2xl bg-[#0A1624] border border-white/10 space-y-3">
+            <div className="p-4 rounded-2xl bg-[#1B211C] border border-white/10 space-y-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#00D2F6]" />
+                <Sparkles className="w-4 h-4 text-[#C08E3A]" />
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                   Testar Recuperação RAG (Auditoria de Resposta)
                 </h4>
@@ -296,7 +296,7 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
                     value={testQuery}
                     onChange={(e) => setTestQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleTestSearch()}
-                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-[#07111F] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00D2F6]"
+                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-[#111512] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#C08E3A]"
                   />
                 </div>
                 <button
@@ -310,8 +310,8 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
               </div>
 
               {testResult && (
-                <div className="p-3 rounded-xl bg-[#07111F] border border-cyan-500/20 space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-[10px] font-mono text-cyan-400">
+                <div className="p-3 rounded-xl bg-[#111512] border border-amber-500/20 space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-[10px] font-mono text-amber-400">
                     <span>Documentos citados: {testResult.sources.join(', ') || 'Nenhum'}</span>
                     <span>100% Fundamentado</span>
                   </div>
@@ -336,24 +336,45 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
               </div>
 
               <div className="space-y-2.5">
-                {documents.map((doc) => (
+                {documents.length === 0 ? (
+                  <div className="p-8 rounded-2xl bg-[#111512] border border-white/5 text-center space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 mx-auto flex items-center justify-center text-slate-400">
+                      <BookOpen className="w-6 h-6 text-[#C08E3A]" />
+                    </div>
+                    <div>
+                      <h5 className="font-bold text-white text-sm">Nenhuma diretriz cadastrada ainda</h5>
+                      <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto font-light leading-relaxed">
+                        Adicione catálogos de serviços, regras de atendimento ou tabelas de preços para orientar sua equipe comercial com precisão.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddForm(true)}
+                      className="px-4 py-2 rounded-xl bg-[#C08E3A] hover:bg-[#A8782F] text-[#111512] text-xs font-mono font-bold uppercase tracking-wider inline-flex items-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Adicionar Primeira Orientação</span>
+                    </button>
+                  </div>
+                ) : (
+                  documents.map((doc) => (
                   <div
                     key={doc.id}
-                    className={`p-4 rounded-2xl bg-[#0A1624] border transition-all space-y-2.5 ${
-                      doc.isActive ? 'border-white/10 hover:border-[#00D2F6]/40' : 'border-white/5 opacity-50'
+                    className={`p-4 rounded-2xl bg-[#1B211C] border transition-all space-y-2.5 ${
+                      doc.isActive ? 'border-white/10 hover:border-[#C08E3A]/40' : 'border-white/5 opacity-50'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0">
-                          <FileText className="w-5 h-5 text-[#00D2F6]" />
+                          <FileText className="w-5 h-5 text-[#C08E3A]" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-slate-400 border border-white/10 uppercase">
                               {doc.fileType.toUpperCase()} • {doc.fileSize}
                             </span>
-                            <span className="text-[9px] font-mono text-[#00D2F6]">
+                            <span className="text-[9px] font-mono text-[#C08E3A]">
                               ~{doc.tokenEstimate} tokens
                             </span>
                           </div>
@@ -390,16 +411,17 @@ export const KnowledgeBaseDrawer: React.FC<KnowledgeBaseDrawerProps> = ({ isOpen
                       {doc.summary}
                     </p>
                   </div>
-                ))}
+                ))
+              )}
               </div>
             </div>
           </div>
 
           {/* Rodapé do Drawer */}
-          <div className="p-4 border-t border-white/10 bg-[#07111F] flex items-center justify-between text-xs font-mono text-slate-400">
+          <div className="p-4 border-t border-white/10 bg-[#111512] flex items-center justify-between text-xs font-mono text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              RAG Neural Conectado ao Atendimento
+              Diretrizes Oficiais Conectadas ao Atendimento
             </span>
             <button
               type="button"
