@@ -10,6 +10,7 @@ import {
   Sparkles,
   RefreshCw,
   Trash2,
+  Plus,
 } from 'lucide-react';
 import { Lead, LeadStatus, LeadScoreCategory, deleteLeadById } from '../../../lib/supabase';
 
@@ -18,6 +19,7 @@ interface LeadsListViewProps {
   onSelectLead: (leadId: string) => void;
   onRefresh: () => void;
   isLoading: boolean;
+  onCreateLead?: () => void;
 }
 
 export const LeadsListView: React.FC<LeadsListViewProps> = ({
@@ -25,6 +27,7 @@ export const LeadsListView: React.FC<LeadsListViewProps> = ({
   onSelectLead,
   onRefresh,
   isLoading,
+  onCreateLead,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -100,7 +103,32 @@ export const LeadsListView: React.FC<LeadsListViewProps> = ({
   }, [leads, searchTerm, statusFilter, solutionFilter, categoryFilter, sortBy]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      {/* Cabeçalho de Contatos com Ação Primária Única */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-white/[0.08]">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Gestão de Contatos
+            </h2>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-[#C08E3A]/15 text-[#C08E3A] border border-[#C08E3A]/30">
+              {filteredLeads.length} de {leads.length} contatos
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-0.5 font-sans">
+            Carteira consolidada de contatos, qualificações e histórico comercial
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onCreateLead || (() => onSelectLead('new'))}
+          className="px-4 py-2.5 rounded-xl bg-[#8a5a00] hover:bg-[#734b00] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer self-start sm:self-auto"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Novo Contato</span>
+        </button>
+      </div>
       {/* Barra de Filtros e Busca */}
       <div className="p-4 rounded-2xl bg-[#091524] border border-white/[0.08] space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -17,6 +17,7 @@ import {
   ChevronRight,
   SlidersHorizontal,
   Globe,
+  Plus,
 } from 'lucide-react';
 import {
   Deal,
@@ -36,6 +37,7 @@ import { PipelineManagerModal } from '../pipelines/PipelineManagerModal';
 interface PipelineKanbanViewProps {
   deals: Deal[];
   leads: Lead[];
+  tenantId: string;
   onSelectLead: (leadId: string) => void;
   onRefresh: () => void;
   adminEmail: string;
@@ -47,12 +49,12 @@ const PIPELINE_COLUMNS: Array<{
   badgeColor: string;
   defaultProb: number;
 }> = [
-  { id: 'NOVO', title: 'NOVO', badgeColor: 'border-blue-500/40 text-blue-400 bg-blue-500/10', defaultProb: 10 },
-  { id: 'QUALIFICADO', title: 'QUALIFICADO', badgeColor: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10', defaultProb: 20 },
+  { id: 'NOVO', title: 'NOVO', badgeColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10', defaultProb: 10 },
+  { id: 'QUALIFICADO', title: 'QUALIFICADO', badgeColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10', defaultProb: 20 },
   { id: 'CONTATADO', title: 'CONTATADO', badgeColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10', defaultProb: 30 },
-  { id: 'REUNIÃO', title: 'REUNIÃO', badgeColor: 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10', defaultProb: 50 },
-  { id: 'PROPOSTA', title: 'PROPOSTA', badgeColor: 'border-purple-500/40 text-purple-400 bg-purple-500/10', defaultProb: 65 },
-  { id: 'NEGOCIAÇÃO', title: 'NEGOCIAÇÃO', badgeColor: 'border-pink-500/40 text-pink-400 bg-pink-500/10', defaultProb: 80 },
+  { id: 'REUNIÃO', title: 'REUNIÃO', badgeColor: 'border-orange-500/40 text-orange-400 bg-orange-500/10', defaultProb: 50 },
+  { id: 'PROPOSTA', title: 'PROPOSTA', badgeColor: 'border-[#C08E3A]/40 text-[#C08E3A] bg-[#C08E3A]/10', defaultProb: 65 },
+  { id: 'NEGOCIAÇÃO', title: 'NEGOCIAÇÃO', badgeColor: 'border-blue-500/40 text-blue-400 bg-blue-500/10', defaultProb: 80 },
   { id: 'FECHADO', title: 'FECHADO', badgeColor: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10', defaultProb: 100 },
   { id: 'PERDIDO', title: 'PERDIDO', badgeColor: 'border-rose-500/40 text-rose-400 bg-rose-500/10', defaultProb: 0 },
 ];
@@ -72,6 +74,7 @@ const LOST_REASONS = [
 export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
   deals,
   leads,
+  tenantId,
   onSelectLead,
   onRefresh,
   adminEmail,
@@ -163,6 +166,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
       await updateDealStage({
         dealId: deal.id,
         leadId: deal.lead_id,
+        tenantId,
         newStage: targetStage,
         finalValue: extra?.finalValue,
         lostReason: extra?.lostReason,
@@ -278,11 +282,11 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
             <h2 className="font-black text-2xl text-white uppercase tracking-tight">
               {currentPipeline.name}
             </h2>
-            <span className="px-2 py-0.5 rounded-full bg-[#00D2F6]/10 border border-[#00D2F6]/30 text-[10px] font-mono text-[#00D2F6] font-bold">
+            <span className="px-2 py-0.5 rounded-full bg-[#C08E3A]/10 border border-[#C08E3A]/30 text-[10px] font-mono text-[#C08E3A] font-bold">
               {pipelineColumns.length} ETAPAS
             </span>
           </div>
-          <p className="text-xs text-[#94A3B8] font-mono">
+          <p className="text-xs text-[#B5B8AD] font-mono">
             {currentPipeline.description}
           </p>
         </div>
@@ -290,7 +294,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
         {/* Seletor Dropdown de Funil + Botão Gerenciar + Métricas */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Seletor de Funil */}
-          <div className="flex items-center gap-2 bg-[#0A1624] border border-white/10 rounded-2xl px-3 py-2 shadow-sm">
+          <div className="flex items-center gap-2 bg-[#1B211C] border border-white/10 rounded-2xl px-3 py-2 shadow-sm">
             <span className="text-[10px] font-mono text-slate-400 uppercase">Funil:</span>
             <select
               value={currentPipeline.id}
@@ -298,7 +302,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
               className="bg-transparent text-white font-mono font-bold text-xs focus:outline-none cursor-pointer"
             >
               {pipelinesList.map((p) => (
-                <option key={p.id} value={p.id} className="bg-[#091524] text-white">
+                <option key={p.id} value={p.id} className="bg-[#20271F] text-white">
                   {p.icon} {p.name}
                 </option>
               ))}
@@ -309,16 +313,26 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
           <button
             type="button"
             onClick={() => setShowPipelineManagerModal(true)}
-            className="px-3 py-2 rounded-2xl bg-white/[0.04] hover:bg-[#00D2F6]/15 hover:border-[#00D2F6]/40 border border-white/10 text-xs font-mono text-slate-300 hover:text-[#00D2F6] flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            className="px-3 py-2 rounded-2xl bg-white/[0.04] hover:bg-[#C08E3A]/15 hover:border-[#C08E3A]/40 border border-white/10 text-xs font-mono text-slate-300 hover:text-[#C08E3A] flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
             title="Criar novos funis de nicho ou customizar etapas"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#00D2F6]" />
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#C08E3A]" />
             <span className="hidden sm:inline font-bold">Gerenciar Funis</span>
             <span className="sm:hidden font-bold">Funis</span>
           </button>
 
+          {/* Ação Primária Única: Nova Oportunidade */}
+          <button
+            type="button"
+            onClick={() => onSelectLead('new')}
+            className="px-3.5 py-2 rounded-2xl bg-[#8a5a00] hover:bg-[#734b00] text-white font-bold text-xs font-mono flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Nova Oportunidade</span>
+          </button>
+
           {/* Resumo de Pipeline Aberto */}
-          <div className="flex items-center gap-3 bg-[#0A1624] border border-white/10 rounded-2xl px-4 py-2">
+          <div className="flex items-center gap-3 bg-[#1B211C] border border-white/10 rounded-2xl px-4 py-2">
             <div>
               <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
                 Pipeline Bruto
@@ -329,10 +343,10 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
             </div>
             <div className="h-7 w-px bg-white/10" />
             <div>
-              <span className="text-[10px] font-mono text-[#00D2F6] uppercase tracking-wider block">
+              <span className="text-[10px] font-mono text-[#C08E3A] uppercase tracking-wider block">
                 Ponderado
               </span>
-              <span className="text-sm font-mono font-bold text-[#00D2F6]">
+              <span className="text-sm font-mono font-bold text-[#C08E3A]">
                 {totalPipelinePonderado.toLocaleString('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
@@ -344,7 +358,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
       </div>
 
       {/* Barra de Navegação & Foco de Etapa do Pipeline */}
-      <div className="flex items-center justify-between gap-3 bg-[#0A1624]/80 border border-white/[0.08] rounded-2xl p-2 sm:p-2.5 shadow-sm">
+      <div className="flex items-center justify-between gap-3 bg-[#1B211C]/80 border border-white/[0.08] rounded-2xl p-2 sm:p-2.5 shadow-sm">
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 max-w-full">
           <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mr-1 hidden lg:inline shrink-0">
             Focar Etapa:
@@ -359,7 +373,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                 onClick={() => scrollToStage(c.id)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
                   isActive
-                    ? 'bg-[#00D2F6] text-[#07111F] font-bold shadow-[0_0_15px_rgba(0,210,246,0.35)] scale-[1.02]'
+                    ? 'bg-[#C08E3A] text-[#111512] font-bold shadow-[0_0_15px_rgba(192,142,58,0.35)] scale-[1.02]'
                     : 'bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]'
                 }`}
                 title={`Ir para ${c.title}`}
@@ -367,7 +381,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                 <span>{c.title}</span>
                 <span
                   className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                    isActive ? 'bg-[#07111F]/20 text-[#07111F]' : 'bg-white/10 text-slate-400'
+                    isActive ? 'bg-[#111512]/20 text-[#111512]' : 'bg-white/10 text-slate-400'
                   }`}
                 >
                   {count}
@@ -382,7 +396,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
           <button
             type="button"
             onClick={() => scrollByAmount('left')}
-            className="p-1.5 sm:p-2 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer hover:border-[#00D2F6]/40"
+            className="p-1.5 sm:p-2 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer hover:border-[#C08E3A]/40"
             title="Rolar pipeline para esquerda"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -390,7 +404,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
           <button
             type="button"
             onClick={() => scrollByAmount('right')}
-            className="p-1.5 sm:p-2 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer hover:border-[#00D2F6]/40"
+            className="p-1.5 sm:p-2 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer hover:border-[#C08E3A]/40"
             title="Rolar pipeline para direita"
           >
             <ChevronRight className="w-4 h-4" />
@@ -431,9 +445,9 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
               onDragOver={(e) => handleDragOver(e, column.id)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, column.id)}
-              className={`w-[270px] xl:w-[285px] shrink-0 bg-[#091524] border rounded-2xl p-3.5 flex flex-col snap-start shadow-sm transition-all ${
+              className={`w-[270px] xl:w-[285px] shrink-0 bg-[#20271F] border rounded-2xl p-3.5 flex flex-col snap-start shadow-sm transition-all ${
                 isOver
-                  ? 'border-[#00D2F6] bg-[#00D2F6]/[0.04] ring-2 ring-[#00D2F6]/30'
+                  ? 'border-[#C08E3A] bg-[#C08E3A]/[0.04] ring-2 ring-[#C08E3A]/30'
                   : 'border-white/[0.08]'
               }`}
             >
@@ -461,7 +475,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                     </strong>
                   </span>
                   {column.id !== 'FECHADO' && column.id !== 'PERDIDO' && colWeighted > 0 && (
-                    <span className="text-[#00D2F6]">
+                    <span className="text-[#C08E3A]">
                       Pond:{' '}
                       {colWeighted.toLocaleString('pt-BR', {
                         style: 'currency',
@@ -493,14 +507,14 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                         onClick={() => onSelectLead(deal.lead_id)}
                         className={`group p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border transition-all cursor-pointer relative ${
                           isHighPriority
-                            ? 'border-[#00D2F6]/30 shadow-[0_0_15px_rgba(0,210,246,0.06)]'
+                            ? 'border-[#C08E3A]/30 shadow-[0_0_15px_rgba(192,142,58,0.06)]'
                             : 'border-white/10 hover:border-white/20'
                         }`}
                       >
                         {/* Indicador de carregamento */}
                         {movingDealId === deal.id && (
-                          <div className="absolute inset-0 bg-[#07111F]/80 backdrop-blur-xs rounded-xl flex items-center justify-center z-10">
-                            <RefreshCw className="w-4 h-4 text-[#00D2F6] animate-spin" />
+                          <div className="absolute inset-0 bg-[#111512]/80 backdrop-blur-xs rounded-xl flex items-center justify-center z-10">
+                            <RefreshCw className="w-4 h-4 text-[#C08E3A] animate-spin" />
                           </div>
                         )}
 
@@ -508,7 +522,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 mb-0.5">
-                              <h4 className="font-bold text-sm text-white truncate group-hover:text-[#00D2F6] transition-colors">
+                              <h4 className="font-bold text-sm text-white truncate group-hover:text-[#C08E3A] transition-colors">
                                 {lead?.name || 'Lead Sem Nome'}
                               </h4>
                               {(lead?.source === 'whatsapp' || lead?.id?.startsWith('lead_wa_')) ? (
@@ -520,7 +534,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                                 </span>
                               ) : (
                                 <span
-                                  className="inline-flex items-center gap-1 px-1.5 py-0.2 text-[9px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded shrink-0"
+                                  className="inline-flex items-center gap-1 px-1.5 py-0.2 text-[9px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded shrink-0"
                                   title="Lead originado via Site / Diagnóstico"
                                 >
                                   <Globe className="w-2.5 h-2.5" /> Web
@@ -540,7 +554,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                             <span
                               className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
                                 isHighPriority
-                                  ? 'bg-[#00D2F6]/10 border-[#00D2F6]/40 text-[#00D2F6]'
+                                  ? 'bg-[#C08E3A]/10 border-[#C08E3A]/40 text-[#C08E3A]'
                                   : 'bg-white/[0.05] border-white/10 text-slate-300'
                               }`}
                             >
@@ -551,7 +565,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
 
                         {/* Título do Projeto / Solução */}
                         <div className="mb-2.5">
-                          <span className="text-[11px] font-mono text-[#00D2F6] bg-[#00D2F6]/10 px-2 py-0.5 rounded border border-[#00D2F6]/20 inline-block truncate max-w-full">
+                          <span className="text-[11px] font-mono text-[#C08E3A] bg-[#C08E3A]/10 px-2 py-0.5 rounded border border-[#C08E3A]/20 inline-block truncate max-w-full">
                             {lead?.recommended_solution || 'Projeto TCA'}
                           </span>
                         </div>
@@ -571,7 +585,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                           </div>
 
                           <div className="flex items-center gap-1 text-slate-400">
-                            <Percent className="w-3 h-3 text-cyan-400" />
+                            <Percent className="w-3 h-3 text-amber-400" />
                             <span>{deal.probability}%</span>
                           </div>
                         </div>
@@ -586,7 +600,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
 
                         {/* Atendente / Vendedor Responsável se houver */}
                         {(deal.assigned_rep_name || (lead as any)?.assigned_rep_name) && (
-                          <div className="mt-2 text-[10px] font-mono text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20 flex items-center gap-1.5 truncate w-fit">
+                          <div className="mt-2 text-[10px] font-mono text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 flex items-center gap-1.5 truncate w-fit">
                             <span>👤</span>
                             <span className="truncate">
                               {deal.assigned_rep_name || (lead as any)?.assigned_rep_name}
@@ -653,7 +667,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
       {/* ========================================================================= */}
       {modalType === 'closed' && pendingDeal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0B1522] border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative font-kanit">
+          <div className="bg-[#171D17] border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative font-kanit">
             <button
               type="button"
               onClick={() => {
@@ -718,7 +732,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
       {/* ========================================================================= */}
       {modalType === 'lost' && pendingDeal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0B1522] border border-rose-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative font-kanit">
+          <div className="bg-[#171D17] border border-rose-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative font-kanit">
             <button
               type="button"
               onClick={() => {
@@ -748,7 +762,7 @@ export const PipelineKanbanView: React.FC<PipelineKanbanViewProps> = ({
                 <select
                   value={lostReasonInput}
                   onChange={(e) => setLostReasonInput(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#091524] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-rose-400"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#20271F] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-rose-400"
                 >
                   {LOST_REASONS.map((reason) => (
                     <option key={reason} value={reason}>

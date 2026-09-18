@@ -29,12 +29,11 @@ interface PipelineManagerModalProps {
 }
 
 const BADGE_COLOR_OPTIONS = [
-  { label: 'Azul', value: 'border-blue-500/40 text-blue-400 bg-blue-500/10' },
-  { label: 'Ciano', value: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10' },
+  { label: 'Azul', value: 'border-amber-500/40 text-amber-400 bg-amber-500/10' },
+  { label: 'Ciano', value: 'border-amber-500/40 text-amber-400 bg-amber-500/10' },
   { label: 'Teal', value: 'border-teal-500/40 text-teal-400 bg-teal-500/10' },
   { label: 'Âmbar', value: 'border-amber-500/40 text-amber-400 bg-amber-500/10' },
-  { label: 'Índigo', value: 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10' },
-  { label: 'Roxo', value: 'border-purple-500/40 text-purple-400 bg-purple-500/10' },
+  { label: 'Dourado', value: 'border-[#C08E3A]/40 text-[#C08E3A] bg-[#C08E3A]/10' },
   { label: 'Rosa', value: 'border-pink-500/40 text-pink-400 bg-pink-500/10' },
   { label: 'Esmeralda', value: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10' },
   { label: 'Vermelho', value: 'border-rose-500/40 text-rose-400 bg-rose-500/10' },
@@ -166,7 +165,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
     const newStage: PipelineStageDefinition = {
       id: `STAGE_${Date.now()}`,
       name: 'NOVA ETAPA',
-      badgeColor: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10',
+      badgeColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
       defaultProb: 50,
     };
     setEditingPipeline({
@@ -199,12 +198,12 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#07111F]/80 backdrop-blur-md font-kanit">
-      <div className="relative w-full max-w-4xl bg-[#091524] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#111512]/80 backdrop-blur-md font-kanit">
+      <div className="relative w-full max-w-4xl bg-[#20271F] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in fade-in zoom-in-95 duration-200">
         {/* Header do Modal */}
-        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-[#0A1624]">
+        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-[#1B211C]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#00D2F6]/10 border border-[#00D2F6]/30 flex items-center justify-center text-[#00D2F6]">
+            <div className="w-10 h-10 rounded-xl bg-[#C08E3A]/10 border border-[#C08E3A]/30 flex items-center justify-center text-[#C08E3A]">
               <Layers className="w-5 h-5" />
             </div>
             <div>
@@ -270,7 +269,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveEditingPipeline}
-                    className="px-4 py-1.5 rounded-xl bg-[#00D2F6] hover:bg-[#00B4D8] text-black font-bold text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer shadow-[0_0_15px_rgba(0,210,246,0.25)]"
+                    className="px-4 py-1.5 rounded-xl bg-[#C08E3A] hover:bg-[#A8782F] text-black font-bold text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer shadow-[0_0_15px_rgba(192,142,58,0.25)]"
                   >
                     <Check className="w-4 h-4" />
                     <span>Salvar Funil</span>
@@ -291,7 +290,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                       setEditingPipeline({ ...editingPipeline, icon: e.target.value })
                     }
                     placeholder="Ex: 🚀"
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-center text-lg focus:outline-none focus:border-[#00D2F6]"
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-center text-lg focus:outline-none focus:border-[#C08E3A]"
                   />
                 </div>
 
@@ -306,7 +305,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                       setEditingPipeline({ ...editingPipeline, name: e.target.value })
                     }
                     placeholder="Ex: Clínicas & Consultórios de Alto Padrão"
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#00D2F6]"
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#C08E3A]"
                   />
                 </div>
 
@@ -324,7 +323,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                       })
                     }
                     placeholder="Ex: Focado em triagem de leads, agendamento de consultas presenciais e fechamento."
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-slate-300 font-mono text-xs focus:outline-none focus:border-[#00D2F6]"
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-slate-300 font-mono text-xs focus:outline-none focus:border-[#C08E3A]"
                   />
                 </div>
               </div>
@@ -333,7 +332,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#00D2F6]">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C08E3A]">
                       Etapas Operacionais ({editingPipeline.stages.length})
                     </span>
                     <span className="text-[10px] font-mono text-slate-500">
@@ -344,7 +343,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                   <button
                     type="button"
                     onClick={handleAddStage}
-                    className="px-3 py-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs font-mono flex items-center gap-1 transition-colors cursor-pointer"
+                    className="px-3 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-mono flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Adicionar Etapa</span>
@@ -370,7 +369,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                             handleStageChange(idx, 'name', e.target.value.toUpperCase())
                           }
                           placeholder="Nome da etapa"
-                          className="flex-1 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-white font-mono text-xs uppercase focus:outline-none focus:border-[#00D2F6]"
+                          className="flex-1 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-white font-mono text-xs uppercase focus:outline-none focus:border-[#C08E3A]"
                         />
                       </div>
 
@@ -391,7 +390,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                                 parseInt(e.target.value, 10) || 0
                               )
                             }
-                            className="w-14 px-2 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-cyan-400 font-mono text-xs text-center focus:outline-none focus:border-[#00D2F6]"
+                            className="w-14 px-2 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-amber-400 font-mono text-xs text-center focus:outline-none focus:border-[#C08E3A]"
                           />
                           <span className="text-[10px] font-mono text-slate-500">%</span>
                         </div>
@@ -402,10 +401,10 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                           onChange={(e) =>
                             handleStageChange(idx, 'badgeColor', e.target.value)
                           }
-                          className="px-2 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-slate-300 font-mono text-[11px] focus:outline-none focus:border-[#00D2F6] cursor-pointer"
+                          className="px-2 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-slate-300 font-mono text-[11px] focus:outline-none focus:border-[#C08E3A] cursor-pointer"
                         >
                           {BADGE_COLOR_OPTIONS.map((c) => (
-                            <option key={c.value} value={c.value} className="bg-[#091524]">
+                            <option key={c.value} value={c.value} className="bg-[#20271F]">
                               {c.label}
                             </option>
                           ))}
@@ -477,10 +476,10 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
             /* ========================================================================= */
             <div className="space-y-6">
               {/* Presets Industriais Prontos */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/20 via-cyan-950/20 to-transparent border border-white/10 space-y-3">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/20 via-amber-950/20 to-transparent border border-white/10 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#00D2F6]" />
+                    <Sparkles className="w-4 h-4 text-[#C08E3A]" />
                     <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
                       Presets Industriais Prontos (Ativação em 1 Clique)
                     </span>
@@ -500,19 +499,19 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                   {INDUSTRY_PIPELINE_PRESETS.map((preset) => (
                     <div
                       key={preset.id}
-                      className="p-3 rounded-xl bg-[#07111F]/70 border border-white/10 hover:border-[#00D2F6]/50 transition-all flex flex-col justify-between gap-3 group"
+                      className="p-3 rounded-xl bg-[#111512]/70 border border-white/10 hover:border-[#C08E3A]/50 transition-all flex flex-col justify-between gap-3 group"
                     >
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-lg">{preset.icon}</span>
-                          <h5 className="font-bold text-xs text-white group-hover:text-[#00D2F6] transition-colors truncate">
+                          <h5 className="font-bold text-xs text-white group-hover:text-[#C08E3A] transition-colors truncate">
                             {preset.name.split('(')[0].trim()}
                           </h5>
                         </div>
                         <p className="text-[10px] text-slate-400 font-mono line-clamp-2">
                           {preset.description}
                         </p>
-                        <div className="mt-2 text-[9px] font-mono text-cyan-400">
+                        <div className="mt-2 text-[9px] font-mono text-amber-400">
                           {preset.stages.length} etapas no fluxo
                         </div>
                       </div>
@@ -520,7 +519,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleCreateFromPreset(preset)}
-                        className="w-full py-1.5 rounded-lg bg-white/[0.04] hover:bg-[#00D2F6] hover:text-black border border-white/10 text-[10px] font-mono font-bold text-slate-300 transition-all cursor-pointer flex items-center justify-center gap-1"
+                        className="w-full py-1.5 rounded-lg bg-white/[0.04] hover:bg-[#C08E3A] hover:text-black border border-white/10 text-[10px] font-mono font-bold text-slate-300 transition-all cursor-pointer flex items-center justify-center gap-1"
                       >
                         <Plus className="w-3 h-3" />
                         <span>Usar este Modelo</span>
@@ -549,19 +548,19 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                           {
                             id: 'NOVO',
                             name: 'NOVO LEAD',
-                            badgeColor: 'border-blue-500/40 text-blue-400 bg-blue-500/10',
+                            badgeColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
                             defaultProb: 10,
                           },
                           {
                             id: 'QUALIFICADO',
                             name: 'QUALIFICADO',
-                            badgeColor: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10',
+                            badgeColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
                             defaultProb: 30,
                           },
                           {
                             id: 'PROPOSTA',
                             name: 'PROPOSTA ENVIADA',
-                            badgeColor: 'border-purple-500/40 text-purple-400 bg-purple-500/10',
+                            badgeColor: 'border-[#C08E3A]/40 text-[#C08E3A] bg-[#C08E3A]/10',
                             defaultProb: 70,
                           },
                           {
@@ -586,7 +585,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                     }}
                     className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/10 text-white border border-white/10 text-xs font-mono font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <Plus className="w-3.5 h-3.5 text-[#00D2F6]" />
+                    <Plus className="w-3.5 h-3.5 text-[#C08E3A]" />
                     <span>Criar Funil do Zero</span>
                   </button>
                 </div>
@@ -600,7 +599,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                         key={pipeline.id}
                         className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                           isActive
-                            ? 'bg-[#00D2F6]/5 border-[#00D2F6]/40 shadow-[0_0_20px_rgba(0,210,246,0.08)]'
+                            ? 'bg-[#C08E3A]/5 border-[#C08E3A]/40 shadow-[0_0_20px_rgba(192,142,58,0.08)]'
                             : 'bg-white/[0.02] border-white/10 hover:border-white/20'
                         }`}
                       >
@@ -611,7 +610,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                               {pipeline.name}
                             </h4>
                             {isActive && (
-                              <span className="px-2 py-0.5 rounded-full bg-[#00D2F6]/20 border border-[#00D2F6]/40 text-[9px] font-mono text-[#00D2F6] font-bold">
+                              <span className="px-2 py-0.5 rounded-full bg-[#C08E3A]/20 border border-[#C08E3A]/40 text-[9px] font-mono text-[#C08E3A] font-bold">
                                 FUNIL ATIVO NO KANBAN
                               </span>
                             )}
@@ -643,7 +642,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
                             <button
                               type="button"
                               onClick={() => handleSelectActivePipeline(pipeline)}
-                              className="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-[#00D2F6]/20 hover:text-[#00D2F6] hover:border-[#00D2F6]/30 border border-white/10 text-xs font-mono text-slate-300 transition-colors cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-[#C08E3A]/20 hover:text-[#C08E3A] hover:border-[#C08E3A]/30 border border-white/10 text-xs font-mono text-slate-300 transition-colors cursor-pointer"
                             >
                               Ativar no Kanban
                             </button>
@@ -679,7 +678,7 @@ export const PipelineManagerModal: React.FC<PipelineManagerModalProps> = ({
         </div>
 
         {/* Footer do Modal */}
-        <div className="p-4 border-t border-white/10 bg-[#0A1624] flex items-center justify-between text-xs font-mono text-slate-400">
+        <div className="p-4 border-t border-white/10 bg-[#1B211C] flex items-center justify-between text-xs font-mono text-slate-400">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>Sincronização em tempo real ativa com o Kanban comercial</span>

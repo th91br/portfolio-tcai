@@ -50,18 +50,18 @@ const CADENCE_SCRIPTS = [
     title: 'Pós-Proposta (24h)',
     trigger: '24h após envio de proposta técnica',
     badge: '🔥 ALTA CONVERSÃO',
-    badgeColor: 'bg-[#00D2F6]/20 text-[#00D2F6] border-[#00D2F6]/30',
+    badgeColor: 'bg-[#C08E3A]/20 text-[#C08E3A] border-[#C08E3A]/30',
     text: (name: string) =>
-      `Fala ${name || 'tudo bem'}! Aqui é o Thiago. Passando pra saber se você conseguiu dar uma olhada na proposta técnica que te enviei. Ficou alguma dúvida sobre o escopo ou prazos?`,
+      `Fala ${name || 'tudo bem'}! Passando pra saber se você conseguiu dar uma olhada na proposta técnica que te enviei. Ficou alguma dúvida sobre o escopo ou prazos?`,
   },
   {
     id: 'confirma_meet',
     title: 'Confirmação de Reunião',
     trigger: '2h antes do Google Meet agendado',
-    badge: '📅 PONTUALIDADE',
-    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    badge: 'PONTUALIDADE',
+    badgeColor: 'bg-[#0b7285]/20 text-[#0b7285] border border-[#0b7285]/30',
     text: (name: string) =>
-      `Opa ${name || 'tudo bem'}! Aqui é o Thiago. Confirmando nossa call de alinhamento daqui a pouco no Google Meet. Segue o link da nossa sala: meet.google.com/tcai-meet. Te vejo lá!`,
+      `Opa ${name || 'tudo bem'}! Confirmando nossa conversa de alinhamento daqui a pouco no Google Meet. Segue o link da nossa sala: meet.google.com/tcai-meet. Te vejo lá!`,
   },
   {
     id: 'quebra_objecao',
@@ -201,7 +201,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
           <h2 className="font-black text-2xl text-white uppercase tracking-tight">
             GERENCIAMENTO DE FOLLOW-UPS
           </h2>
-          <p className="text-xs text-[#94A3B8] font-mono">
+          <p className="text-xs text-[#B5B8AD] font-mono">
             Organize suas próximas ações de contato para manter a disciplina comercial
           </p>
         </div>
@@ -209,7 +209,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 rounded-xl bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 shadow-[0_0_20px_rgba(0,210,246,0.3)] transition-all cursor-pointer self-start sm:self-auto"
+          className="px-4 py-2 rounded-xl bg-[#C08E3A] hover:bg-[#A8782F] text-[#111512] font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 shadow-[0_0_20px_rgba(192,142,58,0.3)] transition-all cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Novo Follow-up</span>
@@ -217,13 +217,13 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
       </div>
 
       {/* Seção: Régua de Cadência Automática & Scripts Rápidos */}
-      <div className="p-4 rounded-2xl bg-[#0A1624] border border-[#16273C] space-y-3">
+      <div className="p-4 rounded-2xl bg-[#1B211C] border border-[#394138] space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Flame className="w-4 h-4 text-[#00D2F6]" />
+            <Flame className="w-4 h-4 text-[#C08E3A]" />
             <h3 className="font-bold text-white text-sm">Régua de Cadência & Scripts de WhatsApp (1-Clique)</h3>
           </div>
-          <span className="text-[10px] font-mono text-[#94A3B8]">
+          <span className="text-[10px] font-mono text-[#B5B8AD]">
             Templates humanizados prontos para envio direto como Thiago
           </span>
         </div>
@@ -232,7 +232,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
           {CADENCE_SCRIPTS.map((script) => (
             <div
               key={script.id}
-              className="p-3 rounded-xl bg-[#07111F] border border-[#16273C] flex flex-col justify-between gap-2.5 hover:border-[#00D2F6]/30 transition-all"
+              className="p-3 rounded-xl bg-[#111512] border border-[#394138] flex flex-col justify-between gap-2.5 hover:border-[#C08E3A]/30 transition-all"
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
@@ -241,13 +241,13 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                     {script.badge}
                   </span>
                 </div>
-                <p className="text-[10px] text-[#94A3B8]">{script.trigger}</p>
-                <p className="text-[11px] text-slate-300 italic line-clamp-3 bg-[#0A1624] p-2 rounded-lg border border-[#16273C]/60 mt-1">
+                <p className="text-[10px] text-[#B5B8AD]">{script.trigger}</p>
+                <p className="text-[11px] text-slate-300 italic line-clamp-3 bg-[#1B211C] p-2 rounded-lg border border-[#394138]/60 mt-1">
                   "{script.text('Cliente')}"
                 </p>
               </div>
 
-              <div className="flex items-center justify-end gap-1.5 pt-1 border-t border-[#16273C]">
+              <div className="flex items-center justify-end gap-1.5 pt-1 border-t border-[#394138]">
                 <button
                   type="button"
                   onClick={() => {
@@ -257,7 +257,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                   }}
                   className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/10 text-[10px] font-mono text-slate-300 flex items-center gap-1 transition-colors cursor-pointer"
                 >
-                  <Copy className="w-3 h-3 text-[#00D2F6]" />
+                  <Copy className="w-3 h-3 text-[#C08E3A]" />
                   <span>{copiedScriptId === script.id ? 'Copiado!' : 'Copiar'}</span>
                 </button>
               </div>
@@ -299,7 +299,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
           onClick={() => setActiveTab('proximos')}
           className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer ${
             activeTab === 'proximos'
-              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-sm'
+              ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-sm'
               : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
           }`}
         >
@@ -312,7 +312,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
           onClick={() => setActiveTab('sem_followup')}
           className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer ${
             activeTab === 'sem_followup'
-              ? 'bg-purple-500/20 text-purple-400 border border-purple-500/40 shadow-sm'
+              ? 'bg-[#0b7285]/20 text-[#0b7285] border border-[#0b7285]/40 shadow-sm'
               : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
           }`}
         >
@@ -333,11 +333,11 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
               <div
                 key={lead.id}
                 onClick={() => onSelectLead(lead.id)}
-                className="p-4 rounded-2xl bg-[#091524] border border-white/10 hover:border-[#00D2F6]/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer"
+                className="p-4 rounded-2xl bg-[#20271F] border border-white/10 hover:border-[#C08E3A]/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer"
               >
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-base text-white hover:text-[#00D2F6] transition-colors">
+                    <h4 className="font-bold text-base text-white hover:text-[#C08E3A] transition-colors">
                       {lead.name}
                     </h4>
                     {lead.company && (
@@ -348,7 +348,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-                    <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/10 text-[#00D2F6]">
+                    <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/10 text-[#C08E3A]">
                       {lead.status}
                     </span>
                     <span>{lead.recommended_solution}</span>
@@ -363,7 +363,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                       setSelectedLeadId(lead.id);
                       setIsModalOpen(true);
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-mono flex items-center gap-1.5 transition-colors"
+                    className="px-3 py-1.5 rounded-xl bg-[#8a5a00]/10 hover:bg-[#8a5a00]/20 text-[#8a5a00] border border-[#8a5a00]/30 text-xs font-mono flex items-center gap-1.5 transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Agendar Follow-up</span>
@@ -409,15 +409,15 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                 <div
                   key={item.id}
                   onClick={() => onSelectLead(item.lead_id)}
-                  className={`p-4 rounded-2xl bg-[#091524] border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer ${
+                  className={`p-4 rounded-2xl bg-[#20271F] border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer ${
                     isOverdue
                       ? 'border-rose-500/30 bg-rose-500/[0.02]'
-                      : 'border-white/10 hover:border-[#00D2F6]/30'
+                      : 'border-white/10 hover:border-[#C08E3A]/30'
                   }`}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-base text-white hover:text-[#00D2F6] transition-colors">
+                      <span className="font-bold text-base text-white hover:text-[#C08E3A] transition-colors">
                         {lead?.name || 'Lead'}
                       </span>
                       {lead?.company && (
@@ -439,7 +439,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                         {item.action}
                       </span>
                       <span className="text-slate-400 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-[#00D2F6]" />
+                        <Clock className="w-3.5 h-3.5 text-[#C08E3A]" />
                         {sched.toLocaleDateString('pt-BR')} às{' '}
                         {sched.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                       </span>
@@ -489,7 +489,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
       {/* ========================================================================= */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm font-kanit">
-          <div className="bg-[#0B1522] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+          <div className="bg-[#171D17] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
@@ -499,7 +499,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
             </button>
 
             <h3 className="text-lg font-black text-white uppercase mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-[#00D2F6]" />
+              <Calendar className="w-5 h-5 text-[#C08E3A]" />
               <span>Agendar Próxima Ação</span>
             </h3>
 
@@ -507,12 +507,12 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
               {/* Seleção de Lead */}
               <div>
                 <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5">
-                  Lead / Negócio <span className="text-[#00D2F6]">*</span>
+                  Lead / Negócio <span className="text-[#C08E3A]">*</span>
                 </label>
                 <select
                   value={selectedLeadId}
                   onChange={(e) => setSelectedLeadId(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#091524] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#00D2F6]"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#20271F] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#C08E3A]"
                 >
                   {leads.map((l) => (
                     <option key={l.id} value={l.id}>
@@ -525,12 +525,12 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
               {/* Ação */}
               <div>
                 <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5">
-                  Próxima Ação <span className="text-[#00D2F6]">*</span>
+                  Próxima Ação <span className="text-[#C08E3A]">*</span>
                 </label>
                 <select
                   value={actionInput}
                   onChange={(e) => setActionInput(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#091524] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#00D2F6] mb-2"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#20271F] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#C08E3A] mb-2"
                 >
                   {COMMON_ACTIONS.map((act) => (
                     <option key={act} value={act}>
@@ -544,14 +544,14 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5">
-                    Data <span className="text-[#00D2F6]">*</span>
+                    Data <span className="text-[#C08E3A]">*</span>
                   </label>
                   <input
                     type="date"
                     required
                     value={dateInput}
                     onChange={(e) => setDateInput(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#091524] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#00D2F6]"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#20271F] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#C08E3A]"
                   />
                 </div>
                 <div>
@@ -562,7 +562,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                     type="time"
                     value={timeInput}
                     onChange={(e) => setTimeInput(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#091524] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#00D2F6]"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#20271F] border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-[#C08E3A]"
                   />
                 </div>
               </div>
@@ -577,7 +577,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                   value={notesInput}
                   onChange={(e) => setNotesInput(e.target.value)}
                   placeholder="Ex: Alinhar escopo do MVP e envio de minuta comercial..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-[#00D2F6] resize-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-[#C08E3A] resize-none"
                 />
               </div>
 
@@ -591,7 +591,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#00D2F6] hover:bg-[#00B4D8] text-[#07111F] font-bold text-xs font-mono uppercase tracking-wider shadow-[0_0_15px_rgba(0,210,246,0.3)]"
+                  className="px-5 py-2 rounded-xl bg-[#C08E3A] hover:bg-[#A8782F] text-[#111512] font-bold text-xs font-mono uppercase tracking-wider shadow-[0_0_15px_rgba(192,142,58,0.3)]"
                 >
                   Salvar Ação
                 </button>
