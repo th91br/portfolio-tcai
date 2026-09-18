@@ -89,6 +89,7 @@ type SubView = 'chat' | 'diagnostics' | 'calendar';
 
 interface WhatsAppAgentViewProps {
   leads?: Lead[];
+  tenantId?: string;
   onNavigateToPipeline?: () => void;
 }
 
@@ -103,7 +104,7 @@ const KANBAN_STAGES: Array<{
   { key: 'triage', label: 'Triagem Inicial', color: 'border-slate-500', badgeBg: 'bg-slate-500/15', badgeBorder: 'border-slate-500/30', badgeText: 'text-slate-300' },
   { key: 'ai_qualified', label: 'Qualificado por IA', color: 'border-[#00D2F6]', badgeBg: 'bg-[#00D2F6]/15', badgeBorder: 'border-[#00D2F6]/30', badgeText: 'text-[#00D2F6]' },
   { key: 'proposal_sent', label: 'Proposta Enviada', color: 'border-amber-400', badgeBg: 'bg-amber-400/15', badgeBorder: 'border-amber-400/30', badgeText: 'text-amber-300' },
-  { key: 'meeting_booked', label: 'Reunião Agendada', color: 'border-purple-400', badgeBg: 'bg-purple-400/15', badgeBorder: 'border-purple-400/30', badgeText: 'text-purple-300' },
+  { key: 'meeting_booked', label: 'Reunião Agendada', color: 'border-[#0b7285]', badgeBg: 'bg-[#d4eef1]', badgeBorder: 'border-[#9bd4dc]', badgeText: 'text-[#0b7285]' },
   { key: 'closed', label: 'Fechado / Ganho', color: 'border-emerald-400', badgeBg: 'bg-emerald-400/15', badgeBorder: 'border-emerald-400/30', badgeText: 'text-emerald-300' },
 ];
 
@@ -946,7 +947,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                   : 'bg-[#07111F] border-[#16273C] text-slate-400 hover:text-white'
               }`}
             >
-              <Calendar className="w-3 h-3 text-purple-400" />
+              <Calendar className="w-3 h-3 text-[#C08E3A]" />
               <span>Meet ({meetings.length})</span>
             </button>
           </div>
@@ -1036,9 +1037,9 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                 <div className="w-[1px] h-4 bg-white/[0.08]" />
                 <div className="text-center">
                   <span className="text-[9px] text-slate-400 block uppercase flex items-center gap-0.5 justify-center">
-                    <Calendar className="w-2 h-2 text-purple-400 inline" /> Meets
+                    <Calendar className="w-2 h-2 text-[#0b7285] inline" /> Meets
                   </span>
-                  <span className="font-bold text-purple-400">
+                  <span className="font-bold text-[#0b7285]">
                     {meetings.filter((m) => m.status !== 'CANCELADO').length || kpis.meetingsBooked}
                   </span>
                 </div>
@@ -1138,7 +1139,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
               onClick={() => setActiveSubView('calendar')}
               className={'px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ' + (activeSubView === 'calendar' ? 'bg-[#00D2F6]/15 border-[#00D2F6] text-[#00D2F6] shadow-[0_0_15px_rgba(0,210,246,0.2)]' : 'bg-[#0A1624] border-[#16273C] text-slate-400 hover:text-white hover:border-white/20')}
             >
-              <Calendar className="w-3.5 h-3.5 text-purple-400" />
+              <Calendar className="w-3.5 h-3.5 text-[#0b7285]" />
               <span>Agenda Google Meet ({meetings.length})</span>
             </button>
           </div>
@@ -1200,7 +1201,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setCategoryFilter('meeting')}
-                    className={'flex-1 py-1 rounded-lg transition-colors flex items-center justify-center gap-1 ' + (categoryFilter === 'meeting' ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40' : 'text-slate-400 hover:text-white bg-white/[0.02]')}
+                    className={'flex-1 py-1 rounded-lg transition-colors flex items-center justify-center gap-1 ' + (categoryFilter === 'meeting' ? 'bg-[#0b7285]/20 text-[#0b7285] font-bold border border-[#0b7285]/40' : 'text-slate-400 hover:text-white bg-white/[0.02]')}
                   >
                     <Calendar className="w-3 h-3" /> Meet
                   </button>
@@ -1220,7 +1221,14 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
 
               {/* Lista de Contatos */}
               <div className="flex-1 overflow-y-auto divide-y divide-[#16273C]/50 min-h-0">
-                {filteredContacts.map((contact) => {
+                {filteredContacts.length === 0 ? (
+                <div className="p-6 text-center text-slate-400 space-y-2">
+                  <MessageSquare className="w-8 h-8 text-slate-500 mx-auto" />
+                  <p className="text-xs font-bold text-slate-200">Nenhuma conversa encontrada</p>
+                  <p className="text-[11px] text-slate-400">Quando clientes enviarem mensagem no WhatsApp, as conversas aparecerão aqui em tempo real.</p>
+                </div>
+              ) : (
+                filteredContacts.map((contact) => {
                   const isSelected = contact.id === activeContact?.id;
                   return (
                     <div
@@ -1251,7 +1259,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                       </div>
                     </div>
                   );
-                })}
+                }))}
               </div>
             </div>
 
@@ -1324,12 +1332,12 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                         }}
                         className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all cursor-pointer ${
                           operationalMode === 'copilot' && !aiPaused
-                            ? 'bg-purple-500 text-white shadow'
+                            ? 'bg-[#8a5a00] text-white shadow'
                             : 'text-slate-400 hover:text-white'
                         }`}
                         title="Modo Copiloto: A IA sugere respostas baseadas na base RAG para você aprovar"
                       >
-                        <Sparkles className="w-3 h-3 text-purple-200" />
+                        <Sparkles className="w-3 h-3 text-amber-200" />
                         <span className="hidden sm:inline">Copiloto</span>
                       </button>
 
@@ -1476,7 +1484,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                         Rascunho Sugerido pelo Copiloto IA (Base RAG)
                       </span>
                     </div>
-                    <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
                       Validação Humana
                     </span>
                   </div>
@@ -1519,7 +1527,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                         type="button"
                         onClick={() => handleSendDraftAsAudio(copilotDraft)}
                         disabled={isGeneratingAudioDraft}
-                        className="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-gradient-to-r from-purple-500 to-[#00D2F6] hover:brightness-110 text-white shadow-lg shadow-purple-500/20 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                        className="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#8a5a00] hover:bg-[#734b00] text-white shadow-sm transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
                         title={
                           assignedRepForActiveContact
                             ? `Sintetizar com a voz de ${assignedRepForActiveContact.name} (${
@@ -1571,7 +1579,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                   }
                   className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-[#00D2F6]/10 border border-white/[0.08] text-[10px] text-slate-300 hover:text-white whitespace-nowrap transition-colors"
                 >
-                  🗓️ Enviar Link do Meet
+                  Enviar Link do Meet
                 </button>
                 <button
                   type="button"
@@ -1582,7 +1590,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                   }
                   className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-[#00D2F6]/10 border border-white/[0.08] text-[10px] text-slate-300 hover:text-white whitespace-nowrap transition-colors"
                 >
-                  📄 Enviar Resumo da Proposta
+                  Enviar Resumo da Proposta
                 </button>
                 <button
                   type="button"
@@ -1593,7 +1601,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                   }
                   className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-[#00D2F6]/10 border border-white/[0.08] text-[10px] text-slate-300 hover:text-white whitespace-nowrap transition-colors"
                 >
-                  ⚡ Confirmar Início
+                  Confirmar Início
                 </button>
               </div>
 
@@ -1682,7 +1690,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Digite uma mensagem ou comande o Agente IA..."
+                    placeholder="Digite uma mensagem para o cliente..."
                     className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#07111F] border border-white/10 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#00D2F6]/50 transition-colors"
                   />
                 )}
@@ -1874,10 +1882,10 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                       });
                       setIsMeetingModalOpen(true);
                     }}
-                    className="w-full py-2 px-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    className="w-full py-2 px-3 rounded-xl bg-[#C08E3A]/10 hover:bg-[#C08E3A]/20 border border-[#C08E3A]/30 text-[#C08E3A] text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
                   >
                     <Calendar className="w-3.5 h-3.5" />
-                    <span>📅 Agendar Google Meet</span>
+                    <span>Agendar Google Meet</span>
                   </button>
 
                   <button
@@ -2077,7 +2085,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0C1B2E] p-4 rounded-2xl border border-[#16273C]">
                 <div>
                   <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-purple-400" />
+                    <Calendar className="w-4 h-4 text-[#0b7285]" />
                     Próximas Reuniões de Alinhamento (Google Meet)
                   </h3>
                   <p className="text-xs text-slate-400">
@@ -2091,7 +2099,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                     setEditingMeeting(null);
                     setIsMeetingModalOpen(true);
                   }}
-                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold font-mono text-xs flex items-center gap-1.5 shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:opacity-95 cursor-pointer w-fit"
+                  className="px-3.5 py-2 rounded-xl bg-[#8a5a00] hover:bg-[#734b00] text-white font-bold font-mono text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer w-fit"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Novo Agendamento</span>
@@ -2107,7 +2115,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                     value={meetingSearch}
                     onChange={(e) => setMeetingSearch(e.target.value)}
                     placeholder="Pesquisar por participante ou pauta..."
-                    className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-[#07111F] border border-[#16273C] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400"
+                    className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-[#07111F] border border-[#16273C] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#C08E3A]"
                   />
                 </div>
 
@@ -2117,7 +2125,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                       key={st}
                       type="button"
                       onClick={() => setMeetingStatusFilter(st)}
-                      className={'px-3 py-1.5 rounded-xl font-mono text-xs font-bold border transition-colors whitespace-nowrap ' + (meetingStatusFilter === st ? 'bg-purple-500/20 border-purple-400 text-purple-300' : 'bg-[#07111F] border-[#16273C] text-slate-400 hover:text-white')}
+                      className={'px-3 py-1.5 rounded-xl font-mono text-xs font-bold border transition-colors whitespace-nowrap ' + (meetingStatusFilter === st ? 'bg-[#0b7285]/20 border-[#0b7285] text-[#0b7285]' : 'bg-[#07111F] border-[#16273C] text-slate-400 hover:text-white')}
                     >
                       {st === 'ALL' ? 'Todas' : st}
                     </button>
@@ -2133,17 +2141,17 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                   return (
                     <div
                       key={m.id}
-                      className={'p-4 rounded-2xl bg-[#07111F] border space-y-3 transition-all shadow-lg ' + (isDone ? 'border-emerald-500/30 opacity-80' : isCancelled ? 'border-rose-500/30 opacity-60' : 'border-[#16273C] hover:border-purple-500/40')}
+                      className={'p-4 rounded-2xl bg-[#07111F] border space-y-3 transition-all shadow-lg ' + (isDone ? 'border-emerald-500/30 opacity-80' : isCancelled ? 'border-rose-500/30 opacity-60' : 'border-[#16273C] hover:border-[#C08E3A]/40')}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-mono font-bold text-purple-300 flex items-center gap-1">
+                            <span className="text-xs font-mono font-bold text-[#C08E3A] flex items-center gap-1">
                               <Clock className="w-3.5 h-3.5" />
                               {m.time}
                             </span>
                             <span
-                              className={'text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ' + (isDone ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : isCancelled ? 'bg-rose-500/15 text-rose-400 border-rose-500/30' : 'bg-purple-500/15 text-purple-300 border-purple-500/30')}
+                              className={'text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ' + (isDone ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : isCancelled ? 'bg-rose-500/15 text-rose-400 border-rose-500/30' : 'bg-[#0b7285]/15 text-[#0b7285] border-[#0b7285]/30')}
                             >
                               {m.status || 'AGENDADO'}
                             </span>
@@ -2162,7 +2170,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                           <button
                             type="button"
                             onClick={() => handleCopyMeetLink(m.link)}
-                            className="px-3 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 font-mono text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                            className="px-3 py-2 rounded-xl bg-[#0b7285]/10 hover:bg-[#0b7285]/20 border border-[#0b7285]/30 text-[#0b7285] font-mono text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                             title="Copiar link da reunião"
                           >
                             <Copy className="w-3.5 h-3.5" />
@@ -2173,7 +2181,7 @@ export const WhatsAppAgentView: React.FC<WhatsAppAgentViewProps> = ({
                             href={'https://' + m.link.replace(/^https?:\/\//, '')}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-mono text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:opacity-95"
+                            className="px-4 py-2 rounded-xl bg-[#0b7285] hover:bg-[#095c6b] text-white font-mono text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
                           >
                             <span>Entrar no Meet</span>
                             <ExternalLink className="w-3.5 h-3.5" />
