@@ -46,7 +46,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/80">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-sky-50 border border-sky-200 text-[#0284C7] uppercase tracking-wider">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-[#FF6B35] uppercase tracking-wider">
                 {project.category}
               </span>
               <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#090D1A] font-kanit">
@@ -86,7 +86,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                     onClick={() => setActiveImage(img)}
                     className={`relative w-24 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
                       currentPreview === img
-                        ? 'border-[#0284C7] shadow-md scale-105'
+                        ? 'border-[#FF6B35] shadow-md scale-105'
                         : 'border-slate-200 opacity-70 hover:opacity-100'
                     }`}
                   >
@@ -98,13 +98,43 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
 
             {/* Description & Narrative */}
             <div>
-              <h3 className="text-sm font-mono text-[#0284C7] uppercase font-bold tracking-wider mb-2">
+              <h3 className="text-sm font-mono text-[#FF6B35] uppercase font-bold tracking-wider mb-2">
                 Sobre a Solução & Impacto
               </h3>
               <p className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed">
                 {project.description}
               </p>
             </div>
+
+            {/* Structured Insights: Problem -> Solution -> Operational Impact */}
+            {(project.problem || project.solutionBuilt || project.operationalImpact) && (
+              <div className="space-y-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                {project.problem && (
+                  <div>
+                    <span className="text-[11px] font-mono font-bold text-amber-700 uppercase block mb-0.5">
+                      Problema Enfrentado:
+                    </span>
+                    <p className="text-xs sm:text-sm text-slate-600">{project.problem}</p>
+                  </div>
+                )}
+                {project.solutionBuilt && (
+                  <div>
+                    <span className="text-[11px] font-mono font-bold text-slate-900 uppercase block mb-0.5">
+                      Solução Construída pela TCAI:
+                    </span>
+                    <p className="text-xs sm:text-sm text-slate-600">{project.solutionBuilt}</p>
+                  </div>
+                )}
+                {project.operationalImpact && (
+                  <div>
+                    <span className="text-[11px] font-mono font-bold text-emerald-700 uppercase block mb-0.5">
+                      Impacto Prático na Operação:
+                    </span>
+                    <p className="text-xs sm:text-sm text-slate-900 font-medium">{project.operationalImpact}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Technologies */}
             {project.technologies && project.technologies.length > 0 && (
@@ -142,7 +172,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0096F5] to-[#015EEF] hover:scale-105 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer shadow-md shadow-sky-500/20"
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FF6B35] via-[#FA5A20] to-[#E04810] hover:scale-105 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer shadow-md shadow-[#FF6B35]/20"
               >
                 <span>Acessar Projeto ao Vivo</span>
                 <ExternalLink className="w-4 h-4" />
